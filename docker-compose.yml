@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:latest
+    container_name: tps_db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: tps_database
+    ports:
+      - 5432:5432
+    volumes:
+      - ./src/main/resources/V1__SCHEMA.sql:/docker-entrypoint-initdb.d/schema.sql
