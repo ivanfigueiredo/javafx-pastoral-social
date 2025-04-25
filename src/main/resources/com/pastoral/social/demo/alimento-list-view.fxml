@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="700.0" prefWidth="875.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<VBox prefHeight="700.0" prefWidth="875.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pastoral.social.demo.adapters.controller.ListAlimentosController">
    <children>
       <Label text="Listagem de Alimentos">
          <font>
@@ -15,16 +15,16 @@
             <Insets bottom="10.0" left="15.0" top="5.0" />
          </padding></Label>
       <ToolBar prefHeight="40.0" prefWidth="200.0" />
-      <TableView prefHeight="700.0" prefWidth="600.0">
+      <TableView fx:id="tableViewAlimento" prefHeight="700.0" prefWidth="600.0">
         <columns>
-            <TableColumn minWidth="200.0" prefWidth="135.3999908566475" text="Identificador" />
-          <TableColumn minWidth="180.0" prefWidth="87.19998168945312" text="Categoria" />
-          <TableColumn minWidth="180.0" prefWidth="89.60005187988281" text="Marca" />
-            <TableColumn minWidth="180.0" prefWidth="99.199951171875" text="Localização" />
-            <TableColumn minWidth="240.0" prefWidth="82.20001220703125" text="Unidade de Medida" />
-            <TableColumn minWidth="180.0" prefWidth="82.20001220703125" text="Entrada" />
-            <TableColumn minWidth="210.0" prefWidth="128.39996337890625" text="Na Validade" />
-            <TableColumn minWidth="150.0" prefWidth="114.5999755859375" text="Saída" />
+            <TableColumn fx:id="tableColumnIdAlimento" minWidth="200.0" prefWidth="135.3999908566475" text="Identificador" />
+          <TableColumn fx:id="tableColumnCategoria" minWidth="180.0" prefWidth="87.19998168945312" text="Categoria" />
+          <TableColumn fx:id="tableColumnMarca" minWidth="180.0" prefWidth="89.60005187988281" text="Marca" />
+            <TableColumn fx:id="tableColumnLocalizacao" minWidth="180.0" prefWidth="99.199951171875" text="Localização" />
+            <TableColumn fx:id="tableColumnUnidadeMedida" minWidth="240.0" prefWidth="82.20001220703125" text="Unidade de Medida" />
+            <TableColumn fx:id="tableColumnEntrada" minWidth="180.0" prefWidth="82.20001220703125" text="Entrada" />
+            <TableColumn fx:id="tableColumnIsValidade" minWidth="210.0" prefWidth="128.39996337890625" text="Na Validade" />
+            <TableColumn fx:id="tableColumnSaida" minWidth="150.0" prefWidth="114.5999755859375" text="Saída" />
         </columns>
          <VBox.margin>
             <Insets />
