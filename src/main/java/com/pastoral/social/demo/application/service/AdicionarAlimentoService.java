@@ -1,6 +1,6 @@
 package com.pastoral.social.demo.application.service;
 
-import com.pastoral.social.demo.application.AdicionarAlimentoDTO;
+import com.pastoral.social.demo.application.dto.AdicionarAlimentoDTO;
 import com.pastoral.social.demo.application.port.in.AdicionarAlimentoUseCase;
 import com.pastoral.social.demo.application.port.out.EstoqueRepository;
 import com.pastoral.social.demo.application.port.out.UnitOfWork;
