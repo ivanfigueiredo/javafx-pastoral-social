@@ -1,16 +1,28 @@
 package com.pastoral.social.demo.adapters.dao.transaction;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.pastoral.social.demo.adapters.dao.DAO;
+import com.pastoral.social.demo.adapters.dao.entities.EntityBase;
+import com.pastoral.social.demo.application.exceptions.SQLExecutionException;
+import com.pastoral.social.demo.application.exceptions.TransactionCommitException;
+import com.pastoral.social.demo.application.exceptions.TransactionStartException;
 import com.pastoral.social.demo.application.port.out.UnitOfWork;
+import lombok.extern.slf4j.Slf4j;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.Objects;
+import java.sql.*;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class Transacional implements UnitOfWork {
+@Slf4j
+public class Transacional<T extends EntityBase> implements UnitOfWork, TransacionalPersistence<T> {
     private final Connection conn;
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Class<T> type;
 
-    public Transacional(final Connection conn) {
-        this.conn = Objects.requireNonNull(conn);
+    public Transacional(final Class<T> type) throws SQLException {
+        final DAO dao = new DAO();
+        this.conn = dao.getConnection();
+        this.type = type;
     }
 
     @Override
@@ -18,8 +30,9 @@ public class Transacional implements UnitOfWork {
         try {
             this.conn.setAutoCommit(false);
         } catch (SQLException e) {
-            System.out.println("startTransaction" + e.getMessage());
+            log.error(e.getMessage(), e);
             this.closeSilently();
+            throw new TransactionStartException("Erro ao fazer start numa transacao");
         }
     }
 
@@ -28,7 +41,8 @@ public class Transacional implements UnitOfWork {
         try {
             this.conn.commit();
         } catch (SQLException e) {
-            System.out.println("commit" + e.getMessage());
+            log.error(e.getMessage(), e);
+            throw new TransactionCommitException("Erro ao comitar transacoes");
         } finally {
             this.closeSilently();
         }
@@ -39,7 +53,7 @@ public class Transacional implements UnitOfWork {
         try {
             this.conn.rollback();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage(), e);
         } finally {
             this.closeSilently();
         }
@@ -49,7 +63,54 @@ public class Transacional implements UnitOfWork {
         try {
             this.conn.close();
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void saveOrUpdate(final String SQL, final Map<String, Object> data) {
+        int i = 1;
+        try(PreparedStatement ps = this.conn.prepareStatement(SQL)) {
+            for (Object value: data.values()) {
+                ps.setObject(i, value);
+                i++;
+            }
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new SQLExecutionException("Erro ao persistir dados");
+        }
+    }
+
+    @Override
+    public List<T> find(final String SQL) {
+        final List<Map<String, Object>> result = findQuery(SQL);
+        return result.stream()
+                .map(m -> objectMapper.convertValue(m, this.type))
+                .collect(Collectors.toList());
+    }
+
+
+    private List<Map<String, Object>> findQuery(final String SQL) {
+        try(Connection conn = this.conn;
+            PreparedStatement ps = conn.prepareStatement(SQL);
+            ResultSet rs = ps.executeQuery()
+        ) {
+            ResultSetMetaData meta = rs.getMetaData();
+            int colCount = meta.getColumnCount();
+            List<Map<String,Object>> rows = new ArrayList<>();
+            while(rs.next()) {
+                Map<String,Object> row = new LinkedHashMap<>();
+                for (int i = 1; i <= colCount; i++) {
+                    row.put(meta.getColumnLabel(i), rs.getObject(i));
+                }
+                rows.add(row);
+            }
+            return rows;
+        }
+        catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            return new ArrayList<>();
         }
     }
 }
