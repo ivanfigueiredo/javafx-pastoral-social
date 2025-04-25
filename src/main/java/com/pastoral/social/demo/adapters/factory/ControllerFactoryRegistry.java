@@ -1,6 +1,7 @@
 package com.pastoral.social.demo.adapters.factory;
 
 import com.pastoral.social.demo.adapters.controller.CadastroAlimentoController;
+import com.pastoral.social.demo.adapters.controller.ListAlimentosController;
 import com.pastoral.social.demo.application.exceptions.InternalServerErrorException;
 
 import java.util.HashMap;
@@ -18,6 +19,10 @@ public final class ControllerFactoryRegistry {
             cadastroAlimentoController.setListCategoriaUseCase(ResolveDependencyFactory.createListCategoriaUseCase());
             cadastroAlimentoController.setListLocalizacaoUseCase(ResolveDependencyFactory.createListLocalizacaoUseCase());
             cadastroAlimentoController.setup();
+        });
+        registry.put(ListAlimentosController.class, (ListAlimentosController listAlimentosController) -> {
+            listAlimentosController.setListarAlimentosUseCase(ResolveDependencyFactory.createListarAlimentosUseCase());
+            listAlimentosController.setup();
         });
     }
 

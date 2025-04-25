@@ -5,12 +5,9 @@ import com.pastoral.social.demo.adapters.dao.transaction.TransacionalPersistence
 import com.pastoral.social.demo.application.dto.*;
 import com.pastoral.social.demo.application.port.out.EstoqueRepository;
 
-import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EstoqueDAO implements EstoqueRepository {
@@ -67,7 +64,7 @@ public class EstoqueDAO implements EstoqueRepository {
                 .collect(Collectors.toList());
     }
 
-    private Boolean isProdutoNaValidade(final LocalDate validade) {
-        return validade.isBefore(LocalDate.now());
+    private String isProdutoNaValidade(final LocalDate validade) {
+        return validade.isAfter(LocalDate.now()) ? "Na Validade" : "Vencido";
     }
 }

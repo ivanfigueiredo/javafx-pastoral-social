@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class ListarAlimentosDTO {
     private Integer idAlimento;
     private String marca;
-    private Boolean isValidate;
+    private String isValidate;
     private LocalDate entrada;
     private LocalDate saida;
     private UnidadeMedidaDTO unidadeMedida;
