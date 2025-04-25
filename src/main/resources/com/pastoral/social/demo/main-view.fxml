@@ -1,31 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pastoral.social.demo.adapters.controller.MainController">
    <content>
       <VBox prefHeight="380.0" prefWidth="598.0">
          <children>
             <MenuBar>
               <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="false" text="Alimento">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Close" />
+                    <MenuItem fx:id="menuItemCadastrarAlimento" mnemonicParsing="false" onAction="#onMenuItemCadastrarAlimentoAction" text="Cadastrar" />
+                      <MenuItem fx:id="menuItemListarAlimentos" mnemonicParsing="false" onAction="#onMenuItemListarAlimentosAction" text="Listar" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="false" text="Cesta">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="Delete" />
+                    <MenuItem fx:id="menuItemCriarCesta" mnemonicParsing="false" onAction="#onMenuItemCriarCestaAction" text="Criar" />
+                      <MenuItem fx:id="menuItemListarCestas" mnemonicParsing="false" onAction="#onMenuItemListarCestasAction" text="Listar" />
                   </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Help">
+                <Menu mnemonicParsing="false" text="Template Cesta">
                   <items>
-                    <MenuItem mnemonicParsing="false" text="About" />
+                    <MenuItem fx:id="menuItemCriarModelo" mnemonicParsing="false" onAction="#onMenuItemCriarModeloAction" text="Criar Modelo" />
+                      <MenuItem fx:id="menuItemListarModelos" mnemonicParsing="false" onAction="#onMenuItemListarModelosAction" text="Listar Modelos" />
+                      <MenuItem fx:id="menuItemDefinirTemplate" mnemonicParsing="false" onAction="#onMenuItemDefinirTemplateAction" text="Definir Template" />
+                      <MenuItem fx:id="menuItemListarTemplate" mnemonicParsing="false" onAction="#onMenuItemListarTemplateAction" text="Listar Templates" />
                   </items>
                 </Menu>
               </menus>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="10.0" top="10.0" />
+               </padding>
             </MenuBar>
          </children>
       </VBox>

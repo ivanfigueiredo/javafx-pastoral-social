@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="700.0" prefWidth="875.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="Listagem de Alimentos">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+         <padding>
+            <Insets bottom="10.0" left="15.0" top="5.0" />
+         </padding></Label>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" />
+      <TableView prefHeight="700.0" prefWidth="600.0">
+        <columns>
+            <TableColumn minWidth="200.0" prefWidth="135.3999908566475" text="Identificador" />
+          <TableColumn minWidth="180.0" prefWidth="87.19998168945312" text="Categoria" />
+          <TableColumn minWidth="180.0" prefWidth="89.60005187988281" text="Marca" />
+            <TableColumn minWidth="180.0" prefWidth="99.199951171875" text="Localização" />
+            <TableColumn minWidth="240.0" prefWidth="82.20001220703125" text="Unidade de Medida" />
+            <TableColumn minWidth="180.0" prefWidth="82.20001220703125" text="Entrada" />
+            <TableColumn minWidth="210.0" prefWidth="128.39996337890625" text="Na Validade" />
+            <TableColumn minWidth="150.0" prefWidth="114.5999755859375" text="Saída" />
+        </columns>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </TableView>
+   </children>
+</VBox>
