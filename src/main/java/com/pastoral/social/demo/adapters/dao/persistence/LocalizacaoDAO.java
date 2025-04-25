@@ -28,23 +28,5 @@ public class LocalizacaoDAO implements LocalizacaoRepository {
                         .descricao(item.getDescricao())
                         .build())
                 .collect(Collectors.toList());
-
-        //        try(Connection conn = dao.getConnection();
-//            PreparedStatement ps = conn.prepareStatement(SQL);
-//            ResultSet rs = ps.executeQuery()
-//        ) {
-//            final List<LocalizacaoDTO> localizacaoDTOList = new ArrayList<>();
-//            while (rs.next()) {
-//                final LocalizacaoDTO localizacaoDTO = LocalizacaoDTO.builder()
-//                        .idLocalizacao(rs.getInt(1))
-//                        .descricao(rs.getString(2))
-//                        .build();
-//                localizacaoDTOList.add(localizacaoDTO);
-//            }
-//            return localizacaoDTOList;
-//        } catch (SQLException e) {
-//            log.error(e.getMessage(), e);
-//            return new ArrayList<LocalizacaoDTO>();
-//        }
     }
 }
