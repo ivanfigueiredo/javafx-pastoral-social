@@ -1,6 +1,8 @@
 package com.pastoral.social.demo.adapters.dao.transaction;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.pastoral.social.demo.adapters.dao.DAO;
 import com.pastoral.social.demo.adapters.dao.entities.EntityBase;
 import com.pastoral.social.demo.application.exceptions.SQLExecutionException;
@@ -16,10 +18,13 @@ import java.util.stream.Collectors;
 @Slf4j
 public class Transacional<T extends EntityBase> implements UnitOfWork, TransacionalPersistence<T> {
     private final Connection conn;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
     private final Class<T> type;
 
     public Transacional(final Class<T> type) throws SQLException {
+        this.objectMapper = new ObjectMapper();
+        this.objectMapper.registerModule(new JavaTimeModule());
+        this.objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         final DAO dao = new DAO();
         this.conn = dao.getConnection();
         this.type = type;

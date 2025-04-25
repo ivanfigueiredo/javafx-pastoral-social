@@ -1,5 +1,6 @@
 package com.pastoral.social.demo.adapters.dao.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
@@ -27,10 +28,13 @@ public class EstoqueEntity extends EntityBase {
     private Integer idLocalizacao;
     @JsonProperty("localizacao_desc")
     private String localizacaoDescricao;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate validade;
     @JsonProperty("data_entrada")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime entrada;
     @JsonProperty("data_saida")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
     private LocalDateTime saida;
     @JsonProperty("item_na_validade")
     private Boolean itemNaValidade;
