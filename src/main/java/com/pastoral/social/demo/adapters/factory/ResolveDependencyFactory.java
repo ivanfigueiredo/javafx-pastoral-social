@@ -74,4 +74,26 @@ public final class ResolveDependencyFactory {
             throw new InternalServerErrorException("Erro Interno Servidor");
         }
     }
+
+    public static ExcluirAlimentoUseCase createExcluirAlimentoUseCase() {
+        try {
+            final Transacional<EstoqueEntity> transacional = new Transacional<>(EstoqueEntity.class);
+            final EstoqueDAO estoqueDAO = new EstoqueDAO(transacional);
+            return new ExcluirAlimentoService(estoqueDAO);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new InternalServerErrorException("Erro Interno Servidor");
+        }
+    }
+
+    public static AtualizarAlimentoUseCase createAtualizarAlimentoUseCase() {
+        try {
+            final Transacional<EstoqueEntity> transacional = new Transacional<>(EstoqueEntity.class);
+            final EstoqueDAO estoqueDAO = new EstoqueDAO(transacional);
+            return new AtualizarAlimentoService(transacional, estoqueDAO);
+        } catch (SQLException e) {
+            log.error(e.getMessage(), e);
+            throw new InternalServerErrorException("Erro Interno Servidor");
+        }
+    }
 }

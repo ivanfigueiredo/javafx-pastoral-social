@@ -10,4 +10,9 @@ import lombok.*;
 public class LocalizacaoDTO extends DataObjectTransferBase {
     private Integer idLocalizacao;
     private String descricao;
+
+    @Override
+    public String toString() {
+        return descricao;
+    }
 }

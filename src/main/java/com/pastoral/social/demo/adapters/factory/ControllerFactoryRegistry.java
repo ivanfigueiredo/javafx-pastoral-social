@@ -1,5 +1,6 @@
 package com.pastoral.social.demo.adapters.factory;
 
+import com.pastoral.social.demo.adapters.controller.AtualizarAlimentoModalController;
 import com.pastoral.social.demo.adapters.controller.CadastroAlimentoController;
 import com.pastoral.social.demo.adapters.controller.ListAlimentosController;
 import com.pastoral.social.demo.application.exceptions.InternalServerErrorException;
@@ -22,7 +23,14 @@ public final class ControllerFactoryRegistry {
         });
         registry.put(ListAlimentosController.class, (ListAlimentosController listAlimentosController) -> {
             listAlimentosController.setListarAlimentosUseCase(ResolveDependencyFactory.createListarAlimentosUseCase());
+            listAlimentosController.setExcluirAlimentoUseCase(ResolveDependencyFactory.createExcluirAlimentoUseCase());
             listAlimentosController.setup();
+        });
+        registry.put(AtualizarAlimentoModalController.class, (AtualizarAlimentoModalController atualizarAlimentoModalController) -> {
+            atualizarAlimentoModalController.setListUnidadeDeMedidasUseCase(ResolveDependencyFactory.createListUnidadeDeMedidasUseCase());
+            atualizarAlimentoModalController.setListCategoriaUseCase(ResolveDependencyFactory.createListCategoriaUseCase());
+            atualizarAlimentoModalController.setListLocalizacaoUseCase(ResolveDependencyFactory.createListLocalizacaoUseCase());
+            atualizarAlimentoModalController.setAtualizarAlimentoUseCase(ResolveDependencyFactory.createAtualizarAlimentoUseCase());
         });
     }
 

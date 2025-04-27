@@ -10,4 +10,9 @@ import lombok.*;
 public class CategoriaDTO extends DataObjectTransferBase {
     private Integer idCategoria;
     private String descricao;
+
+    @Override
+    public String toString() {
+        return descricao;
+    }
 }

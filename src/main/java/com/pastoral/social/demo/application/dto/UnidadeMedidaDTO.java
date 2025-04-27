@@ -10,4 +10,9 @@ import lombok.*;
 public class UnidadeMedidaDTO extends DataObjectTransferBase {
     private Integer idUND;
     private String descricao;
+
+    @Override
+    public String toString() {
+        return descricao;
+    }
 }

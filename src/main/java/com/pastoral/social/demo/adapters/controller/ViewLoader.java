@@ -16,7 +16,7 @@ import java.util.Objects;
 public final class ViewLoader {
     private ViewLoader() {}
 
-    public static synchronized <T> void loadView(String absolutePath) {
+    public static synchronized <T> void loadView(final String absolutePath) {
         try {
             FXMLLoader loader = new FXMLLoader(ViewLoader.class.getResource(absolutePath));
             VBox newVBox = loader.load();

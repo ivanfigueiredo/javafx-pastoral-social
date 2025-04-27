@@ -64,7 +64,27 @@ public class EstoqueDAO implements EstoqueRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void delete(final Integer idAlimento) {
+        final String SQL = "delete from tps_estoque_alimentos where id_alimento = ?";
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("id_alimento", idAlimento);
+        this.persistence.delete(SQL, map);
+    }
+
+    @Override
+    public void update(final AtualizarAlimentoDTO dto) {
+        final String SQL = "update tps_estoque_alimentos set id_categoria = ?, marca = ?, id_und_medida = ?, id_localizacao = ? where id_alimento = ?";
+        final Map<String, Object> map = new LinkedHashMap<>();
+        map.put("id_categoria", dto.getIdCategoria());
+        map.put("marca", dto.getMarca());
+        map.put("id_und_medida", dto.getIdUndMedida());
+        map.put("id_localizacao", dto.getIdLocalizacao());
+        map.put("id_alimento", dto.getIdAlimento());
+        this.persistence.saveOrUpdate(SQL, map);
+    }
+
     private String isProdutoNaValidade(final LocalDate validade) {
-        return validade.isAfter(LocalDate.now()) ? "Na Validade" : "Vencido";
+        return validade.isAfter(LocalDate.now()) ? "Sim" : "Não";
     }
 }
