@@ -95,6 +95,11 @@ public class Transacional<T extends EntityBase> implements UnitOfWork, Transacio
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void delete(String SQL, Map<String, Object> data) {
+        saveOrUpdate(SQL, data);
+    }
+
 
     private List<Map<String, Object>> findQuery(final String SQL) {
         try(Connection conn = this.conn;
