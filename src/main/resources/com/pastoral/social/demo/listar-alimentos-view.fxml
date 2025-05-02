@@ -19,7 +19,6 @@
         <columns>
             <TableColumn fx:id="tableColumnIdAlimento" minWidth="100.0" prefWidth="135.3999908566475" text="Identificador" />
           <TableColumn fx:id="tableColumnCategoria" minWidth="80.0" prefWidth="87.19998168945312" text="Categoria" />
-          <TableColumn fx:id="tableColumnMarca" minWidth="70.0" prefWidth="89.60005187988281" text="Marca" />
             <TableColumn fx:id="tableColumnLocalizacao" minWidth="100.0" prefWidth="99.199951171875" text="Localização" />
             <TableColumn fx:id="tableColumnUnidadeMedida" minWidth="170.0" prefWidth="82.20001220703125" text="Unidade de Medida" />
             <TableColumn fx:id="tableColumnEntrada" minWidth="100.0" prefWidth="82.20001220703125" text="Entrada" />

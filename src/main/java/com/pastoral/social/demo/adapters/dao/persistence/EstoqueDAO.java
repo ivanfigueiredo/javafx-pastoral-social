@@ -19,40 +19,37 @@ public class EstoqueDAO implements EstoqueRepository {
 
     @Override
     public void save(AdicionarAlimentoDTO dto) {
-        final String SQL = "INSERT INTO tps_estoque_alimentos (id_categoria, marca, validade, id_localizacao, item_na_validade, id_und_medida) VALUES (?,?,?,?,?,?)";
-        final boolean PRODUTO_NA_VALIDADE = true;
+        final String SQL = "INSERT INTO tps_estoque_alimentos (id_item_produto, validade, id_localizacao, id_und_medida, data_entrada) VALUES (?,?,?,?,?)";
         Map<String, Object> map = new LinkedHashMap<>();
-        map.put("idCategoria", dto.getIdCategoria());
-        map.put("marca", dto.getMarca());
+        map.put("idItemProduto", dto.getIdItemProduto());
         map.put("validade", Date.valueOf(dto.getValidade()));
         map.put("idLocalizacao", dto.getIdLocalizacao());
-        map.put("itemNaValidade", PRODUTO_NA_VALIDADE);
         map.put("idUndMedida", dto.getIdUndMedida());
+        map.put("dataEntrada", LocalDate.now());
         persistence.saveOrUpdate(SQL, map);
     }
 
     @Override
     public List<ListarAlimentosDTO> find() {
-        final String SQL = "select tea.id_alimento, tea.marca, tea.validade, tea.item_na_validade, tea.data_entrada, tea.data_saida, tc.id_categoria, tc.categoria_desc, tum.id, tum.und_medidas, tle.id_localizacao, tle.localizacao_desc from tps_estoque_alimentos tea\n" +
-                "left join tps_categoria tc on tc.id_categoria = tea.id_categoria\n" +
+        final String SQL = "select tea.id_alimento, tea.validade, tea.data_entrada, tea.data_saida, tip.id_produto, tip.item_produto_desc, tum.id, tum.und_medidas, tle.id_localizacao, tle.localizacao_desc from tps_estoque_alimentos tea\n" +
+                "left join tps_item_produto tip on tip.id_produto = tea.id_item_produto\n" +
                 "left join tps_unidade_medida tum on tum.id = tea.id_und_medida\n" +
                 "left join tps_localizacao_estoque tle on tle.id_localizacao = tea.id_localizacao;";
         List<EstoqueEntity> estoqueEntityList = this.persistence.find(SQL);
         return estoqueEntityList.stream()
                 .map(item -> ListarAlimentosDTO.builder()
                         .idAlimento(item.getIdAlimento())
-                        .marca(item.getMarca())
                         .isValidate(isProdutoNaValidade(item.getValidade()))
-                        .entrada(item.getEntrada().toLocalDate())
-                        .saida(Objects.isNull(item.getSaida()) ? null : item.getSaida().toLocalDate())
+                        .entrada(item.getEntrada())
+                        .saida(Objects.isNull(item.getSaida()) ? null : item.getSaida())
                         .localizacao(LocalizacaoDTO.builder()
                                 .idLocalizacao(item.getIdLocalizacao())
                                 .descricao(item.getLocalizacaoDescricao())
                                 .build()
                         )
-                        .categoria(CategoriaDTO.builder()
-                                .idCategoria(item.getIdCategoria())
-                                .descricao(item.getCategoriaDescricao())
+                        .itemProduto(ItemProdutoDTO.builder()
+                                .idItemProduto(item.getIdProduto())
+                                .descricao(item.getItemProdutoDesc())
                                 .build()
                         )
                         .unidadeMedida(UnidadeMedidaDTO.builder()
@@ -74,10 +71,9 @@ public class EstoqueDAO implements EstoqueRepository {
 
     @Override
     public void update(final AtualizarAlimentoDTO dto) {
-        final String SQL = "update tps_estoque_alimentos set id_categoria = ?, marca = ?, id_und_medida = ?, id_localizacao = ? where id_alimento = ?";
+        final String SQL = "update tps_estoque_alimentos set id_item_produto = ?, id_und_medida = ?, id_localizacao = ? where id_alimento = ?";
         final Map<String, Object> map = new LinkedHashMap<>();
-        map.put("id_categoria", dto.getIdCategoria());
-        map.put("marca", dto.getMarca());
+        map.put("id_item_produto", dto.getIdItemProduto());
         map.put("id_und_medida", dto.getIdUndMedida());
         map.put("id_localizacao", dto.getIdLocalizacao());
         map.put("id_alimento", dto.getIdAlimento());

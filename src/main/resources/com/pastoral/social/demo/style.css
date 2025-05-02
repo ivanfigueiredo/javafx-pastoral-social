@@ -1,9 +1,9 @@
 .menu-bar .menu {
-    -fx-padding: 0 15px;
+    -fx-padding: 0 30px;
 }
 
 .menu-bar {
-    -fx-padding: 10px;
+    -fx-padding: 10 20px;
     -fx-background-color: #f4f4f4;
     -fx-border-color: #cccccc;
     -fx-border-width: 1px;
@@ -11,7 +11,6 @@
 
 .menu {
     -fx-font-size: 14pt;
-    -fx-font-weight: bold;
     -fx-text-fill: #333333;
     -fx-padding: 5px;
 }
@@ -45,7 +44,7 @@
 }
 
 .grid-pane .combo-box {
-    -fx-background-color: #ffffff;
+    -fx-background-color: #aaaaaa;
     -fx-border-color: #cccccc;
     -fx-border-radius: 5px;
 }

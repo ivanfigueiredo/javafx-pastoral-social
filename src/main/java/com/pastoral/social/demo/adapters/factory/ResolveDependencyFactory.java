@@ -1,10 +1,10 @@
 package com.pastoral.social.demo.adapters.factory;
 
-import com.pastoral.social.demo.adapters.dao.entities.CategoriaEntity;
+import com.pastoral.social.demo.adapters.dao.entities.ItemProdutoEntity;
 import com.pastoral.social.demo.adapters.dao.entities.EstoqueEntity;
 import com.pastoral.social.demo.adapters.dao.entities.LocalizacaoEstoqueEntity;
 import com.pastoral.social.demo.adapters.dao.entities.UnidadeMedidaEntity;
-import com.pastoral.social.demo.adapters.dao.persistence.CategoriaDAO;
+import com.pastoral.social.demo.adapters.dao.persistence.ItemProdutoDAO;
 import com.pastoral.social.demo.adapters.dao.persistence.EstoqueDAO;
 import com.pastoral.social.demo.adapters.dao.persistence.LocalizacaoDAO;
 import com.pastoral.social.demo.adapters.dao.persistence.UnidadeDeMedidasDAO;
@@ -44,8 +44,8 @@ public final class ResolveDependencyFactory {
 
     public static ListCategoriaUseCase createListCategoriaUseCase() {
         try {
-            final Transacional<CategoriaEntity> transacional = new Transacional<>(CategoriaEntity.class);
-            final CategoriaDAO categoriaDAO = new CategoriaDAO(transacional);
+            final Transacional<ItemProdutoEntity> transacional = new Transacional<>(ItemProdutoEntity.class);
+            final ItemProdutoDAO categoriaDAO = new ItemProdutoDAO(transacional);
             return new ListCategoriaService(categoriaDAO);
         } catch (SQLException e) {
             log.error(e.getMessage(), e);

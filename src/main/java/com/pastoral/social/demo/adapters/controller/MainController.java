@@ -1,34 +1,25 @@
 package com.pastoral.social.demo.adapters.controller;
 
+import com.pastoral.social.demo.adapters.util.ColorEnum;
 import javafx.fxml.FXML;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.Button;
+
+import static com.pastoral.social.demo.adapters.util.SVGPathUtils.*;
+import static com.pastoral.social.demo.adapters.util.StringResource.*;
 
 
 public class MainController {
     @FXML
-    public MenuItem menuItemCadastrarAlimento;
+    private Button buttonCesta;
 
     @FXML
-    public MenuItem menuItemListarAlimentos;
+    private Button buttonBuscar;
 
     @FXML
-    public MenuItem menuItemCriarCesta;
+    private Button buttonCategorizar;
 
     @FXML
-    public MenuItem menuItemListarCestas;
-
-    @FXML
-    public MenuItem menuItemCriarModelo;
-
-    @FXML
-    public MenuItem menuItemListarModelos;
-
-    @FXML
-    public MenuItem menuItemDefinirTemplate;
-
-    @FXML
-    public MenuItem menuItemListarTemplate;
-
+    private Button buttonRelatorio;
 
     @FXML
     public void onMenuItemCadastrarAlimentoAction() {
@@ -37,7 +28,7 @@ public class MainController {
 
     @FXML
     public void onMenuItemListarAlimentosAction() {
-        ViewLoader.loadView("/com/pastoral/social/demo/alimento-list-view.fxml");
+        ViewLoader.loadView("/com/pastoral/social/demo/listar-alimentos-view.fxml");
     }
 
     @FXML
@@ -51,22 +42,20 @@ public class MainController {
     }
 
     @FXML
-    public void onMenuItemCriarModeloAction() {
-
-    }
-
-    @FXML
     public void onMenuItemListarModelosAction() {
-
-    }
-
-    @FXML
-    public void onMenuItemDefinirTemplateAction() {
-
+        ViewLoader.loadView("/com/pastoral/social/demo/listar-modelos-view.fxml");
     }
 
     @FXML
     public void onMenuItemListarTemplateAction() {
+        ViewLoader.loadView("/com/pastoral/social/demo/listar-templates-view.fxml");
+    }
 
+    @FXML
+    public void initialize() {
+        buttonCesta.setGraphic(getSvgGraphic(CESTA_SVG, ColorEnum.findColor("Cesta")));
+        buttonBuscar.setGraphic(getSvgGraphic(BUSCAR_SVG, ColorEnum.findColor("Buscar")));
+        buttonCategorizar.setGraphic(getSvgGraphic(CATEGORIZAR_SVG, ColorEnum.findColor("Categorizar")));
+        buttonRelatorio.setGraphic(getSvgGraphic(RELATORIO_SVG, ColorEnum.findColor("Relatorio")));
     }
 }

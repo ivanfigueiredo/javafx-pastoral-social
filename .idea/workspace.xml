@@ -5,23 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="22476bc3-d8a2-43f7-adab-ef1f67f4daab" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/AtualizarAlimentoModalController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/AtualizarAlimentoModalController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/CadastroAlimentoController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/CadastroAlimentoController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/ListAlimentosController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/ListAlimentosController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/ViewLoader.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/ViewLoader.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/MainController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/MainRootScene.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/MainRootScene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/controller/ViewLoader.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/entities/CategoriaEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/entities/ItemProdutoEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/entities/EstoqueEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/entities/EstoqueEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/persistence/CategoriaDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/persistence/ItemProdutoDAO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/persistence/EstoqueDAO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/persistence/EstoqueDAO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/transaction/Transacional.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/transaction/Transacional.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/transaction/TransacionalPersistence.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/dao/transaction/TransacionalPersistence.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/factory/ControllerFactoryRegistry.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/factory/ControllerFactoryRegistry.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/factory/ResolveDependencyFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/factory/ResolveDependencyFactory.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/CategoriaDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/CategoriaDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/LocalizacaoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/LocalizacaoDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/UnidadeMedidaDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/UnidadeMedidaDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/port/out/EstoqueRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/port/out/EstoqueRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/service/AdicionarAlimentoService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/service/AdicionarAlimentoService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/alimento-list-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/alimento-list-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/util/ButtonUtils.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/adapters/util/ButtonUtils.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/AdicionarAlimentoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/AdicionarAlimentoDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/AtualizarAlimentoDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/AtualizarAlimentoDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/CategoriaDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/ItemProdutoDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/ListarAlimentosDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/ListarAlimentosDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/MessageResource.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/dto/MessageResource.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/port/in/ListCategoriaUseCase.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/port/in/ListCategoriaUseCase.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/port/out/CategoriaRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/port/out/CategoriaRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/service/ListCategoriaService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/pastoral/social/demo/application/service/ListCategoriaService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/V1__SCHEMA.sql" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/V1__SCHEMA.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/alimento-list-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/listar-alimentos-view.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/atualizar-alimento-view.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/atualizar-alimento-view.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/cadastro-alimento-form.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/cadastro-alimento-form.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/edit.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/main-view.fxml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/com/pastoral/social/demo/trash-xmark.svg" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +44,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Interface" />
+        <option value="Enum" />
         <option value="Class" />
+        <option value="FxmlFile" />
       </list>
     </option>
   </component>
@@ -57,20 +71,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.MainApplication.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/ivanf/workspace/demo/src/main/resources/com/pastoral/social/demo",
-    "settings.editor.selected.configurable": "preferences.lookFeel"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.MainApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/ivanf/workspace/demo/src/main/resources/com/pastoral/social/demo&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.lookFeel&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\ivanf\workspace\demo\src\main\resources\com\pastoral\social\demo" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.pastoral.social.demo.adapters.controller" />
     </key>
   </component>
   <component name="RunManager">

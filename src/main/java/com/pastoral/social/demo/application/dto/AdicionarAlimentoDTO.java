@@ -12,9 +12,8 @@ import static com.pastoral.social.demo.application.dto.MessageResource.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AdicionarAlimentoDTO {
-    @NotNull(message = MESSAGE_ID_CATEGORIA)
-    private Integer idCategoria;
-    private String marca;
+    @NotNull(message = MESSAGE_ID_ITEM_PRODUTO)
+    private Integer idItemProduto;
     @NotNull(message = MESSAGE_VALIDADE)
     private LocalDate validade;
     @NotNull(message = MESSAGE_ID_LOCALIZACAO)

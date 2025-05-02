@@ -24,7 +24,7 @@ public class MainRootScene extends Application {
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         mainScene = new Scene(scrollPane);
-        mainScene.getStylesheets().add("/com/pastoral/social/demo/style.css");
+//        mainScene.getStylesheets().add("/com/pastoral/social/demo/style.css");
         stage.setScene(mainScene);
         stage.setTitle("Pastoral Social");
         Image icon = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/pastoral/social/demo/icon.png")));

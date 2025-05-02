@@ -30,13 +30,10 @@ public class AtualizarAlimentoModalController extends ControllerModalBase<Listar
     private ComboBox<UnidadeMedidaDTO> comboBoxListUND;
 
     @FXML
-    private ComboBox<CategoriaDTO> comboBoxListCategoria;
+    private ComboBox<ItemProdutoDTO> comboBoxListItemProduto;
 
     @FXML
     private ComboBox<LocalizacaoDTO> comboBoxListLocalizacao;
-
-    @FXML
-    private TextField textFieldMarca;
 
     @FXML
     public void onCancelarAtualizacao() {
@@ -46,21 +43,19 @@ public class AtualizarAlimentoModalController extends ControllerModalBase<Listar
     @FXML
     public void onFinalizarAtualizacao() {
         final Integer idUND = Objects.nonNull(comboBoxListUND.getSelectionModel().getSelectedItem()) ? comboBoxListUND.getSelectionModel().getSelectedItem().getIdUND() : null;
-        final Integer idCategoria = Objects.nonNull(comboBoxListCategoria.getSelectionModel().getSelectedItem()) ? comboBoxListCategoria.getSelectionModel().getSelectedItem().getIdCategoria() : null;
+        final Integer idItemProduto = Objects.nonNull(comboBoxListItemProduto.getSelectionModel().getSelectedItem()) ? comboBoxListItemProduto.getSelectionModel().getSelectedItem().getIdItemProduto() : null;
         final Integer idLocalizacao = Objects.nonNull(comboBoxListLocalizacao.getSelectionModel().getSelectedItem()) ? comboBoxListLocalizacao.getSelectionModel().getSelectedItem().getIdLocalizacao() : null;
-        final String marca = textFieldMarca.getText();
         final AtualizarAlimentoDTO atualizarAlimentoDTO = AtualizarAlimentoDTO.builder()
                 .idAlimento(this.listarAlimentosDTO.getIdAlimento())
-                .idCategoria(idCategoria)
+                .idItemProduto(idItemProduto)
                 .idLocalizacao(idLocalizacao)
                 .idUndMedida(idUND)
-                .marca(marca)
                 .build();
         try {
             this.atualizarAlimentoUseCase.execute(atualizarAlimentoDTO);
             this.close();
             Alerts.showAlert("Atualização Concluída", null, "Produto atualizado com sucesso", Alert.AlertType.INFORMATION);
-            ViewLoader.loadView("/com/pastoral/social/demo/alimento-list-view.fxml");
+            ViewLoader.loadView("/com/pastoral/social/demo/listar-alimentos-view.fxml");
         } catch (InternalServerErrorException e) {
             log.error(e.getMessage(), e);
             Alerts.showAlert("Erro Interno", null, e.getMessage(), Alert.AlertType.ERROR);
@@ -91,28 +86,27 @@ public class AtualizarAlimentoModalController extends ControllerModalBase<Listar
     @Override
     public void setup() {
         List<UnidadeMedidaDTO> listUND = this.listUnidadeDeMedidasUseCase.execute();
-        List<CategoriaDTO> listCategoria = this.listCategoriaUseCase.execute();
+        List<ItemProdutoDTO> listCategoria = this.listCategoriaUseCase.execute();
         List<LocalizacaoDTO> listLocalizacao = this.listLocalizacaoUseCase.execute();
         comboBoxListUND.setItems(FXCollections.observableList(listUND));
-        comboBoxListCategoria.setItems(FXCollections.observableList(listCategoria));
+        comboBoxListItemProduto.setItems(FXCollections.observableList(listCategoria));
         comboBoxListLocalizacao.setItems(FXCollections.observableList(listLocalizacao));
         final Callback<ListView<UnidadeMedidaDTO>, ListCell<UnidadeMedidaDTO>> comboBoxListUndFactory = ComboBoxUtils.<UnidadeMedidaDTO>factory();
-        final Callback<ListView<CategoriaDTO>, ListCell<CategoriaDTO>> comboBoxListCategoryFactory = ComboBoxUtils.<CategoriaDTO>factory();
+        final Callback<ListView<ItemProdutoDTO>, ListCell<ItemProdutoDTO>> comboBoxListCategoryFactory = ComboBoxUtils.<ItemProdutoDTO>factory();
         final Callback<ListView<LocalizacaoDTO>, ListCell<LocalizacaoDTO>> comboBoxListLocalizacaoFactory = ComboBoxUtils.<LocalizacaoDTO>factory();
         comboBoxListUND.setCellFactory(comboBoxListUndFactory);
         comboBoxListUND.setButtonCell(comboBoxListUndFactory.call(null));
-        comboBoxListCategoria.setCellFactory(comboBoxListCategoryFactory);
-        comboBoxListCategoria.setButtonCell(comboBoxListCategoryFactory.call(null));
+        comboBoxListItemProduto.setCellFactory(comboBoxListCategoryFactory);
+        comboBoxListItemProduto.setButtonCell(comboBoxListCategoryFactory.call(null));
         comboBoxListLocalizacao.setCellFactory(comboBoxListLocalizacaoFactory);
         comboBoxListLocalizacao.setButtonCell(comboBoxListLocalizacaoFactory.call(null));
-        textFieldMarca.setText(this.listarAlimentosDTO.getMarca());
-        comboBoxListCategoria.getSelectionModel().select(listarAlimentosDTO.getCategoria());
+        comboBoxListItemProduto.getSelectionModel().select(listarAlimentosDTO.getItemProduto());
         comboBoxListLocalizacao.getSelectionModel().select(listarAlimentosDTO.getLocalizacao());
         comboBoxListUND.getSelectionModel().select(listarAlimentosDTO.getUnidadeMedida());
     }
 
     private void close() {
-        Stage stage = (Stage) textFieldMarca.getScene().getWindow();
+        Stage stage = (Stage) comboBoxListItemProduto.getScene().getWindow();
         stage.close();
     }
 }

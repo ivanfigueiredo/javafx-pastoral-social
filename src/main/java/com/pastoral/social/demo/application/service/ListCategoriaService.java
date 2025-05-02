@@ -1,6 +1,6 @@
 package com.pastoral.social.demo.application.service;
 
-import com.pastoral.social.demo.application.dto.CategoriaDTO;
+import com.pastoral.social.demo.application.dto.ItemProdutoDTO;
 import com.pastoral.social.demo.application.port.in.ListCategoriaUseCase;
 import com.pastoral.social.demo.application.port.out.CategoriaRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +17,7 @@ public class ListCategoriaService implements ListCategoriaUseCase {
     }
 
     @Override
-    public List<CategoriaDTO> execute() {
+    public List<ItemProdutoDTO> execute() {
         return categoriaRepository.listCategoria();
     }
 }

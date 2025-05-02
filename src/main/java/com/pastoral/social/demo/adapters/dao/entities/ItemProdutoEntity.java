@@ -8,9 +8,9 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoriaEntity extends EntityBase{
-    @JsonProperty("id_categoria")
-    private Integer idCategoria;
-    @JsonProperty("categoria_desc")
-    private String categoriaDescricao;
+public class ItemProdutoEntity extends EntityBase{
+    @JsonProperty("id_produto")
+    private Integer idProduto;
+    @JsonProperty("item_produto_desc")
+    private String produtoDescricao;
 }

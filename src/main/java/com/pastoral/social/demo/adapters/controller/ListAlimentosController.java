@@ -25,9 +25,6 @@ public class ListAlimentosController {
     private TableColumn<ListarAlimentosDTO, Integer> tableColumnIdAlimento;
 
     @FXML
-    private TableColumn<ListarAlimentosDTO, String> tableColumnMarca;
-
-    @FXML
     private TableColumn<ListarAlimentosDTO, String> tableColumnIsValidade;
 
     @FXML
@@ -59,9 +56,8 @@ public class ListAlimentosController {
     public void setup() {
         final List<ListarAlimentosDTO> listarAlimentosDTOList = this.listarAlimentosUseCase.execute();
         tableColumnIdAlimento.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getIdAlimento()).asObject());
-        tableColumnMarca.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getMarca()));
         tableColumnIsValidade.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getIsValidate()));
-        tableColumnCategoria.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getCategoria().getDescricao()));
+        tableColumnCategoria.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItemProduto().getDescricao()));
         tableColumnLocalizacao.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getLocalizacao().getDescricao()));
         tableColumnEntrada.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getEntrada().toString()));
         tableColumnSaida.setCellValueFactory(cellData -> new SimpleStringProperty(Objects.isNull(cellData.getValue().getSaida()) ? "Em Estoque" : cellData.getValue().getSaida().toString()));
@@ -80,6 +76,6 @@ public class ListAlimentosController {
     }
 
     public void redirect() {
-        ViewLoader.loadView("/com/pastoral/social/demo/alimento-list-view.fxml");
+        ViewLoader.loadView("/com/pastoral/social/demo/listar-alimentos-view.fxml");
     }
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox prefHeight="700.0" prefWidth="875.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <Label text="Listar Modelos">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+         <padding>
+            <Insets left="10.0" top="10.0" />
+         </padding>
+      </Label>
+      <ToolBar prefHeight="40.0" prefWidth="200.0">
+        <items>
+          <Button mnemonicParsing="false" style="-fx-background-color: #008000;" text="Novo Modelo" textFill="#f7faf8">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font></Button>
+        </items>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+         <padding>
+            <Insets bottom="10.0" left="10.0" top="10.0" />
+         </padding>
+      </ToolBar>
+      <TableView prefHeight="387.0" prefWidth="875.0">
+        <columns>
+          <TableColumn minWidth="250.0" prefWidth="107.19997864961624" text="Identificador" />
+          <TableColumn minWidth="250.0" prefWidth="101.0" text="Descrição" />
+            <TableColumn minWidth="250.0" prefWidth="112.20001220703125" text="Aplicar Modelo" />
+            <TableColumn minWidth="300.0" prefWidth="145.20001220703125" text="Visualizar Templates" />
+            <TableColumn minWidth="270.0" prefWidth="100.0" text="Criado Em" />
+            <TableColumn minWidth="200.0" prefWidth="75.0" text="Ações" />
+        </columns>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </TableView>
+   </children>
+</VBox>

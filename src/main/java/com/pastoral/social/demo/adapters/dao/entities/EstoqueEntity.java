@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -15,11 +14,10 @@ import java.time.LocalDateTime;
 public class EstoqueEntity extends EntityBase {
     @JsonProperty("id_alimento")
     private Integer idAlimento;
-    private String marca;
-    @JsonProperty("id_categoria")
-    private Integer idCategoria;
-    @JsonProperty("categoria_desc")
-    private String categoriaDescricao;
+    @JsonProperty("id_produto")
+    private Integer idProduto;
+    @JsonProperty("item_produto_desc")
+    private String itemProdutoDesc;
     @JsonProperty("id")
     private Integer idUnidadeMedidas;
     @JsonProperty("und_medidas")
@@ -31,11 +29,9 @@ public class EstoqueEntity extends EntityBase {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate validade;
     @JsonProperty("data_entrada")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    private LocalDateTime entrada;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate entrada;
     @JsonProperty("data_saida")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-    private LocalDateTime saida;
-    @JsonProperty("item_na_validade")
-    private Boolean itemNaValidade;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate saida;
 }

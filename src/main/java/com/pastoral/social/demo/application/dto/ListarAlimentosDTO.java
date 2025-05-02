@@ -10,11 +10,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class ListarAlimentosDTO {
     private Integer idAlimento;
-    private String marca;
     private String isValidate;
     private LocalDate entrada;
     private LocalDate saida;
     private UnidadeMedidaDTO unidadeMedida;
-    private CategoriaDTO categoria;
+    private ItemProdutoDTO itemProduto;
     private LocalizacaoDTO localizacao;
 }

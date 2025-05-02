@@ -2,10 +2,10 @@ package com.pastoral.social.demo.adapters.controller;
 
 import com.pastoral.social.demo.adapters.factory.ControllerFactoryRegistry;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,10 +21,9 @@ public final class ViewLoader {
             FXMLLoader loader = new FXMLLoader(ViewLoader.class.getResource(absolutePath));
             VBox newVBox = loader.load();
             Scene mainScene = MainRootScene.getRootScene();
-            VBox mainVBox = (VBox) ((ScrollPane) mainScene.getRoot()).getContent();
-            Node mainMenu = mainVBox.getChildren().get(0);
+            BorderPane borderPane = (BorderPane) ((ScrollPane) mainScene.getRoot()).getContent();
+            VBox mainVBox = (VBox) borderPane.getCenter();
             mainVBox.getChildren().clear();
-            mainVBox.getChildren().add(mainMenu);
             mainVBox.getChildren().add(newVBox);
             T controller = loader.getController();
             if (Objects.nonNull(controller)) {

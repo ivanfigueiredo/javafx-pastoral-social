@@ -8,8 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 public class AtualizarAlimentoDTO {
     private Integer idAlimento;
-    private Integer idCategoria;
+    private Integer idItemProduto;
     private Integer idUndMedida;
     private Integer idLocalizacao;
-    private String marca;
 }

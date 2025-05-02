@@ -7,8 +7,8 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoriaDTO extends DataObjectTransferBase {
-    private Integer idCategoria;
+public class ItemProdutoDTO extends DataObjectTransferBase {
+    private Integer idItemProduto;
     private String descricao;
 
     @Override
