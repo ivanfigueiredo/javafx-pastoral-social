@@ -1,16 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "typeorm";
-import { User } from "./UserEntity";
+import { UserEntity } from "./UserEntity";
 
 @Entity('TPS_SECURITY')
 export class SecurityEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (u) => u.security)
+  @ManyToOne(() => UserEntity, (u) => u.security)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: UserEntity;
 
-  @Column({ name: 'token_hash' })
+  @Column({ name: 'token_hash', type: 'varchar' })
   tokenHash: string;
 
   @Column({ name: 'expires_at', type: 'timestamp' })
@@ -19,7 +19,7 @@ export class SecurityEntity {
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'NOW()' })
   createdAt: Date | null;
 
-  @Column({ default: false })
+  @Column({ default: false, type: 'bool' })
   revoked: boolean;
 
   constructor(
@@ -28,7 +28,7 @@ export class SecurityEntity {
     expiresAt: Date,
     createdAt: Date | null,
     revoked: boolean,
-    user: User
+    user: UserEntity
   ) {
     this.id = id;
     this.tokenHash = tokenHash;

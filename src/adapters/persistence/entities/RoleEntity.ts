@@ -6,7 +6,7 @@ export class RoleEntity {
   @PrimaryGeneratedColumn({ name: 'role_id' })
   id: number;
 
-  @Column({ name: 'role_desc' })
+  @Column({ name: 'role_desc', type: 'varchar' })
   description: string;
 
   @OneToMany(() => PermissionEntity, (p) => p.role)
