@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "t
 import { TipoAjudaEntity } from "./TipoAjudaEntity";
 import { FamiliaEntity } from "./FamiliaEntity";
 
-@Entity('TPS_AJUDA_RECEBIDA')
+@Entity('tps_ajuda_recebida')
 export class AjudaRecebidaEntity {
   @PrimaryGeneratedColumn({ name: 'id_ajuda_recebida' })
   id: number;
@@ -18,16 +18,16 @@ export class AjudaRecebidaEntity {
   @Column({ name: 'data_entrega', nullable: true, type: 'date' })
   dataEntrega: Date | null;
 
-  @Column({ name: 'entrega_aprovada', default: false })
+  @Column({ name: 'entrega_aprovada', type: 'bool', default: false })
   entregaAprovada: boolean;
 
-  @Column({ name: 'observacao', nullable: true, type: 'text' })
+  @Column({ name: 'observacao', nullable: true, type: 'varchar' })
   observacao: string | null;
 
-  @Column({ name: 'envolveu_autoridade', default: false })
+  @Column({ name: 'envolveu_autoridade', type: 'bool', default: false })
   envolveuAutoridade: boolean;
 
-  @Column({ name: 'autoridade_nome', nullable: true })
+  @Column({ name: 'autoridade_nome', type: 'varchar', nullable: true })
   autoridadeNome: string | null;
 
   constructor(

@@ -1,6 +1,19 @@
 import { AbilityBuilder, InferSubjects, PureAbility } from '@casl/ability';
 import { ConditionsMatcher, MatchConditions, TaggedInterface } from '@casl/ability/dist/types/types';
 
+type ActionType = 
+  | 'CadastrarFamilia'
+  | 'ListarFamilia'
+  | 'EditarFamilia' 
+  | 'CadastrarItemEstoque'
+  | 'CriarTemplateCesta'
+  | 'ListarTemplate'
+  | 'GerarCesta'
+  | 'EntregarAjuda'
+  | 'ListarAjuda'
+  | 'VisualizarRelatorios'
+  | 'AprovarEntrega';
+
 export type Action = 
   | 'cadastrar_familia'
   | 'listar_familia'
@@ -14,7 +27,21 @@ export type Action =
   | 'visualizar_relatorios'
   | 'aprovar_entrega';
 
-type Role = 
+export const ActionType: Record<ActionType, Action> = {
+    CadastrarFamilia: 'cadastrar_familia',
+    AprovarEntrega: 'aprovar_entrega',
+    CadastrarItemEstoque: 'cadastrar_item_estoque',
+    CriarTemplateCesta: 'cadastrar_item_estoque',
+    EditarFamilia: 'editar_familia',
+    EntregarAjuda: 'entregar_ajuda',
+    GerarCesta: 'gerar_cesta',
+    ListarAjuda: 'listar_ajuda',
+    ListarFamilia: 'listar_familia',
+    ListarTemplate: 'listar_template',
+    VisualizarRelatorios: 'visualizar_relatorios'
+}
+
+export type Role = 
     | 'Admin'
     | 'App'
     | 'Moderador';

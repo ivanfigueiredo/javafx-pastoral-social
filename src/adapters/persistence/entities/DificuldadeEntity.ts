@@ -6,7 +6,7 @@ export class DificuldadeEntity {
   @PrimaryGeneratedColumn({ name: 'id_dificuldade' })
   id: number;
 
-  @Column()
+  @Column({ name: 'descricao', type: 'varchar' })
   descricao: string;
 
   @OneToMany(() => FamiliaDificuldadeEntity, (fd) => fd.dificuldade)

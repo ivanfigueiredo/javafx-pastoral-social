@@ -16,7 +16,7 @@ export class CestaTemplateEntity {
     @JoinColumn({ name: 'id_template' })
     template: TemplateEntity;
 
-    @Column()
+    @Column({ type: 'int4' })
     quantidade: number;
 
     @OneToMany(() => ItemTemplateEntity, item => item.cestaTemplate)

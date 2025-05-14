@@ -7,7 +7,7 @@ export class ItemProdutoEntity {
   @PrimaryGeneratedColumn({name: 'id_item_produto'})
   id: number;
 
-  @Column({ name: 'item_produto_desc', unique: true })
+  @Column({ name: 'item_produto_desc', type: 'varchar', unique: true })
   itemProdutoDesc: string;
 
   @OneToMany(() => EstoqueAlimentoEntity, alimento => alimento.localizacao)

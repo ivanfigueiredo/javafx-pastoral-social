@@ -6,7 +6,7 @@ export class LocalizacaoEntity {
   @PrimaryGeneratedColumn({ name: 'id_localizacao' })
   id: number;
 
-  @Column({ name: 'localizacao_desc', unique: true })
+  @Column({ name: 'localizacao_desc', type: 'varchar', unique: true })
   localizacaoDesc: string;
 
   @OneToMany(() => EstoqueAlimentoEntity, alimento => alimento.localizacao)
