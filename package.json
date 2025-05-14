@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./dist/main.js",
+    "dev": "nodemon --exec ts-node ./src/main.ts",
     "build": "esbuild src/main.ts --bundle --outfile=dist/main.js --platform=node"
   },
   "keywords": [],
@@ -12,15 +13,18 @@
   "description": "",
   "dependencies": {
     "@casl/ability": "^6.7.3",
+    "dotenv": "^16.5.0",
     "express": "^5.1.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
     "pg": "^8.11.5",
-    "typeorm": "^0.3.20"
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.20",
+    "typescript": "^5.8.3"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.14",
-    "esbuild": "^0.25.4"
+    "ts-node": "^10.9.2",
+    "esbuild": "^0.25.4",
+    "nodemon": "^3.1.10"
   }
 }
