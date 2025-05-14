@@ -3,14 +3,14 @@ import { PermissionEntity } from "./PermissionEntity";
 import { SecurityEntity } from "./SecurityEntity";
 
 @Entity('TPS_USERS')
-export class User {
+export class UserEntity {
   @PrimaryGeneratedColumn({ name: 'user_id' })
   id: number;
 
-  @Column({ name: 'nick_name', nullable: false })
+  @Column({ name: 'nick_name', type: 'varchar', nullable: false })
   nickName: string;
 
-  @Column({ name: 'password', nullable: false })
+  @Column({ name: 'password', type: 'varchar', nullable: false })
   password: string;
 
   @OneToMany(() => PermissionEntity, (p) => p.user)

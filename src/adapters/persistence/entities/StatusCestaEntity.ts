@@ -6,7 +6,7 @@ export class StatusCestaEntity {
   @PrimaryGeneratedColumn({ name: 'id_status_cesta' })
   id: number;
 
-  @Column({ name: 'status_cesta', unique: true })
+  @Column({ name: 'status_cesta', type: 'varchar', unique: true })
   statusDesc: string;
 
   @OneToMany(() => CestaGeradaEntity, cestaGerada => cestaGerada.status)

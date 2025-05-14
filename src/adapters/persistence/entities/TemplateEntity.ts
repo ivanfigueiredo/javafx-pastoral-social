@@ -6,7 +6,7 @@ export class TemplateEntity {
   @PrimaryGeneratedColumn({ name: 'id_template' })
   id: number;
 
-  @Column({ name: 'template_desc' })
+  @Column({ name: 'template_desc', type: 'varchar' })
   descricao: string;
 
   @OneToMany(() => CestaTemplateEntity, cesta => cesta.template)

@@ -1,5 +1,5 @@
-import express, { Request, Response, NextFunction } from 'express';
-import { HttpClient } from './HttpClient';
+import express, { Request, Response } from 'express';
+import { CallbackFunction, HttpClient } from './HttpClient';
 
 export class ExpressAdapter implements HttpClient {
     connect: any;
@@ -12,8 +12,8 @@ export class ExpressAdapter implements HttpClient {
     on(
         method: string, 
         url: string, 
-        middlewareAuth: (req: Request, res: Response, next: NextFunction) => void,
-        middlewareAuthorize: (req: Request, res: Response, next: NextFunction) => void,
+        middlewareAuth: CallbackFunction,
+        middlewareAuthorize: CallbackFunction, 
         callback: Function
     ): void {
         this.connect[method](url, middlewareAuth, middlewareAuthorize, async (req: Request, res: Response) => {

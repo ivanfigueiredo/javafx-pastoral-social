@@ -6,7 +6,7 @@ export class UnidadeMedidaEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ name: 'und_medidas', unique: true })
+  @Column({ name: 'und_medidas', type: 'varchar', unique: true })
   undMedidas: string;
 
   @OneToMany(() => EstoqueAlimentoEntity, alimento => alimento.unidadeMedida)

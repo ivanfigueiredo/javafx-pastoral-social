@@ -9,40 +9,40 @@ export class FamiliaEntity {
   @PrimaryGeneratedColumn({ name: 'id_familia' })
   id: number;
 
-  @Column({ name: 'nome_representante' })
+  @Column({ name: 'nome_representante', type: 'varchar' })
   nomeRepresentante: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'int4' })
   idade: number;
 
-  @Column({ name: 'cpf_rg', nullable: true })
+  @Column({ name: 'cpf_rg', type: 'varchar', nullable: true })
   cpfRg: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   telefone: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'varchar' })
   endereco: string;
 
-  @Column({ name: 'qtd_pessoas_residencia', nullable: true })
+  @Column({ name: 'qtd_pessoas_residencia', type: 'int4', nullable: true })
   qtdPessoasResidencia: number;
 
-  @Column({ name: 'qtd_pessoas_empregadas', nullable: true })
+  @Column({ name: 'qtd_pessoas_empregadas', type: 'int4', nullable: true })
   qtdPessoasEmpregadas: number;
 
-  @Column({ name: 'criancas_frequentam_escola', default: false })
+  @Column({ name: 'criancas_frequentam_escola', type: 'bool', default: false })
   criancasFrequentamEscola: boolean;
 
-  @Column({ name: 'membro_com_problema_saude', default: false })
+  @Column({ name: 'membro_com_problema_saude', type: 'bool', default: false })
   membroComProblemaSaude: boolean;
 
-  @Column({ name: 'ja_recebeu_ajuda', default: false })
+  @Column({ name: 'ja_recebeu_ajuda', type: 'bool', default: false })
   jaRecebeuAjuda: boolean;
 
-  @Column({ name: 'deseja_participar_cursos', default: false })
+  @Column({ name: 'deseja_participar_cursos', type: 'bool', default: false })
   desejaParticiparCursos: boolean;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   observacao: string | null;
 
   @Column({ name: 'data_cadastro', type: 'timestamptz', default: () => 'NOW()' })
