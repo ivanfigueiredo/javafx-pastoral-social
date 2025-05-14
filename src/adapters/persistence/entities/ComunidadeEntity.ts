@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { FamiliaDificuldadeEntity } from "./FamiliaDificuldadeEntity";
 import { FamiliaEntity } from "./FamiliaEntity";
 
-@Entity('TPS_COMUNIDADE')
+@Entity('tps_comunidade')
 export class ComunidadeEntity {
     @PrimaryGeneratedColumn({ name: 'id_comunidade' })
     id: number;

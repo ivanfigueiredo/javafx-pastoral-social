@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
 import { CestaTemplateEntity } from "./CestaTemplateEntity";
 import { EstoqueAlimentoEntity } from "./EstoqueAlimentoEntity";
 
-@Entity('TPS_ITEM_TEMPLATE')
+@Entity('tps_item_template')
 export class ItemTemplateEntity {
   @PrimaryGeneratedColumn({ name: 'id_cesta_item' })
   id: number;

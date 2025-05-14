@@ -4,7 +4,7 @@ import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
 import { CestaGeradaEntity } from "./CestaGeradaEntity";
 import { ComunidadeEntity } from "./ComunidadeEntity";
 
-@Entity('TPS_FAMILIA')
+@Entity('tps_familia')
 export class FamiliaEntity {
   @PrimaryGeneratedColumn({ name: 'id_familia' })
   id: number;

@@ -2,29 +2,23 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { EstoqueAlimentoEntity } from "./EstoqueAlimentoEntity";
 import { CestaTemplateEntity } from "./CestaTemplateEntity";
 
-@Entity('TPS_ITEM_PRODUTO')
+@Entity('tps_item_produto')
 export class ItemProdutoEntity {
-  @PrimaryGeneratedColumn({name: 'id_item_produto'})
+  @PrimaryGeneratedColumn({name: 'id_produto'})
   id: number;
 
   @Column({ name: 'item_produto_desc', type: 'varchar', unique: true })
-  itemProdutoDesc: string;
+  itemProdutoDesc!: string;
 
   @OneToMany(() => EstoqueAlimentoEntity, alimento => alimento.localizacao)
-  alimentos: EstoqueAlimentoEntity[];
+  alimentos!: EstoqueAlimentoEntity[];
 
   @OneToMany(() => CestaTemplateEntity, cestaTemplate => cestaTemplate.itemProduto)
-  itensCesta: CestaTemplateEntity[];
+  itensCesta!: CestaTemplateEntity[];
 
   constructor(
-    id: number,
-    itemProdutoDesc: string,
-    alimentos: EstoqueAlimentoEntity[],
-    itensCesta: CestaTemplateEntity[]
+    id: number
   ) {
     this.id = id;
-    this.itemProdutoDesc = itemProdutoDesc;
-    this.alimentos = alimentos;
-    this.itensCesta = itensCesta;
   }
 }

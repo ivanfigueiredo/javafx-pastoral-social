@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { PermissionEntity } from "./PermissionEntity";
 import { SecurityEntity } from "./SecurityEntity";
 
-@Entity('TPS_USERS')
+@Entity('tps_users')
 export class UserEntity {
   @PrimaryGeneratedColumn({ name: 'user_id' })
   id: number;

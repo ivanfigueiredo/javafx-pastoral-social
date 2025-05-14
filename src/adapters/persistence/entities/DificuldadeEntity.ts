@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { FamiliaDificuldadeEntity } from "./FamiliaDificuldadeEntity";
 
-@Entity('TPS_DIFICULDADE')
+@Entity('tps_dificuldade')
 export class DificuldadeEntity {
   @PrimaryGeneratedColumn({ name: 'id_dificuldade' })
   id: number;
