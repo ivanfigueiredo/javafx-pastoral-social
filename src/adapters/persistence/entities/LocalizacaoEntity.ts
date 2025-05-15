@@ -1,24 +1,20 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { EstoqueAlimentoEntity } from "./EstoqueAlimentoEntity";
 
-@Entity('TPS_LOCALIZACAO_ESTOQUE')
+@Entity('tps_localizacao_estoque')
 export class LocalizacaoEntity {
   @PrimaryGeneratedColumn({ name: 'id_localizacao' })
   id: number;
 
   @Column({ name: 'localizacao_desc', type: 'varchar', unique: true })
-  localizacaoDesc: string;
+  localizacaoDesc!: string;
 
   @OneToMany(() => EstoqueAlimentoEntity, alimento => alimento.localizacao)
-  alimentos: EstoqueAlimentoEntity[];
+  alimentos!: EstoqueAlimentoEntity[];
 
   constructor(
-    id: number,
-    localizacaoDesc: string,
-    alimentos: EstoqueAlimentoEntity[]
+    id: number
   ) {
     this.id = id;
-    this.localizacaoDesc = localizacaoDesc;
-    this.alimentos = alimentos;
   }
 }

@@ -3,10 +3,10 @@ import { UnidadeMedidaEntity } from "./UnidadeDeMedidaEntity";
 import { LocalizacaoEntity } from "./LocalizacaoEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
 
-@Entity('TPS_ESTOQUE_ALIMENTOS')
+@Entity('tps_estoque_alimentos')
 export class EstoqueAlimentoEntity {
     @PrimaryGeneratedColumn({ name: 'id_alimento' })
-    id: number;
+    id: number | null;
 
     @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.alimentos)
     @JoinColumn({ name: 'id_item_produto' })
@@ -30,7 +30,7 @@ export class EstoqueAlimentoEntity {
     dataSaida: Date | null;
 
   constructor(
-    id: number,
+    id: number | null,
     validade: Date,
     dataEntrada: Date,
     dataSaida: Date | null,

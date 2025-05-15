@@ -3,7 +3,7 @@ import { TemplateEntity } from "./TemplateEntity";
 import { ItemTemplateEntity } from "./ItemTemplateEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
 
-@Entity('TPS_CESTA_TEMPLATE')
+@Entity('tps_cesta_template')
 export class CestaTemplateEntity {
     @PrimaryGeneratedColumn({ name: 'id_cesta_template' })
     id: number;

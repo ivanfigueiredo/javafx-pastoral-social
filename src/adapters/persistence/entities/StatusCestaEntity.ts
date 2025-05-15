@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { CestaGeradaEntity } from "./CestaGeradaEntity";
 
-@Entity('TPS_STATUS_CESTA')
+@Entity('tps_status_cesta')
 export class StatusCestaEntity {
   @PrimaryGeneratedColumn({ name: 'id_status_cesta' })
   id: number;

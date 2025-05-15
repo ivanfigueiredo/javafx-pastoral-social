@@ -2,7 +2,7 @@ import { Entity, ManyToOne, JoinColumn, Column, PrimaryColumn } from "typeorm";
 import { DificuldadeEntity } from "./DificuldadeEntity";
 import { FamiliaEntity } from "./FamiliaEntity";
 
-@Entity('TPS_FAMILIA_DIFICULDADE')
+@Entity('tps_familia_dificuldade')
 export class FamiliaDificuldadeEntity {
    @PrimaryColumn({ name: 'id_familia', type: 'int' })
   familiaId: number;
