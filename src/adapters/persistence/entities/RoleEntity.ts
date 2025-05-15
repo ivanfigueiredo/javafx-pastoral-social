@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { PermissionEntity } from "./PermissionEntity";
+import { RolePermissionsEntity } from "./RolePermissionsEntity";
+import { UserEntity } from "./UserEntity";
 
 @Entity('tps_roles')
 export class RoleEntity {
@@ -9,16 +10,21 @@ export class RoleEntity {
   @Column({ name: 'role_desc', type: 'varchar' })
   description: string;
 
-  @OneToMany(() => PermissionEntity, (p) => p.role)
-  permissions: PermissionEntity[];
+  @OneToMany(() => RolePermissionsEntity, (p) => p.rolePermission)
+  rolePermissions: RolePermissionsEntity[];
+
+  @OneToMany(() => UserEntity, (user) => user.role)
+  users: UserEntity[];
 
   constructor(
     id: number,
     description: string,
-    permissions: PermissionEntity[]
+    users: UserEntity[],
+    rolePermissions: RolePermissionsEntity[]
   ) {
     this.id = id;
     this.description = description;
-    this.permissions = permissions;
+    this.users = users;
+    this.rolePermissions = rolePermissions;
   }
 }
