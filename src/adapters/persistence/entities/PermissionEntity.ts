@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "t
 import { UserEntity } from "./UserEntity";
 import { RoleEntity } from "./RoleEntity";
 
-@Entity('TPS_PERMISSIONS')
+@Entity('tps_permissions')
 export class PermissionEntity {
     @PrimaryGeneratedColumn({ name: 'id_permission' })
     id: number;
