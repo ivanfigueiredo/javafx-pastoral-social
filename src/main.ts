@@ -7,16 +7,19 @@ import { config } from 'dotenv';
 import { AlimentoService } from "./application/service/AlimentoService";
 import { AlimentoController } from "./adapters/AlimentoController";
 import { AlimentoPostgresDatabase } from "./adapters/persistence/AlimentoPostgresDatabase";
+import { AbilityPermission } from "./adapters/http/authorization/Permission";
 config();
 
 (async () => {
     const postgresDatabase = new PostgresDatabase();
     await postgresDatabase.init();
+    const abilityPermission = new AbilityPermission(postgresDatabase);
+    await abilityPermission.setupPermissions();
     const httpClient = new ExpressAdapter();
     const alimentoPostgres = new AlimentoPostgresDatabase(postgresDatabase);
     const alimentoUseCase = new AlimentoService(alimentoPostgres);
     const auth = new Auth();
-    const authorize = new Authorize();
+    const authorize = new Authorize(abilityPermission.getAppAbility());
     new MainController(httpClient, auth, authorize);
     new AlimentoController(httpClient, auth, authorize, alimentoUseCase);
     const PORT = parseInt(process.env.PORT as string);

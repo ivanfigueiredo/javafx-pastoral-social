@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { PermissionEntity } from "./PermissionEntity";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne } from "typeorm";
 import { SecurityEntity } from "./SecurityEntity";
+import { RoleEntity } from "./RoleEntity";
 
 @Entity('tps_users')
 export class UserEntity {
@@ -13,23 +13,24 @@ export class UserEntity {
   @Column({ name: 'password', type: 'varchar', nullable: false })
   password: string;
 
-  @OneToMany(() => PermissionEntity, (p) => p.user)
-  permissions: PermissionEntity[];
-
   @OneToMany(() => SecurityEntity, (t) => t.user)
   security: SecurityEntity[];
+
+  @ManyToOne(() => RoleEntity, (r) => r.users)
+  @JoinColumn({ name: 'role_id' })
+  role: RoleEntity;
 
   constructor(
     id: number,
     nickName: string,
     password: string,
-    permissions: PermissionEntity[],
+    role: RoleEntity,
     security: SecurityEntity[]
   ) {
     this.id = id;
     this.nickName = nickName;
     this.password = password;
-    this.permissions = permissions;
+    this.role = role;
     this.security = security;
   }
 }
