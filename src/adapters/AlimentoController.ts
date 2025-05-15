@@ -16,8 +16,8 @@ export class AlimentoController {
             httpClient.on(
                 "post", 
                 "/cadastrar-alimento", 
-                async (req: Request, res: Response, next: NextFunction) => next(),
-                async (req: Request, res: Response, next: NextFunction) => next(),
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
                 async function (params: any, data: CadastroAlimentoDTO) {
                     const output = await alimentoUseCase.cadastrar(data);
                     return output;
@@ -27,8 +27,8 @@ export class AlimentoController {
             httpClient.on(
                 "get", 
                 "/list-und", 
-                async (req: Request, res: Response, next: NextFunction) => next(),
-                async (req: Request, res: Response, next: NextFunction) => next(),
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarUND),
                 async function (params: any, data: any) {
                     const output = await alimentoUseCase.listarUnidadeMedida();
                     return output;
@@ -38,8 +38,8 @@ export class AlimentoController {
             httpClient.on(
                 "get", 
                 "/list-localizacao", 
-                async (req: Request, res: Response, next: NextFunction) => next(),
-                async (req: Request, res: Response, next: NextFunction) => next(),
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarLocalizacao),
                 async function (params: any, data: any) {
                     const output = await alimentoUseCase.listarLocalizacao();
                     return output;
@@ -49,8 +49,8 @@ export class AlimentoController {
             httpClient.on(
                 "get", 
                 "/list-item-produto", 
-                async (req: Request, res: Response, next: NextFunction) => next(),
-                async (req: Request, res: Response, next: NextFunction) => next(),
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarItemProduto),
                 async function (params: any, data: any) {
                     const output = await alimentoUseCase.listarItemProduto();
                     return output;
