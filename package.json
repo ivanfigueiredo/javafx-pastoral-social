@@ -13,6 +13,8 @@
   "description": "",
   "dependencies": {
     "@casl/ability": "^6.7.3",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^6.0.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "pg": "^8.11.5",
@@ -23,8 +25,8 @@
   "devDependencies": {
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.14",
-    "ts-node": "^10.9.2",
     "esbuild": "^0.25.4",
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2"
   }
 }
