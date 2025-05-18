@@ -1,4 +1,5 @@
 import { CadastroAlimentoDTO } from "../../application/dto/CadastroAlimentoDTO";
+import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { LocalizacaoDTO } from "../../application/dto/LocalizacaoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
@@ -33,5 +34,17 @@ export class AlimentoMapper {
 
     public static toItemProdutoDTO(iterator: ItemProdutoEntity[]): ItemProdutoDTO[] {
         return iterator.map(itemProduto => new ItemProdutoDTO(itemProduto.id, itemProduto.itemProdutoDesc));
+    }
+
+    public static toEstoqueDTO(iterator: EstoqueAlimentoEntity[]): EstoqueDTO[] {
+        return iterator.map(estok => new EstoqueDTO(
+            estok.id!, 
+            estok.validade, 
+            estok.dataEntrada, 
+            estok.dataSaida, 
+            new ItemProdutoDTO(estok.itemProduto.id, estok.itemProduto.itemProdutoDesc), 
+            new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc), 
+            new UnidadeDeMedidadDTO(estok.unidadeMedida.id, estok.unidadeMedida.undMedidas))
+        );
     }
 }
