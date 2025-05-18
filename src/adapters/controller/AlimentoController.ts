@@ -1,10 +1,10 @@
 import { NextFunction, Response, Request } from "express";
-import { Authorize } from "./http/authorization/Authorize";
-import { ActionType } from "./http/authorization/Permission";
-import { HttpClient } from "./http/HttpClient";
-import { Auth } from "./http/authentication/Auth";
-import { AlimentoUseCase } from "../application/port/in/AlimentoUseCase";
-import { CadastroAlimentoDTO } from "../application/dto/CadastroAlimentoDTO";
+import { Authorize } from "../http/authorization/Authorize";
+import { ActionType } from "../http/authorization/Permission";
+import { HttpClient } from "../http/HttpClient";
+import { Auth } from "../http/authentication/Auth";
+import { AlimentoUseCase } from "../../application/port/in/AlimentoUseCase";
+import { CadastroAlimentoDTO } from "../../application/dto/CadastroAlimentoDTO";
 
 export class AlimentoController {
      constructor(
@@ -15,7 +15,7 @@ export class AlimentoController {
         ) {
             httpClient.on(
                 "post", 
-                "/cadastrar-alimento", 
+                "/estoque/cadastrar", 
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
                 async function (params: any, data: CadastroAlimentoDTO) {
@@ -25,8 +25,30 @@ export class AlimentoController {
             );
 
             httpClient.on(
+                "delete",
+                "/estoque/delete/:id",
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.DeletarEstoque),
+                async function (params: any, data: any) {
+                    const output = await alimentoUseCase.deletar(parseInt(params.id));
+                    return output;
+                }
+            );
+
+            httpClient.on(
                 "get", 
-                "/list-und", 
+                "/estoque/listar", 
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarEstoque),
+                async function (params: any, data: any) {
+                    const output = await alimentoUseCase.listarAlimentos();
+                    return output;
+                }
+            );
+
+            httpClient.on(
+                "get", 
+                "/und-medidas/listar", 
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarUND),
                 async function (params: any, data: any) {
@@ -37,7 +59,7 @@ export class AlimentoController {
 
             httpClient.on(
                 "get", 
-                "/list-localizacao", 
+                "/estoque/localizacao/listar", 
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarLocalizacao),
                 async function (params: any, data: any) {
@@ -48,7 +70,7 @@ export class AlimentoController {
 
             httpClient.on(
                 "get", 
-                "/list-item-produto", 
+                "/itens/listar", 
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarItemProduto),
                 async function (params: any, data: any) {
