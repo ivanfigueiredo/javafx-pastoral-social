@@ -1,7 +1,6 @@
 import { AbilityBuilder, InferSubjects, PureAbility } from '@casl/ability';
 import { ConditionsMatcher, MatchConditions, TaggedInterface } from '@casl/ability/dist/types/types';
-import { Connection } from '../../persistence/database/Connection';
-import { RoleEntity } from '../../persistence/entities/RoleEntity';
+import { RoleRepository } from './RoleRepository';
 
 type ActionType = 
   | 'CadastrarFamilia'
@@ -15,10 +14,12 @@ type ActionType =
   | 'ListarAjuda'
   | 'VisualizarRelatorios'
   | 'AprovarEntrega'
+  | 'DeletarEstoque'
   | 'ListarEstoque'
   | 'ListarLocalizacao'
   | 'ListarUND'
   | 'ListarItemProduto'
+  | 'ListarDificuldade'
 
 export type Action = 
     | 'cadastrar_familia'
@@ -30,12 +31,14 @@ export type Action =
     | 'gerar_cesta'
     | 'entregar_ajuda'
     | 'aprovar_ajuda'
+    | 'deletar_estoque'
     | 'listar_ajuda'
     | 'visualizar_relatorios'
     | 'listar_estoque'
     | 'listar_localizacao'
     | 'listar_und'
     | 'listar_item_produto'
+    | 'listar_dificuldade'
 
 export const ActionType: Record<ActionType, Action> = {
     CadastrarFamilia: 'cadastrar_familia',
@@ -52,7 +55,9 @@ export const ActionType: Record<ActionType, Action> = {
     ListarEstoque: 'listar_estoque',
     ListarLocalizacao: 'listar_localizacao',
     ListarUND: 'listar_und',
-    ListarItemProduto: 'listar_item_produto'
+    ListarItemProduto: 'listar_item_produto',
+    DeletarEstoque: 'deletar_estoque',
+    ListarDificuldade: 'listar_dificuldade'
 }
 
 export type Role = 
@@ -78,27 +83,14 @@ export interface Permission {
 export class AbilityPermission {
     private readonly abilityBuilder: AbilityBuilder<PureAbility<[Action, Subject], MatchConditions>>;
 
-    constructor(private readonly connection: Connection) {
+    constructor(private readonly roleRepository: RoleRepository) {
         this.abilityBuilder = new AbilityBuilder<PureAbility<[Action, Subject], MatchConditions>>(
             PureAbility<[Action, Subject], MatchConditions>
         )
     }
 
-    private async findPermissions(): Promise<{tr_role_desc: Role; tp_action: string;}[]> {
-        return this.connection.getDataSourcer()
-            .getRepository(RoleEntity)
-            .createQueryBuilder('tr')
-            .leftJoin('tr.rolePermissions', 'trp')
-            .leftJoin('trp.permission', 'tp')
-            .select([
-                'tr.description',
-                'tp.action'
-            ])
-            .getRawMany();
-    }
-
     private async getPermissions(): Promise<Permission[]> {
-        const result = await this.findPermissions();
+        const result = await this.roleRepository.findPermissions();
         const permissions: Permission[] = [
             {role: "Admin", actions: []},
             {role: "App", actions: []},
