@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "typeorm";
-import { UserEntity } from "./UserEntity";
-import { RoleEntity } from "./RoleEntity";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { RolePermissionsEntity } from "./RolePermissionsEntity";
 
 @Entity('tps_permissions')
 export class PermissionEntity {
@@ -10,23 +9,16 @@ export class PermissionEntity {
     @Column({name: 'action', type: 'varchar'})
     action: string;
 
-    @ManyToOne(() => RoleEntity, (r) => r.permissions)
-    @JoinColumn({ name: 'role_id' })
-    role: RoleEntity;
-
-    @ManyToOne(() => UserEntity, (u) => u.permissions)
-    @JoinColumn({ name: 'user_id' })
-    user: UserEntity;
+    @OneToMany(() => RolePermissionsEntity, (p) => p.permission)
+    permissions: RolePermissionsEntity[];
 
     constructor(
         id: number,
         action: string,
-        role: RoleEntity,
-        user: UserEntity
+        permissions: RolePermissionsEntity[]
     ) {
         this.id = id;
         this.action = action;
-        this.role = role;
-        this.user = user;
+        this.permissions = permissions;
     }
 }

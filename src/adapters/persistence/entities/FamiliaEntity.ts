@@ -7,40 +7,40 @@ import { ComunidadeEntity } from "./ComunidadeEntity";
 @Entity('tps_familia')
 export class FamiliaEntity {
   @PrimaryGeneratedColumn({ name: 'id_familia' })
-  id: number;
+  id!: number;
 
   @Column({ name: 'nome_representante', type: 'varchar' })
   nomeRepresentante: string;
 
   @Column({ nullable: true, type: 'int4' })
-  idade: number;
+  idade: number | null;
 
   @Column({ name: 'cpf_rg', type: 'varchar', nullable: true })
-  cpfRg: string;
+  cpfRg: string | null;
 
   @Column({ nullable: true, type: 'varchar' })
-  telefone: string;
+  telefone: string | null;
 
   @Column({ nullable: true, type: 'varchar' })
-  endereco: string;
+  endereco: string | null;
 
   @Column({ name: 'qtd_pessoas_residencia', type: 'int4', nullable: true })
-  qtdPessoasResidencia: number;
+  qtdPessoasResidencia: number | null;
 
   @Column({ name: 'qtd_pessoas_empregadas', type: 'int4', nullable: true })
-  qtdPessoasEmpregadas: number;
+  qtdPessoasEmpregadas: number | null;
 
   @Column({ name: 'criancas_frequentam_escola', type: 'bool', default: false })
-  criancasFrequentamEscola: boolean;
+  criancasFrequentamEscola: boolean | null;
 
   @Column({ name: 'membro_com_problema_saude', type: 'bool', default: false })
-  membroComProblemaSaude: boolean;
+  membroComProblemaSaude: boolean | null;
 
   @Column({ name: 'ja_recebeu_ajuda', type: 'bool', default: false })
-  jaRecebeuAjuda: boolean;
+  jaRecebeuAjuda: boolean | null;
 
   @Column({ name: 'deseja_participar_cursos', type: 'bool', default: false })
-  desejaParticiparCursos: boolean;
+  desejaParticiparCursos: boolean | null;
 
   @Column({ type: 'varchar', nullable: true })
   observacao: string | null;
@@ -62,18 +62,17 @@ export class FamiliaEntity {
   comunidade: ComunidadeEntity;
 
   constructor(
-    id: number,
     nomeRepresentante: string,
     idade: number,
-    cpfRg: string,
-    telefone: string,
-    endereco: string,
-    qtdPessoasResidencia: number,
-    qtdPessoasEmpregadas: number,
-    criancasFrequentamEscola: boolean,
-    membroComProblemaSaude: boolean,
-    jaRecebeuAjuda: boolean,
-    desejaParticiparCursos: boolean,
+    cpfRg: string| null,
+    telefone: string | null,
+    endereco: string | null,
+    qtdPessoasResidencia: number | null,
+    qtdPessoasEmpregadas: number | null,
+    criancasFrequentamEscola: boolean | null,
+    membroComProblemaSaude: boolean | null,
+    jaRecebeuAjuda: boolean | null,
+    desejaParticiparCursos: boolean | null,
     observacao: string | null,
     dataCadastro: Date,
     comunidade: ComunidadeEntity,
@@ -81,7 +80,6 @@ export class FamiliaEntity {
     ajudasRecebidas: AjudaRecebidaEntity[],
     cestasGeradas: CestaGeradaEntity[]
   ) {
-    this.id = id;
     this.nomeRepresentante = nomeRepresentante;
     this.idade = idade;
     this.cpfRg = cpfRg;

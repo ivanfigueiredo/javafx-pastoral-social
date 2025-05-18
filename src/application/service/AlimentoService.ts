@@ -1,4 +1,5 @@
 import { CadastroAlimentoDTO } from "../dto/CadastroAlimentoDTO";
+import { EstoqueDTO } from "../dto/EstoqueDTO";
 import { ItemProdutoDTO } from "../dto/ItemProdutoDTO";
 import { LocalizacaoDTO } from "../dto/LocalizacaoDTO";
 import { UnidadeDeMedidadDTO } from "../dto/UnidadeDeMedidaDTO";
@@ -14,6 +15,12 @@ export class AlimentoService implements AlimentoUseCase {
         } catch (error) {}
     };
 
+    public async deletar(idAlimento: number): Promise<void> {
+        try {
+            await this.alimentoRepository.deleteOne(idAlimento);
+        } catch (error) {}
+    }
+
     public async listarUnidadeMedida(): Promise<UnidadeDeMedidadDTO[]> {
         return await this.alimentoRepository.findUnidadeDeMedidas();
     }
@@ -26,8 +33,8 @@ export class AlimentoService implements AlimentoUseCase {
         return await this.alimentoRepository.findITemProduto();
     }
 
-    public async listarAlimentos(): Promise<string[]> {
-        return [""]
+    public async listarAlimentos(): Promise<EstoqueDTO[]> {
+        return await this.alimentoRepository.findEstoque();
     }
     
 }

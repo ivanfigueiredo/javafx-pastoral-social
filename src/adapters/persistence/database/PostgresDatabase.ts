@@ -20,6 +20,7 @@ import { TemplateEntity } from "../entities/TemplateEntity";
 import { UnidadeMedidaEntity } from "../entities/UnidadeDeMedidaEntity";
 import { UserEntity } from "../entities/UserEntity";
 import { TipoAjudaEntity } from "../entities/TipoAjudaEntity";
+import { RolePermissionsEntity } from "../entities/RolePermissionsEntity";
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -35,6 +36,7 @@ export class PostgresDatabase implements Connection {
             synchronize: false,
             entities: [
                 AjudaRecebidaEntity,
+                RolePermissionsEntity,
                 FamiliaEntity,
                 TipoAjudaEntity,
                 CestaGeradaEntity,

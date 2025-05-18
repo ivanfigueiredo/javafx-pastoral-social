@@ -4,7 +4,7 @@ import { UserEntity } from "./UserEntity";
 @Entity('tps_security')
 export class SecurityEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: number | null;
 
   @ManyToOne(() => UserEntity, (u) => u.security)
   @JoinColumn({ name: 'user_id' })
@@ -17,18 +17,18 @@ export class SecurityEntity {
   expiresAt: Date;
 
   @Column({ name: 'created_at', type: 'timestamp', default: () => 'NOW()' })
-  createdAt: Date | null;
+  createdAt?: Date;
 
   @Column({ default: false, type: 'bool' })
   revoked: boolean;
 
   constructor(
-    id: number,
+    id: number | null,
     tokenHash: string,
     expiresAt: Date,
-    createdAt: Date | null,
     revoked: boolean,
-    user: UserEntity
+    user: UserEntity,
+    createdAt?: Date
   ) {
     this.id = id;
     this.tokenHash = tokenHash;

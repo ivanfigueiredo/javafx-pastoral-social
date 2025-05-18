@@ -12,21 +12,21 @@ export class FamiliaDificuldadeEntity {
   
   @ManyToOne(() => FamiliaEntity, (f) => f.dificuldades)
   @JoinColumn({ name: 'id_familia' })
-  familia: FamiliaEntity;
+  familia: FamiliaEntity | null;
 
   @ManyToOne(() => DificuldadeEntity, (d) => d.familias)
   @JoinColumn({ name: 'id_dificuldade' })
-  dificuldade: DificuldadeEntity;
+  dificuldade: DificuldadeEntity | null;
 
   @Column({ name: 'descricao_outros', type: 'varchar', nullable: true })
-  descricaoOutros: string;
+  descricaoOutros: string | null;
 
   constructor(
     familiaId: number,
     dificuldadeId: number,
-    familia: FamiliaEntity,
-    dificuldade: DificuldadeEntity,
-    descricaoOutros: string
+    descricaoOutros: string | null,
+    familia: FamiliaEntity | null,
+    dificuldade: DificuldadeEntity | null
   ) {
     this.dificuldadeId = dificuldadeId;
     this.familiaId = familiaId;

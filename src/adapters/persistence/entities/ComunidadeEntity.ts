@@ -8,23 +8,17 @@ export class ComunidadeEntity {
     id: number;
 
     @Column({ name: 'comunidade_desc', type: 'varchar' })
-    descricao: string;
+    descricao!: string;
 
     @OneToMany(() => FamiliaDificuldadeEntity, (fd) => fd.dificuldade)
-    familias: FamiliaDificuldadeEntity[];
+    familias!: FamiliaDificuldadeEntity[];
 
     @OneToMany(() => FamiliaEntity, (fe) => fe.comunidade)
-    familiasComunidade: FamiliaDificuldadeEntity[];
+    familiasComunidade!: FamiliaDificuldadeEntity[];
 
     constructor(
-        id: number,
-        descricao: string,
-        familias: FamiliaDificuldadeEntity[],
-        familiasComunidade: FamiliaDificuldadeEntity[]
+        id: number
     ) {
         this.id = id;
-        this.descricao = descricao;
-        this.familias = familias;
-        this.familiasComunidade = familiasComunidade;
     }
 }
