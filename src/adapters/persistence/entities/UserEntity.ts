@@ -18,13 +18,13 @@ export class UserEntity {
 
   @ManyToOne(() => RoleEntity, (r) => r.users)
   @JoinColumn({ name: 'role_id' })
-  role: RoleEntity;
+  role: RoleEntity | null;
 
   constructor(
     id: number,
     nickName: string,
     password: string,
-    role: RoleEntity,
+    role: RoleEntity | null,
     security: SecurityEntity[]
   ) {
     this.id = id;

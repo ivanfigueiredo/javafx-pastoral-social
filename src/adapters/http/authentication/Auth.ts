@@ -1,21 +1,30 @@
 import { NextFunction, Request, Response } from "express";
-import { randomUUID } from "node:crypto";
+import { AuthQuery } from "./AuthQuery";
 
 export class Auth {
-    private auth = "secreto";
+    constructor(private readonly authQuery: AuthQuery) {}
     
     public async authentication(req: Request, res: Response, next: NextFunction): Promise<void> {
-        const token = req.headers.authorization;
-        const role = req.headers['role-x-user'] as string;
-        if (token && token === this.auth) {
+        const bearerToken = req.headers.authorization;
+        const token = bearerToken?.split(" ")[1];
+        if (token) {
+            const security = await this.authQuery.authentication(token);
+            if (!security || this.isAccessTokenExpired(security.expiresAt) || security.revoked) {
+                res.status(401).json({ message: 'Unauthorized' });
+                return;
+            }
             req.user = {
-                id: randomUUID(),
-                role
+                id: security.userId,
+                role: security.role
             }
             next();
 
         } else {
-            res.status(401).json({ error: 'Unauthorized' });
+            res.status(401).json({ message: 'Unauthorized' });
         }
+    }
+
+    private isAccessTokenExpired(expiresAt: Date): boolean {
+        return expiresAt.getTime() < Date.now();
     }
 }

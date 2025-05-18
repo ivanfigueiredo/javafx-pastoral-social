@@ -18,20 +18,15 @@ export class RolePermissionsEntity {
     @JoinColumn({ name: 'id_permission' })
     permission: PermissionEntity;
 
-    @Column({ name: 'descricao_outros', type: 'varchar', nullable: true })
-    descricaoOutros: string;
-
     constructor(
         roleId: number,
         permissionId: number,
         rolePermission: RoleEntity,
-        permission: PermissionEntity,
-        descricaoOutros: string
+        permission: PermissionEntity
     ) {
         this.roleId = roleId;
         this.permissionId = permissionId;
         this.rolePermission = rolePermission;
         this.permission = permission;
-        this.descricaoOutros = descricaoOutros;
     }
 }
