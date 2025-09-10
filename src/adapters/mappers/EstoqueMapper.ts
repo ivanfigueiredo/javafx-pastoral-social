@@ -1,4 +1,4 @@
-import { CadastroAlimentoDTO } from "../../application/dto/CadastroAlimentoDTO";
+import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
 import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { LocalizacaoDTO } from "../../application/dto/LocalizacaoDTO";
@@ -8,10 +8,10 @@ import { ItemProdutoEntity } from "../persistence/entities/ItemProdutoEntity";
 import { LocalizacaoEntity } from "../persistence/entities/LocalizacaoEntity";
 import { UnidadeMedidaEntity } from "../persistence/entities/UnidadeDeMedidaEntity";
 
-export class AlimentoMapper {
-    private AlimentoMapper() {}
+export class EstoqueMapper {
+    private EstoqueMapper() {}
 
-    public static toAlimentoEntity(dto: CadastroAlimentoDTO): EstoqueEntity {
+    public static toAlimentoEntity(dto: CadastroEstoqueDTO): EstoqueEntity {
         return new EstoqueEntity(
             null,
             new Date(),
