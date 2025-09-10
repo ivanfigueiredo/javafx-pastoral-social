@@ -3,9 +3,9 @@ import { TemplateEntity } from "./TemplateEntity";
 import { ItemTemplateEntity } from "./ItemTemplateEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
 
-@Entity('tps_cesta_template')
-export class CestaTemplateEntity {
-    @PrimaryGeneratedColumn({ name: 'id_cesta_template' })
+@Entity('tps_acao_social_template')
+export class AcaoSocialTemplateEntity {
+    @PrimaryGeneratedColumn({ name: 'id_acao_social_template' })
     id: number;
 
     @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.itensCesta)
@@ -19,7 +19,7 @@ export class CestaTemplateEntity {
     @Column({ type: 'int4' })
     quantidade: number;
 
-    @OneToMany(() => ItemTemplateEntity, item => item.cestaTemplate)
+    @OneToMany(() => ItemTemplateEntity, item => item.acaoSocialTemplate)
     itensTemplate: ItemTemplateEntity[];
 
     constructor(

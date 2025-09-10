@@ -1,11 +1,11 @@
-import { Repository, TableExclusion } from "typeorm";
+import { Repository } from "typeorm";
 import { CadastroAlimentoDTO } from "../../application/dto/CadastroAlimentoDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { LocalizacaoDTO } from "../../application/dto/LocalizacaoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
 import { AlimentoRepository } from "../../application/port/out/AlimentoRepository";
 import { Connection } from "./database/Connection";
-import { EstoqueAlimentoEntity } from "./entities/EstoqueAlimentoEntity";
+import { EstoqueEntity } from "./entities/EstoqueEntity";
 import { AlimentoMapper } from "../mappers/AlimentoMapper";
 import { UnidadeMedidaEntity } from "./entities/UnidadeDeMedidaEntity";
 import { LocalizacaoEntity } from "./entities/LocalizacaoEntity";
@@ -13,13 +13,13 @@ import { ItemProdutoEntity } from "./entities/ItemProdutoEntity";
 import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 
 export class AlimentoPostgresDatabase implements AlimentoRepository {
-    private readonly estoqueRepository: Repository<EstoqueAlimentoEntity>;
+    private readonly estoqueRepository: Repository<EstoqueEntity>;
     private readonly unidadeDeMedidaRepository: Repository<UnidadeMedidaEntity>;
     private readonly localizacaoRepository: Repository<LocalizacaoEntity>;
     private readonly itemProdutoRepository: Repository<ItemProdutoEntity>;
 
     constructor(private readonly connection: Connection) {
-        this.estoqueRepository = this.connection.getDataSourcer().getRepository(EstoqueAlimentoEntity);
+        this.estoqueRepository = this.connection.getDataSourcer().getRepository(EstoqueEntity);
         this.unidadeDeMedidaRepository = this.connection.getDataSourcer().getRepository(UnidadeMedidaEntity);
         this.localizacaoRepository = this.connection.getDataSourcer().getRepository(LocalizacaoEntity);
         this.itemProdutoRepository = this.connection.getDataSourcer().getRepository(ItemProdutoEntity);

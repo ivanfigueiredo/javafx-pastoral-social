@@ -1,27 +1,27 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { CestaTemplateEntity } from "./CestaTemplateEntity";
-import { EstoqueAlimentoEntity } from "./EstoqueAlimentoEntity";
+import { AcaoSocialTemplateEntity } from "./AcaoSocialTemplateEntity";
+import { EstoqueEntity } from "./EstoqueEntity";
 
 @Entity('tps_item_template')
 export class ItemTemplateEntity {
   @PrimaryGeneratedColumn({ name: 'id_cesta_item' })
   id: number;
 
-  @ManyToOne(() => CestaTemplateEntity, cesta => cesta.itensTemplate)
-  @JoinColumn({ name: 'id_cesta_template' })
-  cestaTemplate: CestaTemplateEntity;
+  @ManyToOne(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.itensTemplate)
+  @JoinColumn({ name: 'id_acao_social_template' })
+  acaoSocialTemplate: AcaoSocialTemplateEntity;
 
-  @ManyToOne(() => EstoqueAlimentoEntity, alimento => alimento)
-  @JoinColumn({ name: 'id_alimento' })
-  alimento: EstoqueAlimentoEntity;
+  @ManyToOne(() => EstoqueEntity, estoque => estoque.itensTemplate)
+  @JoinColumn({ name: 'id_estoque' })
+  estoque: EstoqueEntity;
 
   constructor(
     id: number,
-    cestaTemplate: CestaTemplateEntity,
-    alimento: EstoqueAlimentoEntity
+    acaoSocialTemplate: AcaoSocialTemplateEntity,
+    estoque: EstoqueEntity
   ) {
     this.id = id;
-    this.cestaTemplate = cestaTemplate;
-    this.alimento = alimento;
+    this.acaoSocialTemplate = acaoSocialTemplate;
+    this.estoque = estoque;
   }
 }

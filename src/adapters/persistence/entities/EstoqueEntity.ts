@@ -1,27 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne } from "typeorm";
-import { UnidadeMedidaEntity } from "./UnidadeDeMedidaEntity";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { LocalizacaoEntity } from "./LocalizacaoEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
+import { ItemTemplateEntity } from "./ItemTemplateEntity";
 
-@Entity('tps_estoque_alimentos')
-export class EstoqueAlimentoEntity {
-    @PrimaryGeneratedColumn({ name: 'id_alimento' })
+@Entity('tps_estoque')
+export class EstoqueEntity {
+    @PrimaryGeneratedColumn({ name: 'id_estoque' })
     id: number | null;
 
-    @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.alimentos)
+    @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.estoques)
     @JoinColumn({ name: 'id_item_produto' })
     itemProduto: ItemProdutoEntity;
-
-    @Column({ type: 'date' })
-    validade: Date;
 
     @ManyToOne(() => LocalizacaoEntity, localizacao => localizacao.alimentos)
     @JoinColumn({ name: 'id_localizacao' })
     localizacao: LocalizacaoEntity;
 
-    @ManyToOne(() => UnidadeMedidaEntity, unidade => unidade.alimentos)
-    @JoinColumn({ name: 'id_und_medida' })
-    unidadeMedida: UnidadeMedidaEntity;
+    @OneToMany(() => ItemTemplateEntity, item => item.estoque)
+    itensTemplate: ItemTemplateEntity[];
 
     @Column({ name: 'data_entrada', type: 'date' })
     dataEntrada: Date;
@@ -31,19 +27,17 @@ export class EstoqueAlimentoEntity {
 
   constructor(
     id: number | null,
-    validade: Date,
     dataEntrada: Date,
     dataSaida: Date | null,
-    unidadeMedida: UnidadeMedidaEntity,
     localizacao: LocalizacaoEntity,
-    itemProduto: ItemProdutoEntity
+    itemProduto: ItemProdutoEntity,
+    itensTemplate: ItemTemplateEntity[]
   ) {
     this.id = id;
-    this.validade = validade;
     this.dataEntrada = dataEntrada;
     this.dataSaida = dataSaida;
-    this.unidadeMedida = unidadeMedida;
     this.localizacao = localizacao;
     this.itemProduto = itemProduto;
+    this.itensTemplate = itensTemplate;
   }
 }

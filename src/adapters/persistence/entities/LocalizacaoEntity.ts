@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { EstoqueAlimentoEntity } from "./EstoqueAlimentoEntity";
+import { EstoqueEntity } from "./EstoqueEntity";
 
 @Entity('tps_localizacao_estoque')
 export class LocalizacaoEntity {
@@ -9,8 +9,8 @@ export class LocalizacaoEntity {
   @Column({ name: 'localizacao_desc', type: 'varchar', unique: true })
   localizacaoDesc!: string;
 
-  @OneToMany(() => EstoqueAlimentoEntity, alimento => alimento.localizacao)
-  alimentos!: EstoqueAlimentoEntity[];
+  @OneToMany(() => EstoqueEntity, estoque => estoque.localizacao)
+  alimentos!: EstoqueEntity[];
 
   constructor(
     id: number
