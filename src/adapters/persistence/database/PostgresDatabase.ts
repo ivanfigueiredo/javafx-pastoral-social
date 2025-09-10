@@ -3,10 +3,10 @@ import "reflect-metadata";
 import { Connection } from "./Connection";
 import { AjudaRecebidaEntity } from "../entities/AjudaRecebidaEntity";
 import { CestaGeradaEntity } from "../entities/CestaGeradaEntity";
-import { CestaTemplateEntity } from "../entities/CestaTemplateEntity";
+import { AcaoSocialTemplateEntity } from "../entities/AcaoSocialTemplateEntity";
 import { ComunidadeEntity } from "../entities/ComunidadeEntity";
 import { DificuldadeEntity } from "../entities/DificuldadeEntity";
-import { EstoqueAlimentoEntity } from "../entities/EstoqueAlimentoEntity";
+import { EstoqueEntity } from "../entities/EstoqueEntity";
 import { FamiliaDificuldadeEntity } from "../entities/FamiliaDificuldadeEntity";
 import { FamiliaEntity } from "../entities/FamiliaEntity";
 import { ItemTemplateEntity } from "../entities/ItemTemplateEntity";
@@ -40,10 +40,10 @@ export class PostgresDatabase implements Connection {
                 FamiliaEntity,
                 TipoAjudaEntity,
                 CestaGeradaEntity,
-                CestaTemplateEntity,
+                AcaoSocialTemplateEntity,
                 ComunidadeEntity,
                 DificuldadeEntity,
-                EstoqueAlimentoEntity,
+                EstoqueEntity,
                 FamiliaDificuldadeEntity,
                 ItemTemplateEntity,
                 ItemProdutoEntity,

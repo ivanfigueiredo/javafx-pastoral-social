@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { EstoqueAlimentoEntity } from "./EstoqueAlimentoEntity";
+import { ItemProdutoEntity } from "./ItemProdutoEntity";
+
 
 @Entity('tps_unidade_medida')
 export class UnidadeMedidaEntity {
@@ -7,14 +8,18 @@ export class UnidadeMedidaEntity {
   id: number;
 
   @Column({ name: 'und_medidas', type: 'varchar', unique: true })
-  undMedidas!: string;
+  undMedidas: string;
 
-  @OneToMany(() => EstoqueAlimentoEntity, alimento => alimento.unidadeMedida)
-  alimentos!: EstoqueAlimentoEntity[];
+  @OneToMany(() => ItemProdutoEntity, ItemProdutoEntity => ItemProdutoEntity.unidadeMedida)
+  itemProduto: ItemProdutoEntity[];
 
   constructor(
-    id: number
+    id: number,
+    undMedidas: string,
+    itemProduto: ItemProdutoEntity[]
   ) {
     this.id = id;
+    this.undMedidas = undMedidas;
+    this.itemProduto = itemProduto;
   }
 }

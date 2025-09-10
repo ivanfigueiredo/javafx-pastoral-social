@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { CestaTemplateEntity } from "./CestaTemplateEntity";
+import { AcaoSocialTemplateEntity } from "./AcaoSocialTemplateEntity";
+import { TemplateTypeEnum } from "./TemplateTypeEnum";
 
 @Entity('tps_template')
 export class TemplateEntity {
@@ -9,16 +10,21 @@ export class TemplateEntity {
   @Column({ name: 'template_desc', type: 'varchar' })
   descricao: string;
 
-  @OneToMany(() => CestaTemplateEntity, cesta => cesta.template)
-  cestas: CestaTemplateEntity[];
+  @Column({ name: 'template_type', type: 'varchar', enum: TemplateTypeEnum })
+  templateType: TemplateTypeEnum;
+
+  @OneToMany(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.template)
+  cestas: AcaoSocialTemplateEntity[];
 
   constructor(
     id: number,
     descricao: string,
-    cestas: CestaTemplateEntity[]
+    templateType: TemplateTypeEnum,
+    cestas: AcaoSocialTemplateEntity[]
   ) {
     this.id = id;
     this.descricao = descricao;
+    this.templateType = templateType;
     this.cestas = cestas;
   }
 }

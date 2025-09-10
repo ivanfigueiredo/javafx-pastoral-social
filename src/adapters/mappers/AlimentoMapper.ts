@@ -3,7 +3,7 @@ import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { LocalizacaoDTO } from "../../application/dto/LocalizacaoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
-import { EstoqueAlimentoEntity } from "../persistence/entities/EstoqueAlimentoEntity";
+import { EstoqueEntity } from "../persistence/entities/EstoqueEntity";
 import { ItemProdutoEntity } from "../persistence/entities/ItemProdutoEntity";
 import { LocalizacaoEntity } from "../persistence/entities/LocalizacaoEntity";
 import { UnidadeMedidaEntity } from "../persistence/entities/UnidadeDeMedidaEntity";
@@ -11,16 +11,15 @@ import { UnidadeMedidaEntity } from "../persistence/entities/UnidadeDeMedidaEnti
 export class AlimentoMapper {
     private AlimentoMapper() {}
 
-    public static toAlimentoEntity(dto: CadastroAlimentoDTO): EstoqueAlimentoEntity {
-        const teste = new UnidadeMedidaEntity(dto.idUnidadeMedida);
-        return new EstoqueAlimentoEntity(
+    public static toAlimentoEntity(dto: CadastroAlimentoDTO): EstoqueEntity {
+        return new EstoqueEntity(
             null,
-            dto.validade,
             new Date(),
             null,
-            new UnidadeMedidaEntity(dto.idUnidadeMedida),
             new LocalizacaoEntity(dto.idLocalizacao),
-            new ItemProdutoEntity(dto.itemProdutoId)
+            new ItemProdutoEntity(dto.itemProdutoId, '', dto.validade, [], new UnidadeMedidaEntity(dto.idUnidadeMedida, '', []), []),
+            []
+
         );
     }
 
@@ -36,15 +35,15 @@ export class AlimentoMapper {
         return iterator.map(itemProduto => new ItemProdutoDTO(itemProduto.id, itemProduto.itemProdutoDesc));
     }
 
-    public static toEstoqueDTO(iterator: EstoqueAlimentoEntity[]): EstoqueDTO[] {
+    public static toEstoqueDTO(iterator: EstoqueEntity[]): EstoqueDTO[] {
         return iterator.map(estok => new EstoqueDTO(
             estok.id!, 
-            estok.validade, 
+            estok.itemProduto.validade, 
             estok.dataEntrada, 
             estok.dataSaida, 
             new ItemProdutoDTO(estok.itemProduto.id, estok.itemProduto.itemProdutoDesc), 
             new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc), 
-            new UnidadeDeMedidadDTO(estok.unidadeMedida.id, estok.unidadeMedida.undMedidas))
+            new UnidadeDeMedidadDTO(estok.itemProduto.unidadeMedida.id, estok.itemProduto.unidadeMedida.undMedidas))
         );
     }
 }
