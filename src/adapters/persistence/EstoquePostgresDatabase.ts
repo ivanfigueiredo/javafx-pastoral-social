@@ -11,6 +11,7 @@ import { UnidadeMedidaEntity } from "./entities/UnidadeDeMedidaEntity";
 import { LocalizacaoEntity } from "./entities/LocalizacaoEntity";
 import { ItemProdutoEntity } from "./entities/ItemProdutoEntity";
 import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
+import { TemplateItemDTO } from "../../application/dto/TemplateItemDTO";
 
 export class EstoquePostgresDatabase implements EstoqueRepository {
     private readonly estoqueRepository: Repository<EstoqueEntity>;
@@ -69,5 +70,36 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
             ])
             .getMany();
         return EstoqueMapper.toEstoqueDTO(listEstoque);
+    }
+
+    public async consultaGeracaoTemplate(templateItens: TemplateItemDTO[]): Promise<number> {
+        const result = await this.estoqueRepository
+            .createQueryBuilder("e")
+            .innerJoin(ItemProdutoEntity, "p", "e.id_item_produto = p.id_produto")
+            .where("e.data_saida IS NULL")
+            .andWhere("p.validade >= CURRENT_DATE")
+            .select("e.id_item_produto", "id_item_produto")
+            .addSelect("COUNT(*)", "disponivel")
+            .groupBy("e.id_item_produto")
+            .getRawMany();
+
+        const estoqueMap: Record<number, number> = {};
+        for (const row of result) {
+            const id = Number(row.id_item_produto);
+            const disponivel = Number(row.disponivel);
+            estoqueMap[id] = disponivel;
+        }
+        const totalItens = this.calculaGeracaoTemplate(templateItens, estoqueMap);
+        return totalItens;
+    }
+
+    private calculaGeracaoTemplate(templateItens: TemplateItemDTO[], estoque: Record<number, number>): number {
+        let total = Infinity;
+        for (const item of templateItens) {
+            const disponivel = estoque[item.itemProdutoId] ?? 0;
+            const possivel = Math.floor(disponivel / item.quantidade);
+            total = Math.min(total, possivel);
+        }
+        return total === Infinity ? 0 : total;
     }
 }
