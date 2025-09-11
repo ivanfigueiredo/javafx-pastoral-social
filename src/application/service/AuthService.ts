@@ -9,6 +9,7 @@ import { SecurityRepository } from "../port/out/SecurityRepository";
 import { UserRepository } from "../port/out/UserRepository";
 import { SecurityDTO } from '../dto/SecurityDTO';
 import { AuthRepository } from '../port/out/AuthRepository';
+import { UnauthorizedException } from '../exceptions/UnauthorizedException';
 
 export class AuthService implements AuthUseCase {
     constructor(
@@ -20,7 +21,7 @@ export class AuthService implements AuthUseCase {
     public async login(dto: LoginDTO): Promise<LoginResponseDTO> {
         const user = await this.userRepository.findUserByNickName(dto.nickName);
         const passwordIsValid = await this.isSenhaValida(dto.senha, user.password);
-        if (!passwordIsValid) throw Error("Usuário ou senha inválidos");
+        if (!passwordIsValid) throw new UnauthorizedException("Usuário ou senha inválidos");
         const hashAccessToken = await this.generateHash(randomUUID());
         const hashRefreshToken = await this.generateHash(randomUUID());
         const securityAccessToken = new SecurityDTO(user, hashAccessToken, this.generateAccessTokenExpiry());
@@ -33,7 +34,7 @@ export class AuthService implements AuthUseCase {
     public async refreshToken(dto: RefreshTokenDTO): Promise<RefreshTokenResponseDTO> {
         const security = await this.authRepository.validateRefreshToken(dto.refreshToken);
         if (!security || this.isRefreshTokenExpired(security.expiresAt) || security.revoked) {
-            throw new Error("Unauthorized");
+            throw new UnauthorizedException("Token inválido, expirado ou revogado");
         }
         const revokedToken = await this.securityRepository.findTokenByUserId(security.user.userId);
         await this.securityRepository.updateMany(revokedToken);

@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { CallbackFunction, HttpClient } from './HttpClient';
+import { UnauthorizedException } from '../../application/exceptions/UnauthorizedException';
 
 export class ExpressAdapter implements HttpClient {
     connect: any;
@@ -21,6 +22,10 @@ export class ExpressAdapter implements HttpClient {
                 const output = await callback(req.params, req.body);
                 res.json(output);
             } catch (error: any) {
+                if (error instanceof UnauthorizedException) {
+                    res.status(error.statusCode).json(error);
+                    return;
+                }
                 res.status(500).json(error.message);
             }
         });
