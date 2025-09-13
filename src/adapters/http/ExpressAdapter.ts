@@ -3,6 +3,7 @@ import { CallbackFunction, HttpClient } from './HttpClient';
 import { UnauthorizedException } from '../../application/exceptions/UnauthorizedException';
 import { UnprocessableException } from '../../application/exceptions/UnprocessableException';
 import { InternalServerErrorException } from '../../application/exceptions/InternalServerErrorException';
+import { NotFoundException } from '../../application/exceptions/NotFoundException';
 
 export class ExpressAdapter implements HttpClient {
     connect: any;
@@ -33,6 +34,10 @@ export class ExpressAdapter implements HttpClient {
                     return;
                 }
                 if (error instanceof InternalServerErrorException) {
+                    res.status(error.statusCode).json(error);
+                    return;
+                }
+                if (error instanceof NotFoundException) {
                     res.status(error.statusCode).json(error);
                     return;
                 }
