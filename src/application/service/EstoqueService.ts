@@ -9,6 +9,7 @@ import { LocalizacaoDTO } from "../dto/LocalizacaoDTO";
 import { RespostaConsultaGeracaoTemplateDTO } from "../dto/RespostaConsultaGeracaoTemplateDTO";
 import { UnidadeDeMedidadDTO } from "../dto/UnidadeDeMedidaDTO";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
+import { NotFoundException } from "../exceptions/NotFoundException";
 import { UnprocessableException } from "../exceptions/UnprocessableException";
 import { EstoqueUseCase } from "../port/in/EstoqueUseCase";
 import { AcaoSocialTemplateRepository } from "../port/out/AcaoSocialTemplateRepository";
@@ -64,7 +65,7 @@ export class EstoqueService implements EstoqueUseCase {
             await this.unitOfWork.startTransaction();
             const templateEntity = await this.templateRepository.findTemplateById(dto.idTemplate);
             if (!templateEntity) {
-                throw new Error("Template informado não foi encontrado.");
+                throw new NotFoundException("Template informado não foi encontrado.");
             }
             const consultGeracaoTemplate = new ConsultaGeracaoTemplateDTO(dto.templateItens);
             const result = await this.consultarGeracaoTemplate(consultGeracaoTemplate);
