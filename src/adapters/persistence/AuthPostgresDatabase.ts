@@ -36,9 +36,4 @@ export class AuthPostgresDatabase implements AuthQuery, AuthRepository {
         }
         return security;
     }
-
-
-    
-
-    
 }

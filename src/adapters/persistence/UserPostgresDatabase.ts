@@ -4,6 +4,7 @@ import { Connection } from "./database/Connection";
 import { UserEntity } from "./entities/UserEntity";
 import { SecurityMapper } from "../mappers/SecurityMapper";
 import { UserResponseDTO } from "../../application/dto/UserResponseDTO";
+import { UnauthorizedException } from "../../application/exceptions/UnauthorizedException";
 
 export class UserPostgresDatabase implements UserRepository {
     private readonly userRepository: Repository<UserEntity>;
@@ -19,7 +20,7 @@ export class UserPostgresDatabase implements UserRepository {
             .leftJoinAndSelect('rrp.permission', 'p')
             .where({nickName})
             .getOne();
-        if (!user) throw Error("Usuário ou senha inválidos");
+        if (!user) throw new UnauthorizedException("Usuário ou senha inválidos");
         return SecurityMapper.toUserResponseDTO(user);
     }
 }
