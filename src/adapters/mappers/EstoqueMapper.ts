@@ -11,13 +11,15 @@ import { UnidadeMedidaEntity } from "../persistence/entities/UnidadeDeMedidaEnti
 export class EstoqueMapper {
     private EstoqueMapper() {}
 
-    public static toAlimentoEntity(dto: CadastroEstoqueDTO): EstoqueEntity {
+    public static toEstoqueEntity(dto: CadastroEstoqueDTO): EstoqueEntity {
         return new EstoqueEntity(
             null,
             new Date(),
+            dto.validade,
+            null,
             null,
             new LocalizacaoEntity(dto.idLocalizacao),
-            new ItemProdutoEntity(dto.itemProdutoId, '', dto.validade, [], new UnidadeMedidaEntity(dto.idUnidadeMedida, '', []), []),
+            new ItemProdutoEntity(dto.itemProdutoId, '', [], new UnidadeMedidaEntity(dto.idUnidadeMedida, '', []), []),
             []
 
         );
@@ -38,7 +40,7 @@ export class EstoqueMapper {
     public static toEstoqueDTO(iterator: EstoqueEntity[]): EstoqueDTO[] {
         return iterator.map(estok => new EstoqueDTO(
             estok.id!, 
-            estok.itemProduto.validade, 
+            estok.validade, 
             estok.dataEntrada, 
             estok.dataSaida, 
             new ItemProdutoDTO(estok.itemProduto.id, estok.itemProduto.itemProdutoDesc), 

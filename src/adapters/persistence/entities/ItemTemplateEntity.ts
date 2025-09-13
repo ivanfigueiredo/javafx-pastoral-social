@@ -4,8 +4,8 @@ import { EstoqueEntity } from "./EstoqueEntity";
 
 @Entity('tps_item_template')
 export class ItemTemplateEntity {
-  @PrimaryGeneratedColumn({ name: 'id_cesta_item' })
-  id: number;
+  @PrimaryGeneratedColumn({ name: 'id_item_template' })
+  id: number | null;
 
   @ManyToOne(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.itensTemplate)
   @JoinColumn({ name: 'id_acao_social_template' })
@@ -16,7 +16,7 @@ export class ItemTemplateEntity {
   estoque: EstoqueEntity;
 
   constructor(
-    id: number,
+    id: number | null,
     acaoSocialTemplate: AcaoSocialTemplateEntity,
     estoque: EstoqueEntity
   ) {

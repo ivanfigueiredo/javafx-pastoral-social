@@ -6,11 +6,7 @@ import { ItemProdutoEntity } from "./ItemProdutoEntity";
 @Entity('tps_acao_social_template')
 export class AcaoSocialTemplateEntity {
     @PrimaryGeneratedColumn({ name: 'id_acao_social_template' })
-    id: number;
-
-    @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.itensCesta)
-    @JoinColumn({ name: 'id_item_produto' })
-    itemProduto: ItemProdutoEntity;
+    id: number | null;
 
     @ManyToOne(() => TemplateEntity, template => template.cestas)
     @JoinColumn({ name: 'id_template' })
@@ -23,15 +19,13 @@ export class AcaoSocialTemplateEntity {
     itensTemplate: ItemTemplateEntity[];
 
     constructor(
-        id: number,
+        id: number | null,
         quantidade: number,
-        itemProduto: ItemProdutoEntity,
         template: TemplateEntity,
         itensTemplate: ItemTemplateEntity[]
     ) {
         this.id = id;
         this.quantidade = quantidade;
-        this.itemProduto = itemProduto;
         this.template = template;
         this.itensTemplate = itensTemplate;
     }

@@ -12,6 +12,8 @@ import { LocalizacaoEntity } from "./entities/LocalizacaoEntity";
 import { ItemProdutoEntity } from "./entities/ItemProdutoEntity";
 import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 import { TemplateItemDTO } from "../../application/dto/TemplateItemDTO";
+import { UnitOfWork } from "./unitOfWork/UnitOfWork";
+import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 
 export class EstoquePostgresDatabase implements EstoqueRepository {
     private readonly estoqueRepository: Repository<EstoqueEntity>;
@@ -19,7 +21,10 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
     private readonly localizacaoRepository: Repository<LocalizacaoEntity>;
     private readonly itemProdutoRepository: Repository<ItemProdutoEntity>;
 
-    constructor(private readonly connection: Connection) {
+    constructor(
+        private readonly connection: Connection,
+        private readonly unitOfWork: UnitOfWork
+    ) {
         this.estoqueRepository = this.connection.getDataSourcer().getRepository(EstoqueEntity);
         this.unidadeDeMedidaRepository = this.connection.getDataSourcer().getRepository(UnidadeMedidaEntity);
         this.localizacaoRepository = this.connection.getDataSourcer().getRepository(LocalizacaoEntity);
@@ -27,12 +32,16 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
     }
 
     public async save(dto: CadastroEstoqueDTO): Promise<void> {
-        await this.estoqueRepository.save(EstoqueMapper.toAlimentoEntity(dto));
+        await this.estoqueRepository.save(EstoqueMapper.toEstoqueEntity(dto));
     }
 
-    public async deleteOne(idAlimento: number): Promise<void> {
+    public async saveMany(estoque: EstoqueEntity[]): Promise<void> {
+        await this.unitOfWork.transactionMany(EstoqueEntity, estoque);
+    }
+
+    public async deleteOne(idEstoque: number): Promise<void> {
         try {
-            await this.estoqueRepository.delete(idAlimento);
+            await this.estoqueRepository.delete(idEstoque);
         } catch (error) {}
     }
 
@@ -42,7 +51,7 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
     }
 
     public async findLocalizacao(): Promise<LocalizacaoDTO[]> {
-        const listLocalizacao = await this.localizacaoRepository.find();
+        const listLocalizacao = await this.localizacaoRepository.find();;
         return EstoqueMapper.toLocalizacaoDTO(listLocalizacao);
     }
 
@@ -69,7 +78,21 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
                 'tum.undMedidas'
             ])
             .getMany();
-        return EstoqueMapper.toEstoqueDTO(listEstoque);
+            return EstoqueMapper.toEstoqueDTO(listEstoque);
+    }
+
+    public async findEstoqueByItemProdutoIdAndQtdGeracaoTemplate(itemProdutoId: number, qtdGeracaoTemplate: number): Promise<EstoqueEntity[]> {
+            return await this.unitOfWork.queryMany(
+                EstoqueEntity,
+                "e",
+                qb => qb
+                    .leftJoinAndSelect("e.itemProduto", "p")
+                    .where("e.data_saida IS NULL")
+                    .andWhere("e.validade >= CURRENT_DATE")
+                    .andWhere("e.id_item_produto = :idProduto", { idProduto: itemProdutoId })
+                    .orderBy("e.data_entrada")
+                    .limit(qtdGeracaoTemplate),
+            );
     }
 
     public async consultaGeracaoTemplate(templateItens: TemplateItemDTO[]): Promise<number> {
@@ -77,12 +100,12 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
             .createQueryBuilder("e")
             .innerJoin(ItemProdutoEntity, "p", "e.id_item_produto = p.id_produto")
             .where("e.data_saida IS NULL")
-            .andWhere("p.validade >= CURRENT_DATE")
+            .andWhere("e.validade >= CURRENT_DATE")
+            .andWhere("e.is_disponivel IS TRUE")
             .select("e.id_item_produto", "id_item_produto")
             .addSelect("COUNT(*)", "disponivel")
             .groupBy("e.id_item_produto")
             .getRawMany();
-
         const estoqueMap: Record<number, number> = {};
         for (const row of result) {
             const id = Number(row.id_item_produto);

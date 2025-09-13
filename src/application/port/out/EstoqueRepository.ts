@@ -1,3 +1,4 @@
+import { EstoqueEntity } from "../../../adapters/persistence/entities/EstoqueEntity";
 import { CadastroEstoqueDTO } from "../../dto/CadastroEstoqueDTO";
 import { EstoqueDTO } from "../../dto/EstoqueDTO";
 import { ItemProdutoDTO } from "../../dto/ItemProdutoDTO";
@@ -7,10 +8,12 @@ import { UnidadeDeMedidadDTO } from "../../dto/UnidadeDeMedidaDTO";
 
 export interface EstoqueRepository {
     save: (dto: CadastroEstoqueDTO) => Promise<void>;
-    deleteOne: (idAlimento: number) => Promise<void>;
+    saveMany: (estoque: EstoqueEntity[]) => Promise<void>;
+    deleteOne: (idEstoque: number) => Promise<void>;
     findUnidadeDeMedidas: () => Promise<UnidadeDeMedidadDTO[]>;
     findLocalizacao: () => Promise<LocalizacaoDTO[]>;
     findITemProduto: () => Promise<ItemProdutoDTO[]>;
     findEstoque: () => Promise<EstoqueDTO[]>;
     consultaGeracaoTemplate: (templateItens: TemplateItemDTO[]) => Promise<number>;
+    findEstoqueByItemProdutoIdAndQtdGeracaoTemplate: (itemProdutoId: number, qtdGeracaoTemplate: number) => Promise<EstoqueEntity[]>;
 }

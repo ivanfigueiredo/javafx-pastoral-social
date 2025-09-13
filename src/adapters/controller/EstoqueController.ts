@@ -6,6 +6,7 @@ import { Auth } from "../http/authentication/Auth";
 import { EstoqueUseCase } from "../../application/port/in/EstoqueUseCase";
 import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
 import { ConsultaGeracaoTemplateDTO } from "../../application/dto/ConsultaGeracaoTemplateDTO";
+import { GeracaoModeloTemplateDTO } from "../../application/dto/GeracaoModeloTemplateDTO";
 
 export class EstoqueController {
      constructor(
@@ -34,6 +35,19 @@ export class EstoqueController {
                 (req: Request, res: Response, next: NextFunction) => next(),
                 async function (params: any, data: ConsultaGeracaoTemplateDTO) {
                     const output = await estoqueUseCase.consultarGeracaoTemplate(data);
+                    return output;
+                }
+            );
+
+            httpClient.on(
+                "post", 
+                "/estoque/geracao-modelo-template", 
+                // auth.authentication.bind(auth),
+                // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
+                (req: Request, res: Response, next: NextFunction) => next(),
+                (req: Request, res: Response, next: NextFunction) => next(),
+                async function (params: any, data: GeracaoModeloTemplateDTO) {
+                    const output = await estoqueUseCase.gerarModeloTemplate(data);
                     return output;
                 }
             );

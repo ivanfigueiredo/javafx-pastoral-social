@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express';
 import { CallbackFunction, HttpClient } from './HttpClient';
 import { UnauthorizedException } from '../../application/exceptions/UnauthorizedException';
+import { UnprocessableException } from '../../application/exceptions/UnprocessableException';
+import { InternalServerErrorException } from '../../application/exceptions/InternalServerErrorException';
 
 export class ExpressAdapter implements HttpClient {
     connect: any;
@@ -23,6 +25,14 @@ export class ExpressAdapter implements HttpClient {
                 res.json(output);
             } catch (error: any) {
                 if (error instanceof UnauthorizedException) {
+                    res.status(error.statusCode).json(error);
+                    return;
+                }
+                if (error instanceof UnprocessableException) {
+                    res.status(error.statusCode).json(error);
+                    return;
+                }
+                if (error instanceof InternalServerErrorException) {
                     res.status(error.statusCode).json(error);
                     return;
                 }

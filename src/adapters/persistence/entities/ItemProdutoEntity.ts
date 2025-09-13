@@ -11,9 +11,6 @@ export class ItemProdutoEntity {
   @Column({ name: 'item_produto_desc', type: 'varchar', unique: true, nullable: false })
   itemProdutoDesc: string;
 
-  @Column({ type: 'date', nullable: false })
-  validade: Date;
-
   @OneToMany(() => EstoqueEntity, estoque => estoque.localizacao)
   estoques: EstoqueEntity[];
 
@@ -21,22 +18,16 @@ export class ItemProdutoEntity {
   @JoinColumn({ name: 'id_und_medida' })
   unidadeMedida: UnidadeMedidaEntity;
 
-  @OneToMany(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.itemProduto)
-  itensCesta: AcaoSocialTemplateEntity[];
-
   constructor(
     id: number,
     itemProdutoDesc: string,
-    validade: Date,
     estoques: EstoqueEntity[],
     unidadeMedida: UnidadeMedidaEntity,
     itensCesta: AcaoSocialTemplateEntity[]
   ) {
     this.id = id;
     this.itemProdutoDesc = itemProdutoDesc;
-    this.validade = validade;
     this.unidadeMedida = unidadeMedida;
     this.estoques = estoques;
-    this.itensCesta = itensCesta;
   }
 }
