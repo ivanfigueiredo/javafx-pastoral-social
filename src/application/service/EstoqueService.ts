@@ -32,9 +32,9 @@ export class EstoqueService implements EstoqueUseCase {
         } catch (error) {}
     };
 
-    public async deletar(idAlimento: number): Promise<void> {
+    public async deletar(idEstoque: number): Promise<void> {
         try {
-            await this.estoqueRepository.deleteOne(idAlimento);
+            await this.estoqueRepository.deleteOne(idEstoque);
         } catch (error) {}
     }
 
