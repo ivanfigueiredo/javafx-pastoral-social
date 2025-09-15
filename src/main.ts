@@ -10,7 +10,7 @@ import { AbilityPermission } from "./adapters/http/authorization/Permission";
 import { RolePermissionsPostgresDatabase } from "./adapters/persistence/RolePermissionsPostgresDatabase";
 import { FamiliaController } from "./adapters/controller/FamiliaController";
 import { FamiliaPostgresDatabase } from "./adapters/persistence/FamiliaPostgresDatabase";
-import { FamiliaService } from "./application/service/FamiliaService";
+import { ConsultarFamiliaService } from "./application/service/ConsultarFamiliaService";
 import { AuthService } from "./application/service/AuthService";
 import { UserPostgresDatabase } from "./adapters/persistence/UserPostgresDatabase";
 import { SecurityPostgresDatabase } from "./adapters/persistence/SecurityPostgresDatabase";
@@ -19,7 +19,13 @@ import { TemplatePostgresDatabase } from "./adapters/persistence/TemplatePostgre
 import { AcaoSocialTemplatePostgresDatabase } from "./adapters/persistence/AcaoSocialTemplatePostgresDatabase";
 import { ItemTemplatePostgresDatabase } from "./adapters/persistence/ItemTemplatePostgresDatabase";
 import { UnitOfWorkAdapter } from "./adapters/persistence/unitOfWork/UnitOfWorkAdapter";
+import { TemplateController } from "./adapters/controller/TemplateController";
+import { TemplateService } from "./application/service/TemplateService";
+import { FamiliaAuditProxy } from "./application/proxy/FamiliaAuditProxy";
+import { CadastrarFamiliaService } from "./application/service/CadastrarFamiliaService";
 import { config } from 'dotenv';
+import { AuditoriaEntity } from "./adapters/persistence/entities/AuditoriaEntity";
+import { AuditoriaPostgresDatabase } from "./adapters/persistence/AuditoriaPostgresDatabase";
 config();
 
 (async () => {
@@ -34,18 +40,23 @@ config();
     const securityRepository = new SecurityPostgresDatabase(postgresDatabase);
     const authRepository = new AuthPostgresDatabase(postgresDatabase);
     const templateRepository = new TemplatePostgresDatabase(postgresDatabase);
+    const auditoriaRepository = new AuditoriaPostgresDatabase(postgresDatabase);
     const acaoSocialTemplate = new AcaoSocialTemplatePostgresDatabase(postgresDatabase, unitOfWork);
     const itemTemplateRepository = new ItemTemplatePostgresDatabase(postgresDatabase, unitOfWork);
     const abilityPermission = new AbilityPermission(roleRepository);
     await abilityPermission.setupPermissions();
+    const templateService = new TemplateService(templateRepository);
     const estoqueService = new EstoqueService(estoquePostgres, acaoSocialTemplate, itemTemplateRepository, templateRepository, unitOfWork);
-    const familiaUseCase = new FamiliaService(familiaRepository);
+    const consultarFamiliaService = new ConsultarFamiliaService(familiaRepository);
+    const cadastrarFamiliaService = new CadastrarFamiliaService(familiaRepository);
+    const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
     const authUseCase = new AuthService(userRepository, securityRepository, authRepository);
     const auth = new Auth(authRepository);
     const authorize = new Authorize(abilityPermission.getAppAbility());
+    new TemplateController(httpClient, templateService);
     new MainController(httpClient, authUseCase);
     new EstoqueController(httpClient, auth, authorize, estoqueService);
-    new FamiliaController(httpClient, auth, authorize, familiaUseCase);
+    new FamiliaController(httpClient, auth, authorize, familiaAuditProxy, consultarFamiliaService);
     const PORT = parseInt(process.env.PORT as string);
     httpClient.listen(PORT, () => console.log(`Rodando na porta: ${PORT}`));
 })()

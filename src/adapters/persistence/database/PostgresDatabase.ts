@@ -21,6 +21,7 @@ import { UnidadeMedidaEntity } from "../entities/UnidadeDeMedidaEntity";
 import { UserEntity } from "../entities/UserEntity";
 import { TipoAjudaEntity } from "../entities/TipoAjudaEntity";
 import { RolePermissionsEntity } from "../entities/RolePermissionsEntity";
+import { AuditoriaEntity } from "../entities/AuditoriaEntity";
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -54,7 +55,8 @@ export class PostgresDatabase implements Connection {
                 StatusCestaEntity,
                 TemplateEntity,
                 UnidadeMedidaEntity,
-                UserEntity
+                UserEntity,
+                AuditoriaEntity
             ]
         });
     }
