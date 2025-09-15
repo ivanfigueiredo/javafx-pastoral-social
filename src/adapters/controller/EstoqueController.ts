@@ -22,7 +22,11 @@ export class EstoqueController {
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
                 async function (params: any, data: CadastroEstoqueDTO) {
                     const output = await estoqueUseCase.cadastrar(data);
-                    return output;
+                    return {
+                        statusCode: 201,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
 
@@ -35,7 +39,11 @@ export class EstoqueController {
                 (req: Request, res: Response, next: NextFunction) => next(),
                 async function (params: any, data: ConsultaGeracaoTemplateDTO) {
                     const output = await estoqueUseCase.consultarGeracaoTemplate(data);
-                    return output;
+                    return {
+                        statusCode: 200,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
 
@@ -48,7 +56,11 @@ export class EstoqueController {
                 (req: Request, res: Response, next: NextFunction) => next(),
                 async function (params: any, data: GeracaoModeloTemplateDTO) {
                     const output = await estoqueUseCase.gerarModeloTemplate(data);
-                    return output;
+                    return {
+                        statusCode: 201,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
 
@@ -59,7 +71,11 @@ export class EstoqueController {
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.DeletarEstoque),
                 async function (params: any, data: any) {
                     const output = await estoqueUseCase.deletar(parseInt(params.id));
-                    return output;
+                    return {
+                        statusCode: 200,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
 
@@ -70,7 +86,11 @@ export class EstoqueController {
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarEstoque),
                 async function (params: any, data: any) {
                     const output = await estoqueUseCase.listarAlimentos();
-                    return output;
+                    return {
+                        statusCode: 200,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
 
@@ -81,7 +101,11 @@ export class EstoqueController {
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarUND),
                 async function (params: any, data: any) {
                     const output = await estoqueUseCase.listarUnidadeMedida();
-                    return output;
+                    return {
+                        statusCode: 200,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
 
@@ -92,7 +116,11 @@ export class EstoqueController {
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarLocalizacao),
                 async function (params: any, data: any) {
                     const output = await estoqueUseCase.listarLocalizacao();
-                    return output;
+                    return {
+                        statusCode: 200,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
 
@@ -103,7 +131,11 @@ export class EstoqueController {
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarItemProduto),
                 async function (params: any, data: any) {
                     const output = await estoqueUseCase.listarItemProduto();
-                    return output;
+                    return {
+                        statusCode: 200,
+                        timeStampe: new Date().toISOString(),
+                        data: output
+                    };
                 }
             );
         }

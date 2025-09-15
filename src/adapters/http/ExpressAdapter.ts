@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { CallbackFunction, HttpClient } from './HttpClient';
+import { Callback, CallbackFunction, HttpClient } from './HttpClient';
 import { UnauthorizedException } from '../../application/exceptions/UnauthorizedException';
 import { UnprocessableException } from '../../application/exceptions/UnprocessableException';
 import { InternalServerErrorException } from '../../application/exceptions/InternalServerErrorException';
@@ -18,12 +18,12 @@ export class ExpressAdapter implements HttpClient {
         url: string, 
         middlewareAuth: CallbackFunction,
         middlewareAuthorize: CallbackFunction, 
-        callback: Function
+        callback: Callback,
     ): void {
         this.connect[method](url, middlewareAuth, middlewareAuthorize, async (req: Request, res: Response) => {
             try {
-                const output = await callback(req.params, req.body);
-                res.json(output);
+                const output = await callback(req.params, req.body, req?.user);
+                res.status(output.statusCode).json(output);
             } catch (error: any) {
                 if (error instanceof UnauthorizedException) {
                     res.status(error.statusCode).json(error);
