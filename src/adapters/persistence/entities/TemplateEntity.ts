@@ -5,7 +5,7 @@ import { TemplateTypeEnum } from "./TemplateTypeEnum";
 @Entity('tps_template')
 export class TemplateEntity {
   @PrimaryGeneratedColumn({ name: 'id_template' })
-  id: number;
+  id: number | null;
 
   @Column({ name: 'template_desc', type: 'varchar' })
   descricao: string;
@@ -17,7 +17,7 @@ export class TemplateEntity {
   cestas: AcaoSocialTemplateEntity[];
 
   constructor(
-    id: number,
+    id: number | null,
     descricao: string,
     templateType: TemplateTypeEnum,
     cestas: AcaoSocialTemplateEntity[]

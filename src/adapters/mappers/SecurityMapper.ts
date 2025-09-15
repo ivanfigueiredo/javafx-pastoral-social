@@ -23,7 +23,7 @@ export class SecurityMapper {
             dto.token,
             dto.expiresAt,
             false,
-            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.password, null, []),
+            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.password, null, [], []),
             new Date()
         );
     }
@@ -42,7 +42,7 @@ export class SecurityMapper {
             sec.tokenHash,
             sec.expiresAt,
             true,
-            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.password, null, [])
+            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.password, null, [], [])
         ));
     }
 }

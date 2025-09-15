@@ -16,10 +16,15 @@ export class MainController {
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: LoginDTO) {
                 const output = await auth.login(data);
-                return output;
+                return {
+                    statusCode: 200,
+                    timeStampe: new Date().toISOString(),
+                    data: output
+                };
             }
         );
 
+        
         httpClient.on(
             "post", 
             "/security/refresh/token", 
@@ -27,7 +32,11 @@ export class MainController {
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: RefreshTokenDTO) {
                 const output = await auth.refreshToken(data);
-                return output;
+                return {
+                    statusCode: 200,
+                    timeStampe: new Date().toISOString(),
+                    data: output
+                };
             }
         );
     }

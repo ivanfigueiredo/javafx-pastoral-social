@@ -13,12 +13,13 @@ export class Auth {
                 res.status(401).json({ message: 'Unauthorized' });
                 return;
             }
+            const userInfo = await this.authQuery.userInfo(security.userId);
             req.user = {
-                id: security.userId,
+                userId: security.userId,
+                nickName: userInfo!.nickName,
                 role: security.role
             }
             next();
-
         } else {
             res.status(401).json({ message: 'Unauthorized' });
         }

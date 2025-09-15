@@ -1,4 +1,6 @@
-export class CadastrarFamiliaDTO {
+import { BaseDTO } from "./BaseDTO";
+
+export class CadastrarFamiliaDTO extends BaseDTO {
     constructor(
         readonly nomeRepresentante: string,
         readonly idade: number,
@@ -15,5 +17,7 @@ export class CadastrarFamiliaDTO {
         readonly desejaParticiparCursos: boolean | null,
         readonly observacao: string | null,
         readonly outros: string | null
-    ) {}
+    ) {
+        super();
+    }
 }

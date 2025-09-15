@@ -6,12 +6,15 @@ import { SecurityResponseDTO } from "../../application/dto/SecurityResponseDTO";
 import { AuthRepository } from "../../application/port/out/AuthRepository";
 import { ValidateRefreshTokenResponseDTO } from "../../application/dto/ValidateRefreshTokenResponseDTO";
 import { SecurityMapper } from "../mappers/SecurityMapper";
+import { UserEntity } from "./entities/UserEntity";
 
 export class AuthPostgresDatabase implements AuthQuery, AuthRepository {
     private readonly securityRepository: Repository<SecurityEntity>;
+    private readonly userRepository: Repository<UserEntity>
 
     constructor(private readonly connection: Connection) {
         this.securityRepository = this.connection.getDataSourcer().getRepository(SecurityEntity);
+        this.userRepository = this.connection.getDataSourcer().getRepository(UserEntity);
     }
     
     public async authentication(token: string): Promise<SecurityResponseDTO | null> {
@@ -24,6 +27,10 @@ export class AuthPostgresDatabase implements AuthQuery, AuthRepository {
             return new SecurityResponseDTO(security.user.id, security.user.role!.description, security.expiresAt, security.revoked);
         }
         return security;
+    }
+
+    public async userInfo(userId: number): Promise<UserEntity | null> {
+        return this.userRepository.findOne({where: {id: userId}});
     }
 
     public async validateRefreshToken(refreshToken: string): Promise<ValidateRefreshTokenResponseDTO | null> {
