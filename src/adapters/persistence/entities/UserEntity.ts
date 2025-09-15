@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne } from "typeorm";
 import { SecurityEntity } from "./SecurityEntity";
 import { RoleEntity } from "./RoleEntity";
+import { AuditoriaEntity } from "./AuditoriaEntity";
 
 @Entity('tps_users')
 export class UserEntity {
@@ -16,6 +17,9 @@ export class UserEntity {
   @OneToMany(() => SecurityEntity, (t) => t.user)
   security: SecurityEntity[];
 
+  @OneToMany(() => AuditoriaEntity, auditoria => auditoria.user)
+  auditorias: AuditoriaEntity[];
+
   @ManyToOne(() => RoleEntity, (r) => r.users)
   @JoinColumn({ name: 'role_id' })
   role: RoleEntity | null;
@@ -25,12 +29,14 @@ export class UserEntity {
     nickName: string,
     password: string,
     role: RoleEntity | null,
-    security: SecurityEntity[]
+    security: SecurityEntity[],
+    auditorias: AuditoriaEntity[]
   ) {
     this.id = id;
     this.nickName = nickName;
     this.password = password;
     this.role = role;
     this.security = security;
+    this.auditorias = auditorias;
   }
 }
