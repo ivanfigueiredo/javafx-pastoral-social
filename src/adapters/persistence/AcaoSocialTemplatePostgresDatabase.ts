@@ -1,20 +1,25 @@
-import { Repository } from "typeorm";
+import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 import { AcaoSocialTemplateRepository } from "../../application/port/out/AcaoSocialTemplateRepository";
-import { Connection } from "./database/Connection";
 import { AcaoSocialTemplateEntity } from "./entities/AcaoSocialTemplateEntity";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
+import { Logger } from "pino";
 
 export class AcaoSocialTemplatePostgresDatabase implements AcaoSocialTemplateRepository {
-    private readonly acaoSocialTemplateRepository: Repository<AcaoSocialTemplateEntity>;
-    
+    private readonly logger: Logger;
+
     constructor(
-        private readonly connection: Connection,
+        logger: Logger,
         private readonly unitOfWork: UnitOfWork
     ) {
-        this.acaoSocialTemplateRepository = this.connection.getDataSourcer().getRepository(AcaoSocialTemplateEntity);
+        this.logger = logger.child({service: "AcaoSocialTemplatePostgresDatabase"})
     }
 
-    public async save(acaoSocialTemplate: AcaoSocialTemplateEntity): Promise<void> {
-        await this.unitOfWork.transaction(AcaoSocialTemplateEntity, acaoSocialTemplate);
+    public async save(acaoSocialTemplate: AcaoSocialTemplateEntity): Promise<AcaoSocialTemplateEntity> {
+        try {
+            return await this.unitOfWork.transaction(AcaoSocialTemplateEntity, acaoSocialTemplate);
+        } catch (e: any) {
+            this.logger.error({err: e.message}, "Erro ao persistir acoes sociais")
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
     }
 }

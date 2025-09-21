@@ -1,7 +1,7 @@
 import { DeepPartial, EntityTarget, FindOptionsWhere, ObjectLiteral, SelectQueryBuilder } from "typeorm";
 
 export interface UnitOfWork {
-  transaction<T extends ObjectLiteral>(entityTarget: EntityTarget<T> , data: DeepPartial<T>): Promise<void>;
+  transaction<T extends ObjectLiteral>(entityTarget: EntityTarget<T> , data: DeepPartial<T>): Promise<T>;
   transactionMany<T extends ObjectLiteral>(entityTarget: EntityTarget<T> , data: DeepPartial<T>[]): Promise<void>;
   findOne<T extends ObjectLiteral>(entity: EntityTarget<T>, criteria: FindOptionsWhere<T>): Promise<T | null>;
   find<T extends ObjectLiteral>(entityTarget: EntityTarget<T>): Promise<T[]>;

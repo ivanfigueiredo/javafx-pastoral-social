@@ -1,5 +1,5 @@
 import { AcaoSocialTemplateEntity } from "../../../adapters/persistence/entities/AcaoSocialTemplateEntity";
 
 export interface AcaoSocialTemplateRepository {
-    save: (templateAcaoSocial: AcaoSocialTemplateEntity) => Promise<void>;
+    save: (templateAcaoSocial: AcaoSocialTemplateEntity) => Promise<AcaoSocialTemplateEntity>;
 }

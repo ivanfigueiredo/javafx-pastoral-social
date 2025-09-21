@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { HttpLogger } from 'pino-http';
 import { Callback, CallbackFunction, HttpClient } from './HttpClient';
 import { UnauthorizedException } from '../../application/exceptions/UnauthorizedException';
 import { UnprocessableException } from '../../application/exceptions/UnprocessableException';
@@ -8,9 +9,10 @@ import { NotFoundException } from '../../application/exceptions/NotFoundExceptio
 export class ExpressAdapter implements HttpClient {
     connect: any;
 
-    constructor() {
+    constructor(private readonly httpLogger: HttpLogger) {
         this.connect = express();
         this.connect.use(express.json());
+        this.connect.use(httpLogger);
     }
 
     on(

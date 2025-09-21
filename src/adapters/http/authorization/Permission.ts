@@ -7,7 +7,7 @@ type ActionType =
   | 'ListarFamilia'
   | 'EditarFamilia' 
   | 'CadastrarItemEstoque'
-  | 'CriarTemplateCesta'
+  | 'CriarModeloTemplate'
   | 'ListarTemplate'
   | 'GerarCesta'
   | 'EntregarAjuda'
@@ -20,13 +20,14 @@ type ActionType =
   | 'ListarUND'
   | 'ListarItemProduto'
   | 'ListarDificuldade'
+  | 'ConsultarGeracaoModelo'
 
 export type Action = 
     | 'cadastrar_familia'
     | 'listar_familia'
     | 'editar_familia'
     | 'cadastrar_item_estoque'
-    | 'criar_template_cesta'
+    | 'criar_modelo_template'
     | 'listar_template'
     | 'gerar_cesta'
     | 'entregar_ajuda'
@@ -39,13 +40,14 @@ export type Action =
     | 'listar_und'
     | 'listar_item_produto'
     | 'listar_dificuldade'
+    | 'consultar_geracao_modelo'
 
 export const ActionType: Record<ActionType, Action> = {
     CadastrarFamilia: 'cadastrar_familia',
     ListarFamilia: 'listar_familia',
     EditarFamilia: 'editar_familia',
     CadastrarItemEstoque: 'cadastrar_item_estoque',
-    CriarTemplateCesta: 'cadastrar_item_estoque',
+    CriarModeloTemplate: 'criar_modelo_template',
     ListarTemplate: 'listar_template',
     GerarCesta: 'gerar_cesta',
     EntregarAjuda: 'entregar_ajuda',
@@ -57,7 +59,8 @@ export const ActionType: Record<ActionType, Action> = {
     ListarUND: 'listar_und',
     ListarItemProduto: 'listar_item_produto',
     DeletarEstoque: 'deletar_estoque',
-    ListarDificuldade: 'listar_dificuldade'
+    ListarDificuldade: 'listar_dificuldade',
+    ConsultarGeracaoModelo: 'consultar_geracao_modelo'
 }
 
 export type Role = 

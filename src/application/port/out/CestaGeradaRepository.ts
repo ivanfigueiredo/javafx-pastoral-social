@@ -1,0 +1,5 @@
+import { CestaGeradaEntity } from "../../../adapters/persistence/entities/CestaGeradaEntity";
+
+export interface CestaGeradaRepository {
+    saveMany: (cestas: CestaGeradaEntity[]) => Promise<void>;
+}

@@ -1,5 +1,5 @@
 import { TemplateTypeEnum } from "./enuns/TemplateTypeEnum";
 
 export class CriarTemplateDTO {
-    constructor(readonly templateDesc: string, readonly templateType: TemplateTypeEnum) {}
+    constructor(readonly templateDesc: string, readonly templateType: TemplateTypeEnum, readonly gerarCestas?: boolean) {}
 }

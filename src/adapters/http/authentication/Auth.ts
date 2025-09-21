@@ -7,10 +7,15 @@ export class Auth {
     public async authentication(req: Request, res: Response, next: NextFunction): Promise<void> {
         const bearerToken = req.headers.authorization;
         const token = bearerToken?.split(" ")[1];
+        const response = {
+            timestamp: new Date().toISOString(),
+            message: 'Não Autorizado',
+            path: req.path
+        }
         if (token) {
             const security = await this.authQuery.authentication(token);
             if (!security || this.isAccessTokenExpired(security.expiresAt) || security.revoked) {
-                res.status(401).json({ message: 'Unauthorized' });
+                res.status(401).json(response);
                 return;
             }
             const userInfo = await this.authQuery.userInfo(security.userId);
@@ -21,7 +26,7 @@ export class Auth {
             }
             next();
         } else {
-            res.status(401).json({ message: 'Unauthorized' });
+            res.status(401).json(response);
         }
     }
 

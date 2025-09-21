@@ -1,5 +1,6 @@
 import { compare, hash } from 'bcrypt';
 import { randomUUID } from 'crypto';
+import { Logger } from 'pino';
 import { LoginDTO } from "../dto/LoginDTO";
 import { LoginResponseDTO, PermissinSecurityDTO, UserDTO } from "../dto/LoginResponseDTO";
 import { RefreshTokenDTO } from "../dto/RefreshTokenDTO";
@@ -12,11 +13,16 @@ import { AuthRepository } from '../port/out/AuthRepository';
 import { UnauthorizedException } from '../exceptions/UnauthorizedException';
 
 export class AuthService implements AuthUseCase {
+    private readonly logger: Logger;
+
     constructor(
+        logger: Logger,
         private readonly userRepository: UserRepository,
         private readonly securityRepository: SecurityRepository,
         private readonly authRepository: AuthRepository
-    ) {}
+    ) {
+        this.logger = logger.child({service: "AuthUseCase"})
+    }
 
     public async login(dto: LoginDTO): Promise<LoginResponseDTO> {
         const user = await this.userRepository.findUserByNickName(dto.nickName);
@@ -34,6 +40,7 @@ export class AuthService implements AuthUseCase {
     public async refreshToken(dto: RefreshTokenDTO): Promise<RefreshTokenResponseDTO> {
         const security = await this.authRepository.validateRefreshToken(dto.refreshToken);
         if (!security || this.isRefreshTokenExpired(security.expiresAt) || security.revoked) {
+            this.logger.error({ token: dto.refreshToken }, "Token invalido, expirado ou revogado");
             throw new UnauthorizedException("Token inválido, expirado ou revogado");
         }
         const revokedToken = await this.securityRepository.findTokenByUserId(security.user.userId);
