@@ -6,7 +6,7 @@ import { StatusCestaEntity } from "./StatusCestaEntity";
 @Entity('tps_cesta_gerada')
 export class CestaGeradaEntity {
   @PrimaryGeneratedColumn({ name: 'id_cesta' })
-  id: number;
+  id: number | null;
 
   @ManyToOne(() => TemplateEntity)
   @JoinColumn({ name: 'id_template' })
@@ -24,7 +24,7 @@ export class CestaGeradaEntity {
   status: StatusCestaEntity;
 
   constructor(
-    id: number,
+    id: number | null,
     dataCriacao: Date,
     familia: FamiliaEntity | null,
     template: TemplateEntity,

@@ -7,14 +7,14 @@ export class StatusCestaEntity {
   id: number;
 
   @Column({ name: 'status_cesta', type: 'varchar', unique: true })
-  statusDesc: string;
+  statusDesc: string | null;
 
   @OneToMany(() => CestaGeradaEntity, cestaGerada => cestaGerada.status)
   cestasGeradas: CestaGeradaEntity[];
 
   constructor(
     id: number,
-    statusDesc: string,
+    statusDesc: string | null,
     cestasGeradas: CestaGeradaEntity[]
   ) {
     this.id = id;

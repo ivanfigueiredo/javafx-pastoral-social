@@ -1,21 +1,26 @@
-import { Repository } from "typeorm";
+import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 import { ItemTemplateRepository } from "../../application/port/out/ItemTemplateRepository";
 import { ItemTemplateEntity } from "./entities/ItemTemplateEntity";
-import { Connection } from "./database/Connection";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
+import { Logger } from "pino";
 
 export class ItemTemplatePostgresDatabase implements ItemTemplateRepository {
-    private readonly itemTemplateRepository: Repository<ItemTemplateEntity>;
+    private readonly logger: Logger;
 
     constructor(
-        private readonly connection: Connection,
+        logger: Logger,
         private readonly unitOfWork: UnitOfWork
     ) {
-        this.itemTemplateRepository = this.connection.getDataSourcer().getRepository(ItemTemplateEntity);
+        this.logger = logger.child({service: "ItemTemplatePostgresDatabase"})
     }
 
-    public async save(itemTemplate: ItemTemplateEntity): Promise<void> {
-        await this.unitOfWork.transaction(ItemTemplateEntity, itemTemplate);
+    public async save(itemTemplate: ItemTemplateEntity): Promise<ItemTemplateEntity> {
+        try {
+           return await this.unitOfWork.transaction(ItemTemplateEntity, itemTemplate);
+        } catch (e: any) {
+            this.logger.error({err: e.message}, "Erro ao persistir itens template")
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
     }
     
 }

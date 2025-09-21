@@ -3,11 +3,20 @@ import { TemplateRepository } from "../../application/port/out/TemplateRepositor
 import { TemplateEntity } from "./entities/TemplateEntity";
 import { Connection } from "./database/Connection";
 import { CriarTemplateDTO } from "../../application/dto/CriarTemplateDTO";
+import { UnitOfWork } from "./unitOfWork/UnitOfWork";
+import { Logger } from "pino";
+import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 
 export class TemplatePostgresDatabase implements TemplateRepository {
     private readonly templateRepository: Repository<TemplateEntity>;
+    private readonly logger: Logger;
 
-    constructor(private readonly connection: Connection) {
+    constructor(
+        logger: Logger,
+        private readonly connection: Connection,
+        private readonly unitOfWork: UnitOfWork
+    ) {
+        this.logger = logger.child({service: "TemplatePostgresDatabase"})
         this.templateRepository = this.connection.getDataSourcer().getRepository(TemplateEntity);
     }
 
@@ -16,7 +25,11 @@ export class TemplatePostgresDatabase implements TemplateRepository {
     }
 
     public async save(dto: CriarTemplateDTO): Promise<TemplateEntity> {
-        const output = await this.templateRepository.save(new TemplateEntity(null, dto.templateDesc, dto.templateType, []));
-        return output;
+        try {
+            return await this.unitOfWork.transaction(TemplateEntity, new TemplateEntity(null, dto.templateDesc, dto.templateType, []));
+        } catch (e: any) {
+            this.logger.error({err: e.message}, "Erro ao persistir template")
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
     }
 }

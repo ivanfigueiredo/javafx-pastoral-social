@@ -13,7 +13,6 @@ import { ItemProdutoEntity } from "./entities/ItemProdutoEntity";
 import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 import { TemplateItemDTO } from "../../application/dto/TemplateItemDTO";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
-import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 
 export class EstoquePostgresDatabase implements EstoqueRepository {
     private readonly estoqueRepository: Repository<EstoqueEntity>;

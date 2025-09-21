@@ -7,13 +7,17 @@ import { EstoqueUseCase } from "../../application/port/in/EstoqueUseCase";
 import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
 import { ConsultaGeracaoTemplateDTO } from "../../application/dto/ConsultaGeracaoTemplateDTO";
 import { GeracaoModeloTemplateDTO } from "../../application/dto/GeracaoModeloTemplateDTO";
+import { AuditProxy } from "../../application/port/in/AuditProxy";
+import { UserLogged } from "../http/types/express";
+import { ModeloTemplateCriadoResponse } from "../../application/dto/ModeloTemplateCriadoResponseDTO";
 
 export class EstoqueController {
      constructor(
             readonly httpClient: HttpClient,
             readonly auth: Auth,
             readonly authorize: Authorize,
-            readonly estoqueUseCase: EstoqueUseCase
+            readonly estoqueUseCase: EstoqueUseCase,
+            readonly gerarModeloTemplateProxy: AuditProxy<GeracaoModeloTemplateDTO, ModeloTemplateCriadoResponse>
         ) {
             httpClient.on(
                 "post", 
@@ -33,10 +37,8 @@ export class EstoqueController {
             httpClient.on(
                 "post", 
                 "/estoque/consulta-geracao-template", 
-                // auth.authentication.bind(auth),
-                // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
-                (req: Request, res: Response, next: NextFunction) => next(),
-                (req: Request, res: Response, next: NextFunction) => next(),
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ConsultarGeracaoModelo),
                 async function (params: any, data: ConsultaGeracaoTemplateDTO) {
                     const output = await estoqueUseCase.consultarGeracaoTemplate(data);
                     return {
@@ -50,12 +52,10 @@ export class EstoqueController {
             httpClient.on(
                 "post", 
                 "/estoque/geracao-modelo-template", 
-                // auth.authentication.bind(auth),
-                // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
-                (req: Request, res: Response, next: NextFunction) => next(),
-                (req: Request, res: Response, next: NextFunction) => next(),
-                async function (params: any, data: GeracaoModeloTemplateDTO) {
-                    const output = await estoqueUseCase.gerarModeloTemplate(data);
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CriarModeloTemplate),
+                async function (params: any, data: GeracaoModeloTemplateDTO, userLogged?: UserLogged) {
+                    const output = await gerarModeloTemplateProxy.execute(data, ActionType.CriarModeloTemplate, userLogged!);
                     return {
                         statusCode: 201,
                         timeStampe: new Date().toISOString(),

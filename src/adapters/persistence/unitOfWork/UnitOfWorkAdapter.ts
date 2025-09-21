@@ -3,12 +3,18 @@ import { UnitOfWorkPort } from '../../../application/port/out/UnitOfWorkPort';
 import { Connection } from '../database/Connection';
 import { UnitOfWork } from './UnitOfWork';
 import { InternalServerErrorException } from '../../../application/exceptions/InternalServerErrorException';
+import { Logger } from 'pino';
 
 
 export class UnitOfWorkAdapter implements UnitOfWork, UnitOfWorkPort {
   private readonly queryRunner: QueryRunner;
+  private readonly logger: Logger;
 
-  public constructor(private readonly connection: Connection) {
+  public constructor(
+    logger: Logger,
+    private readonly connection: Connection
+  ) {
+    this.logger = logger.child({service: "UnitOfWork"});
     this.queryRunner = this.connection.getDataSourcer().createQueryRunner();
     this.queryRunner.connect();
   }
@@ -17,12 +23,13 @@ export class UnitOfWorkAdapter implements UnitOfWork, UnitOfWorkPort {
     try {
       await this.queryRunner.startTransaction();
     } catch (error: any) {
+      this.logger.error({err: error.message}, "Erro ao iniciar uma transacao");
       throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
     }
   }
 
-  public async transaction<T extends ObjectLiteral>(entityTarget: EntityTarget<T>, data: DeepPartial<T>): Promise<void> {
-    await this.queryRunner.manager.save(entityTarget, data);
+  public async transaction<T extends ObjectLiteral>(entityTarget: EntityTarget<T>, data: DeepPartial<T>): Promise<T> {
+    return await this.queryRunner.manager.save(entityTarget, data);
   }
 
   public async transactionMany<T extends ObjectLiteral>(entityTarget: EntityTarget<T>, data: DeepPartial<T>[]): Promise<void> {
@@ -37,6 +44,7 @@ export class UnitOfWorkAdapter implements UnitOfWork, UnitOfWorkPort {
     try {
       await this.queryRunner.commitTransaction()
     } catch (error: any) {
+      this.logger.error({err: error.message}, "Erro ao commitar uma transacao");
       throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
     }
   }

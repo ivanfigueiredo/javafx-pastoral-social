@@ -1,4 +1,5 @@
 import { Repository } from "typeorm";
+import { Logger } from 'pino';
 import { AuditoriaRepository } from "../../application/port/out/AuditoriaRepository";
 import { AuditoriaEntity } from "./entities/AuditoriaEntity";
 import { Connection } from "./database/Connection";
@@ -6,8 +7,13 @@ import { InternalServerErrorException } from "../../application/exceptions/Inter
 
 export class AuditoriaPostgresDatabase implements AuditoriaRepository {
     private readonly auditoriaRepository: Repository<AuditoriaEntity>;
+    private readonly logger: Logger;
 
-    constructor(private readonly connection: Connection) {
+    constructor(
+        private readonly connection: Connection,
+        logger: Logger
+    ) {
+        this.logger = logger.child({service: 'AuditoriaPostgresDatabase'});
         this.auditoriaRepository = this.connection.getDataSourcer().getRepository(AuditoriaEntity);
     }
 
@@ -15,7 +21,7 @@ export class AuditoriaPostgresDatabase implements AuditoriaRepository {
         try {
             await this.auditoriaRepository.save(auditoriaEntity);
         } catch(error: any) {
-            console.log(`Error ==>> ${JSON.stringify(error)}`);
+            this.logger.error({ err: error.message }, "Erro inesperado");
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
