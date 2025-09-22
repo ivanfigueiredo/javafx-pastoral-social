@@ -1,0 +1,477 @@
+openapi: 3.0.3
+info:
+  title: Backend Pastoral Social
+  description: Modelo de Swagger com autenticação Bearer Token
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:5000
+    description: Servidor local de desenvolvimento
+
+paths:
+  /security/login:
+    post:
+      tags:
+        - Security
+      summary: Login do usuário
+      description: Retorna um token Opaque Token para autenticação
+      requestBody:
+        $ref: '#/components/requestBodies/reqLoginDTO'
+      responses:
+        '200':
+          $ref: '#/components/responses/resLoginResponseDTO'
+
+  /security/refresh/token:
+    post:
+      tags:
+        - Security
+      summary: Refresh Token
+      description: Retorna um novo token de acesso e refresh token
+      requestBody:
+        $ref: '#/components/requestBodies/reqRefreshTokenDTO'
+      responses:
+        '200':
+          $ref: '#/components/responses/resRefreshTokenDTO'
+
+
+  /estoque/cadastrar:
+    post:
+      tags:
+        - Estoque
+      summary: Cadastrar Estoque
+      security:
+        - BearerAuth: []
+      description: Cadastra um novo estoque
+      requestBody:
+        $ref: '#/components/requestBodies/reqCadastrarEstoqueDTO'
+      responses:
+        '204':
+          description: Estoque cadastrado com sucesso
+
+  /estoque/consulta-geracao-template:
+    post:
+      tags:
+        - Estoque
+      security:
+        - BearerAuth: []
+      summary: Consultar disponibilidade para geração de modelo template
+      description: Consultar disponibilidade modelo template
+      requestBody:
+        $ref: '#/components/requestBodies/reqConsultaGeracaoModeloTemplateDTO'
+      responses:
+        '200':
+          $ref: '#/components/responses/resConsultaGeracaoModeloTemplateDTO'
+  
+  /estoque/geracao-modelo-template:
+    post:
+      tags:
+        - Estoque
+      security:
+        - BearerAuth: []
+      summary: Gerar modelo template
+      description: Gerar modelo template
+      requestBody:
+        $ref: '#/components/requestBodies/reqGerarModeloTemplateDTO'
+      responses:
+        '200':
+          $ref: '#/components/responses/resGerarModeloTemplateDTO'
+
+  /und-medidas/listas:
+    get:
+      tags:
+        - Estoque
+      security:
+        - BearerAuth: []
+      summary: Listar unidade de medidas
+      description: Lista unidade de medidas
+      responses:
+        '200':
+          $ref: '#/components/responses/resListaUnidadeMedidasDTO'
+
+  /estoque/localizacao/listar:
+    get:
+      tags:
+        - Estoque
+      security:
+        - BearerAuth: []
+      summary: Listar localização de produtos
+      description: Lista as localizações dos produtos
+      responses:
+        '200':
+          $ref: '#/components/responses/resListaLocalizacaoDTO'
+
+
+components:
+  requestBodies:
+    reqLoginDTO:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/LoginDTO'
+
+    reqCadastrarEstoqueDTO:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CadastrarEstoqueDTO'
+
+    reqRefreshTokenDTO:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/RefreshTokenDTO'
+
+    reqConsultaGeracaoModeloTemplateDTO:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ConsultaGeracaoTemplateDTO'
+
+    reqGerarModeloTemplateDTO:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/GerarModeloTemplateDTO'
+  
+  responses:
+    resLoginResponseDTO:
+      description: Login realizado com sucesso
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/LoginResponseDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+
+    resRefreshTokenDTO:
+      description: Requisição realizada com sucesso
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/ResponseRefreshTokenDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+
+    resConsultaGeracaoModeloTemplateDTO:
+      description: Modelo template consultado com sucesso
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/ResponseConsultaGeracaoModeloTemplateDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+
+    resGerarModeloTemplateDTO:
+      description: Modelo template gerado com sucesso
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/ResponseGeracaoModeloTemplateDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+
+    resListaUnidadeMedidasDTO:
+      description: Lista Unidade de Medidas
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/ResponseListaUnidadeMedidasDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+
+    resListaLocalizacaoDTO:
+      description: Lista localização dos produtos
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/ResponseListaLocalizacaoDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+            
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Opaque Token
+
+  schemas:
+    ResponseRefreshTokenDTO:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+
+    RefreshTokenDTO:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+      required:
+        - refreshToken
+
+    LoginDTO:
+      type: object
+      properties:
+        nickName:
+          type: string
+          example: thiago@example.com
+        senha:
+          type: string
+          example: senha123
+      required:
+        - nickName
+        - senha
+
+    LoginResponseDTO:
+      type: object
+      properties:
+        user: 
+          $ref: '#/components/schemas/UserDTO'
+        security:
+          $ref: '#/components/schemas/PermissinSecurityDTO'
+    
+    UserDTO:
+      type: object
+      properties: 
+        userId:
+          type: number
+          example: 1231
+        nickName:
+          type: string
+        permissions:
+          type: array
+          items:
+            type: string
+            example: ["cadastrar_familia", "cadastrar_item_estoque"]
+      required:
+        - userId
+        - nickName
+        - permissions
+
+    PermissinSecurityDTO:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+      required:
+        - accessToken
+        - refreshToken
+
+    CadastrarEstoqueDTO:
+      type: object
+      properties:
+        validade:
+          type: string
+          example: "2025-09-21"
+          format: date
+        itemProdutoId:
+          type: number
+          example: 12345
+        idLocalizacao:
+          type: number
+          example: 12345
+        idUnidadeMedida:
+          type: number
+          example: 12345
+      required:
+        - validade
+        - itemProdutoId
+        - idLocalizacao
+        - idUnidadeMedida
+
+    ConsultaGeracaoTemplateDTO:
+      type: object
+      properties:
+        templateItens:
+          type: array
+          items:
+            type: object
+            properties:
+              itemProdutoId:
+                type: number
+              quantidade:
+                type: number
+            required:
+              - itemProdutoId
+              - quantidade
+      required:
+        - templateItens
+
+    ResponseConsultaGeracaoModeloTemplateDTO:
+      type: object
+      properties:
+        quantidadePossivel:
+          type: number
+          example: 50
+      required:
+        - quantidadePossivel
+
+    ResponseGeracaoModeloTemplateDTO:
+      type: object
+      properties:
+        templateId:
+          type: number
+          example: 124
+      required:
+        - templateId
+
+    GerarModeloTemplateDTO:
+      type: object
+      properties:
+        qtdGeracaoPossivel:
+          type: number
+          example: 50
+        template:
+          $ref: '#/components/schemas/CriarTemplateDTO'
+        templateItens:
+          $ref: '#/components/schemas/TemplateItemDTO'
+      required:
+        - qtdGeracaoPossivel
+        - template
+        - templateItens
+
+    TemplateItemDTO:
+      type: array
+      items:
+        type: object
+        properties:
+          itemProdutoId:
+            type: number
+            example: 1414
+          quantidade:
+            type: number
+        required:
+          - itemProdutoId
+          - quantidade
+        
+
+    CriarTemplateDTO:
+      type: object
+      properties:
+        templateDesc:
+          type: string
+        templateType:
+          type: string
+          enum: ['CESTA_BASICA', 'JANTA', 'ALMOCO']
+        gerarCestas:
+          type: boolean
+          description: "Campo opcional utilizado para gerar cestas básicas também"
+      required:
+        - templateDesc
+        - templateType
+
+    ResponseListaUnidadeMedidasDTO:
+      type: array
+      items:
+        type: object
+        properties:
+          idUnidadeDeMedida:
+            type: number
+          descricao:
+            type: string
+        required:
+          - idUnidadeDeMedida
+          - descricao
+
+    ResponseListaLocalizacaoDTO:
+      type: array
+      items:
+        type: object
+        properties:
+          idLocalizacao:  
+            type: number
+          descricao:
+            type: string
+        required:
+          - idLocalizacao
+          - descricao
+
+
+  
+
+
