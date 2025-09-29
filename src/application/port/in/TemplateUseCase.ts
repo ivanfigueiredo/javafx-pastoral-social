@@ -1,7 +1,6 @@
-import { CriarTemplateDTO } from "../../dto/CriarTemplateDTO";
-import { TemplateCreatedDTO } from "../../dto/TemplateCreatedDTO";
+import { GetTemplatesDTO } from "../../dto/GetTemplatesDTO";
 
 export interface TemplateUseCase {
     getDetalheTemplate(templateId: number): Promise<any>;
-    listarTemplates(): Promise<any>;
+    listarTemplates(dto: GetTemplatesDTO): Promise<any>;
 }

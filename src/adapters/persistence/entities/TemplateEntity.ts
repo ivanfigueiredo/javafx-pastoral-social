@@ -10,21 +10,21 @@ export class TemplateEntity {
   @Column({ name: 'template_desc', type: 'varchar' })
   descricao: string;
 
-  @Column({ name: 'template_type', type: 'varchar', enum: TemplateTypeEnum })
+  @Column({ name: 'template_type', type: 'enum', enum: TemplateTypeEnum })
   templateType: TemplateTypeEnum;
 
   @OneToMany(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.template)
-  cestas: AcaoSocialTemplateEntity[];
+  acoes: AcaoSocialTemplateEntity[];
 
   constructor(
     id: number | null,
     descricao: string,
     templateType: TemplateTypeEnum,
-    cestas: AcaoSocialTemplateEntity[]
+    acoes: AcaoSocialTemplateEntity[]
   ) {
     this.id = id;
     this.descricao = descricao;
     this.templateType = templateType;
-    this.cestas = cestas;
+    this.acoes = acoes;
   }
 }
