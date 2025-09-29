@@ -32,4 +32,24 @@ export class TemplatePostgresDatabase implements TemplateRepository {
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
+
+    public async findPaginatedTemplate(page: number, pageSize: number): Promise<[TemplateEntity[], number]> {
+        const currentPage = (page && page > 1) ? page : 1;
+        const currentPageSize = (pageSize && pageSize > 10) ? pageSize : 10;
+        return this.templateRepository.findAndCount({
+            skip: (currentPage - 1) * pageSize,
+            take: currentPageSize,
+            order: { id: "ASC" },
+            relations: {
+                acoes: {
+                    itensTemplate: {
+                        acaoSocialTemplate: true, 
+                        estoque: {
+                            itemProduto : true
+                        }
+                    }
+                }
+            }
+        });
+    }
 }

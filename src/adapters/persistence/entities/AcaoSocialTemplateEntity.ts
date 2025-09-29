@@ -1,14 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 import { TemplateEntity } from "./TemplateEntity";
 import { ItemTemplateEntity } from "./ItemTemplateEntity";
-import { ItemProdutoEntity } from "./ItemProdutoEntity";
 
 @Entity('tps_acao_social_template')
 export class AcaoSocialTemplateEntity {
     @PrimaryGeneratedColumn({ name: 'id_acao_social_template' })
     id: number | null;
 
-    @ManyToOne(() => TemplateEntity, template => template.cestas)
+    @ManyToOne(() => TemplateEntity, template => template.acoes)
     @JoinColumn({ name: 'id_template' })
     template: TemplateEntity;
 
