@@ -25,7 +25,6 @@ export class FamiliaMapper {
             new Date(),
             new ComunidadeEntity(dto.idComunidade),
             [],
-            [],
             []
         );
     }

@@ -99,10 +99,67 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/resListaLocalizacaoDTO'
+  
+  /familia/cadastrar:
+    post:
+      tags:
+        - Familia
+      security:
+        - BearerAuth: []
+      summary: Cadastrar familia
+      description: Cadastra familia
+      requestBody:
+        $ref: '#/components/requestBodies/reqCadastrarFamiliaDTO'
+      responses:
+        '204':
+          description: Estoque cadastrado com sucesso
+
+  /dificuldade/listar:
+    get:
+      tags:
+        - Familia
+      security:
+        - BearerAuth: []
+      summary: Listar dificuldades
+      description: Listar dificuldades
+      responses:
+        '200':
+          $ref: '#/components/responses/resListarDificuldadesDTO'
+
+  /template/lista:
+    get:
+      tags:
+        - Template
+      security:
+        - BearerAuth: []
+      summary: Listar templates
+      description: Listagem paginada dos templates
+      responses:
+        '200':
+          $ref: '#/components/responses/resListarTemplatesPaginadosDTO'
+  
+  /estoque/listar:
+    get:
+      tags:
+        - Estoque
+      security:
+        - BearerAuth: []
+      summary: Listar estoque
+      description: Listagem de estoque
+      responses:
+        '200':
+          $ref: '#/components/responses/resListarEstoqueDTO'
 
 
 components:
   requestBodies:
+    reqCadastrarFamiliaDTO:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/CadastrarFamiliaDTO'
+
     reqLoginDTO:
       required: true
       content:
@@ -139,6 +196,66 @@ components:
             $ref: '#/components/schemas/GerarModeloTemplateDTO'
   
   responses:
+    resListarEstoqueDTO:
+      description: Listar estoque
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/ListarEstoqueDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+    resListarTemplatesPaginadosDTO:
+      description: Listar templates paginados
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/PaginatedTemplatesDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
+    resListarDificuldadesDTO:
+      description: Listar dificuldades
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              statusCode:
+                type: number
+                example: 200
+              timestamp:
+                type: string
+                format: date-time
+                example: "2025-09-21T16:42:22.818Z"
+              data:
+                $ref: '#/components/schemas/ListarDificuldadesDTO'
+            required:
+              - statusCode
+              - timestamp
+              - data
     resLoginResponseDTO:
       description: Login realizado com sucesso
       content:
@@ -273,6 +390,144 @@ components:
       bearerFormat: Opaque Token
 
   schemas:
+    ListarEstoqueDTO:
+      type: array
+      items:
+        type: object
+        properties:
+          idEstoque:
+            type: number
+          validade:
+            type: string
+            format: date
+            example: '2025-08-22'
+          entrada:
+            type: string
+            format: date
+          saida:
+            type: string
+            format: date
+          itemProduto:
+            $ref: '#/components/schemas/ItemProdutoDTO'
+          localizacao:
+            $ref: '#/components/schemas/LocalizacaoDTO'
+          unidadeDeMedida:
+            $ref: '#/components/schemas/UnidadeDeMedidaDTO'
+        required:
+          - idEstoque
+          - validade
+          - entrada
+          - itemProduto
+          - localizacao
+          - unidadeDeMedida
+    UnidadeDeMedidaDTO:
+      type: object
+      properties:
+        idUnidadeDeMedida:
+          type: number
+        descricao:
+          type: string
+      required:
+        - idUnidadeDeMedida
+        - descricao
+    LocalizacaoDTO:
+      type: object
+      properties:
+        idLocalizacao:
+          type: number
+        descricao:
+          type: string
+      required:
+        - idLocalizacao
+        - descricao
+    ItemProdutoDTO:
+      type: object
+      properties:
+        idItemProduto:
+          type: number
+        descricao:
+          type: string
+      required:
+        - idItemProduto
+        - descricao
+    PaginatedTemplatesDTO:
+      type: object
+      properties:
+        paginaAtual:
+          type: number
+        totalItens:
+          type: number
+        totalPaginas:
+          type: number
+        result: 
+          type: object
+          properties:
+            idTemplate:
+              type: number
+            descricao:  
+              type: string
+            qtdPossivelGeracao:
+              type: number
+          required:
+            - idTemplate
+            - descricao
+            - qtdPossivelGeracao
+      required:
+        - paginaAtual
+        - totalItens
+        - totalPaginas
+        - result
+    ListarDificuldadesDTO:
+      type: array
+      items:
+        type: object
+        properties:
+          idDificuldade:
+            type: number
+          descricao:
+            type: string
+        required:
+          - idDificuldade
+          - descricao
+    CadastrarFamiliaDTO:
+      type: object
+      properties:
+        nomeRepresentante:
+          type: string
+        idade: 
+          type: number
+        idComunidade:
+          type: number
+        idDificuldade:
+          type: number
+        cpfRg:
+          type: string
+        telefone:
+          type: string
+        endereco:
+          type: string
+        qtdPessoasResidencia:
+          type: number
+        qtdPessoasEmpregadas:
+          type: number
+        criancasFrequentamEscola:
+          type: boolean
+        membroComProblemaSaude:
+          type: boolean
+        jaRecebeuAjuda:
+          type: boolean
+        desejaParticiparCursos:
+          type: boolean
+        observacao:
+          type: string
+        outros:
+          type: string
+      required:
+        - nomeRepresentante
+        - idade
+        - idComunidade
+        - idDificuldade
+      
     ResponseRefreshTokenDTO:
       type: object
       properties:

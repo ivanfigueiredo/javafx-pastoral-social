@@ -4,7 +4,7 @@ import { UnidadeDeMedidadDTO } from "./UnidadeDeMedidaDTO";
 
 export class EstoqueDTO {
     constructor(
-        readonly idAlimento: number, 
+        readonly idEstoque: number, 
         readonly validade: Date,
         readonly entrada: Date,
         readonly saida: Date | null,

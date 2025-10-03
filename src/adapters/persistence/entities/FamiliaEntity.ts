@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne } from "typeorm";
 import { FamiliaDificuldadeEntity } from "./FamiliaDificuldadeEntity";
 import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
-import { CestaGeradaEntity } from "./CestaGeradaEntity";
 import { ComunidadeEntity } from "./ComunidadeEntity";
 
 @Entity('tps_familia')
@@ -54,9 +53,6 @@ export class FamiliaEntity {
   @OneToMany(() => AjudaRecebidaEntity, (ar) => ar.familia)
   ajudasRecebidas: AjudaRecebidaEntity[];
 
-  @OneToMany(() => CestaGeradaEntity, (cg) => cg.familia)
-  cestasGeradas: CestaGeradaEntity[];
-
   @ManyToOne(() => ComunidadeEntity, comunidadeEntity => comunidadeEntity.familiasComunidade)
   @JoinColumn({ name: 'id_comunidade' })
   comunidade: ComunidadeEntity;
@@ -78,7 +74,6 @@ export class FamiliaEntity {
     comunidade: ComunidadeEntity,
     dificuldades: FamiliaDificuldadeEntity[],
     ajudasRecebidas: AjudaRecebidaEntity[],
-    cestasGeradas: CestaGeradaEntity[]
   ) {
     this.nomeRepresentante = nomeRepresentante;
     this.idade = idade;
@@ -95,7 +90,6 @@ export class FamiliaEntity {
     this.dataCadastro = dataCadastro;
     this.dificuldades = dificuldades;
     this.ajudasRecebidas = ajudasRecebidas;
-    this.cestasGeradas = cestasGeradas;
     this.comunidade = comunidade;
   }
 }

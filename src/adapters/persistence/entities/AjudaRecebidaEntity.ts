@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "typeorm";
 import { TipoAjudaEntity } from "./TipoAjudaEntity";
 import { FamiliaEntity } from "./FamiliaEntity";
+import { CestaGeradaEntity } from "./CestaGeradaEntity";
 
 @Entity('tps_ajuda_recebida')
 export class AjudaRecebidaEntity {
@@ -14,6 +15,10 @@ export class AjudaRecebidaEntity {
   @ManyToOne(() => TipoAjudaEntity, tipo => tipo.ajudas)
   @JoinColumn({ name: 'id_tipo_ajuda' })
   tipoAjuda: TipoAjudaEntity;
+
+  @ManyToOne(() => CestaGeradaEntity, cesta => cesta.ajudas)
+  @JoinColumn({ name: 'id_cesta_gerada' })
+  cestaGerada: CestaGeradaEntity | null;
 
   @Column({ name: 'data_entrega', nullable: true, type: 'date' })
   dataEntrega: Date | null;
@@ -38,7 +43,8 @@ export class AjudaRecebidaEntity {
     autoridadeNome: string | null,
     observacao: string | null,
     familia: FamiliaEntity,
-    tipoAjuda: TipoAjudaEntity
+    tipoAjuda: TipoAjudaEntity,
+    cestaGerada: CestaGeradaEntity | null
   ) {
     this.id = id;
     this.dataEntrega = dataEntrega;
@@ -48,5 +54,6 @@ export class AjudaRecebidaEntity {
     this.familia = familia;
     this.observacao = observacao;
     this.tipoAjuda = tipoAjuda;
+    this.cestaGerada = cestaGerada;
   }
 }

@@ -60,24 +60,8 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
     }
 
     public async findEstoque(): Promise<EstoqueDTO[]> {
-        const listEstoque = await this.estoqueRepository.createQueryBuilder('tea')
-            .leftJoin('tea.itemProduto', 'tip')
-            .leftJoin('tea.localizacao', 'tle')
-            .leftJoin('tea.unidadeMedida', 'tum')
-            .select([
-                'tea.id',
-                'tea.validade',
-                'tea.dataEntrada',
-                'tea.dataSaida',
-                'tip.id',
-                'tip.itemProdutoDesc',
-                'tle.id',
-                'tle.localizacaoDesc',
-                'tum.id',
-                'tum.undMedidas'
-            ])
-            .getMany();
-            return EstoqueMapper.toEstoqueDTO(listEstoque);
+        const estoqueLista = await this.estoqueRepository.find({relations: {itemProduto: {unidadeMedida: true}, localizacao: true}});
+        return EstoqueMapper.toEstoqueDTO(estoqueLista);
     }
 
     public async findEstoqueByItemProdutoIdAndQtdGeracaoTemplate(itemProdutoId: number, qtdGeracaoTemplate: number): Promise<EstoqueEntity[]> {
