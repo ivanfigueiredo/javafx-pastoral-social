@@ -52,7 +52,7 @@ config();
     const estoqueService = new EstoqueService(logger, estoquePostgres, acaoSocialTemplate, itemTemplateRepository, templateRepository, cestaGeradaRepository, unitOfWork);
     const templateService = new TemplateService(templateRepository, estoqueService);
     const consultarFamiliaService = new ConsultarFamiliaService(familiaRepository);
-    const cadastrarFamiliaService = new CadastrarFamiliaService(familiaRepository);
+    const cadastrarFamiliaService = new CadastrarFamiliaService(logger, familiaRepository);
     const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
     const gerarModeloTemplateProxy = new GerarModeloTemplateProxy(logger, estoqueService, auditoriaRepository);
     const authUseCase = new AuthService(logger, userRepository, securityRepository, authRepository);

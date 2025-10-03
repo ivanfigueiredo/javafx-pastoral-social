@@ -85,7 +85,7 @@ export class EstoqueController {
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarEstoque),
                 async function (params: any, data: any) {
-                    const output = await estoqueUseCase.listarAlimentos();
+                    const output = await estoqueUseCase.listarEstoque();
                     return {
                         statusCode: 200,
                         timeStampe: new Date().toISOString(),

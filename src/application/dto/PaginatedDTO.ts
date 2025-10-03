@@ -3,6 +3,6 @@ export class PaginatedDTO {
         readonly paginaAtual: number, 
         readonly totalItens: number, 
         readonly totalPaginas: number,
-        readonly data: any
+        readonly result: any
     ) {}
 }

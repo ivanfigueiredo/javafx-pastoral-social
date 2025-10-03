@@ -42,13 +42,17 @@ export class EstoqueService implements EstoqueUseCase {
     public async cadastrar(dto: CadastroEstoqueDTO): Promise<void> {
         try {
             await this.estoqueRepository.save(dto);
-        } catch (error) {}
+        } catch (e: any) {
+            this.logger.error({ err: e.message }, 'Erro ao persistir ')
+        }
     };
 
     public async deletar(idEstoque: number): Promise<void> {
         try {
             await this.estoqueRepository.deleteOne(idEstoque);
-        } catch (error) {}
+        } catch (e: any) {
+            this.logger.error({ err: e.message }, 'Erro ao persistir ')
+        }
     }
 
     public async listarUnidadeMedida(): Promise<UnidadeDeMedidadDTO[]> {
@@ -63,7 +67,7 @@ export class EstoqueService implements EstoqueUseCase {
         return await this.estoqueRepository.findITemProduto();
     }
 
-    public async listarAlimentos(): Promise<EstoqueDTO[]> {
+    public async listarEstoque(): Promise<EstoqueDTO[]> {
         return await this.estoqueRepository.findEstoque();
     }
 
@@ -101,7 +105,7 @@ export class EstoqueService implements EstoqueUseCase {
                     this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
                     if (dto.template.gerarCestas) {
                         const statusCesta = new StatusCestaEntity(StatusCestaEnum.CRIADA, null, []);
-                        const gerarCestas = new CestaGeradaEntity(null, new Date(), null, templateEntity, statusCesta);
+                        const gerarCestas = new CestaGeradaEntity(null, new Date(), null, templateEntity, statusCesta, []);
                         cestas.push(gerarCestas);
                     }
                 }
