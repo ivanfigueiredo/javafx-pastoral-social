@@ -34,7 +34,20 @@ export class EstoqueMapper {
     }
 
     public static toItemProdutoDTO(iterator: ItemProdutoEntity[]): ItemProdutoDTO[] {
-        return iterator.map(itemProduto => new ItemProdutoDTO(itemProduto.id, itemProduto.itemProdutoDesc));
+        return iterator.map(itemProduto => new ItemProdutoDTO(
+            itemProduto.id, 
+            itemProduto.itemProdutoDesc, 
+            itemProduto.estoques.length,
+            (itemProduto.estoques != null && itemProduto.estoques.length > 0) ?
+                itemProduto.estoques.map(estok => new EstoqueDTO(
+                    estok.id,
+                    estok.validade,
+                    estok.dataEntrada, 
+                    estok.dataSaida,
+                    new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc),
+                    new UnidadeDeMedidadDTO(itemProduto.unidadeMedida.id, itemProduto.unidadeMedida.undMedidas))
+                ) : []
+        ));
     }
 
     public static toEstoqueDTO(iterator: EstoqueEntity[]): EstoqueDTO[] {
@@ -43,7 +56,6 @@ export class EstoqueMapper {
             estok.validade, 
             estok.dataEntrada, 
             estok.dataSaida, 
-            new ItemProdutoDTO(estok.itemProduto.id, estok.itemProduto.itemProdutoDesc), 
             new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc), 
             new UnidadeDeMedidadDTO(estok.itemProduto.unidadeMedida.id, estok.itemProduto.unidadeMedida.undMedidas))
         );
