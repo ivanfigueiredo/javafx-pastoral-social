@@ -14,7 +14,7 @@ export class TemplateEntity {
   templateType: TemplateTypeEnum;
 
   @OneToMany(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.template)
-  acoes: AcaoSocialTemplateEntity[];
+  acoes: AcaoSocialTemplateEntity[] = [];
 
   constructor(
     id: number | null,

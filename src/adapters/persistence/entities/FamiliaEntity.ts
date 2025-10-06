@@ -48,12 +48,14 @@ export class FamiliaEntity {
   dataCadastro: Date;
 
   @OneToMany(() => FamiliaDificuldadeEntity, (fd) => fd.familia)
-  dificuldades: FamiliaDificuldadeEntity[];
+  dificuldades: FamiliaDificuldadeEntity[] = [];
 
   @OneToMany(() => AjudaRecebidaEntity, (ar) => ar.familia)
-  ajudasRecebidas: AjudaRecebidaEntity[];
+  ajudasRecebidas: AjudaRecebidaEntity[] = [];
 
-  @ManyToOne(() => ComunidadeEntity, comunidadeEntity => comunidadeEntity.familiasComunidade)
+  @ManyToOne(() => ComunidadeEntity, comunidadeEntity => comunidadeEntity.familiasComunidade, {
+    eager: true
+  })
   @JoinColumn({ name: 'id_comunidade' })
   comunidade: ComunidadeEntity;
 
@@ -73,7 +75,7 @@ export class FamiliaEntity {
     dataCadastro: Date,
     comunidade: ComunidadeEntity,
     dificuldades: FamiliaDificuldadeEntity[],
-    ajudasRecebidas: AjudaRecebidaEntity[],
+    ajudasRecebidas: AjudaRecebidaEntity[]
   ) {
     this.nomeRepresentante = nomeRepresentante;
     this.idade = idade;

@@ -8,15 +8,21 @@ export class AjudaRecebidaEntity {
   @PrimaryGeneratedColumn({ name: 'id_ajuda_recebida' })
   id: number;
 
-  @ManyToOne(() => FamiliaEntity, familia => familia.ajudasRecebidas)
+  @ManyToOne(() => FamiliaEntity, familia => familia.ajudasRecebidas, {
+    eager: true
+  })
   @JoinColumn({ name: 'id_familia' })
   familia: FamiliaEntity;
 
-  @ManyToOne(() => TipoAjudaEntity, tipo => tipo.ajudas)
+  @ManyToOne(() => TipoAjudaEntity, tipo => tipo.ajudas, {
+    eager: true
+  })
   @JoinColumn({ name: 'id_tipo_ajuda' })
   tipoAjuda: TipoAjudaEntity;
 
-  @ManyToOne(() => CestaGeradaEntity, cesta => cesta.ajudas)
+  @ManyToOne(() => CestaGeradaEntity, cesta => cesta.ajudas, {
+    eager: true
+  })
   @JoinColumn({ name: 'id_cesta_gerada' })
   cestaGerada: CestaGeradaEntity | null;
 

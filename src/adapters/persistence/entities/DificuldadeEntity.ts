@@ -10,7 +10,7 @@ export class DificuldadeEntity {
   descricao: string;
 
   @OneToMany(() => FamiliaDificuldadeEntity, (fd) => fd.dificuldade)
-  familias: FamiliaDificuldadeEntity[];
+  familias: FamiliaDificuldadeEntity[] = [];
 
   constructor(
     id: number,

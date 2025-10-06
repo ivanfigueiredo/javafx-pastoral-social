@@ -10,11 +10,15 @@ export class RolePermissionsEntity {
     @PrimaryColumn({ name: 'id_permission', type: 'int' })
     permissionId: number;
     
-    @ManyToOne(() => RoleEntity, (r) => r.rolePermissions)
+    @ManyToOne(() => RoleEntity, (r) => r.rolePermissions, {
+        eager: true
+    })
     @JoinColumn({ name: 'role_id' })
     rolePermission: RoleEntity;
 
-    @ManyToOne(() => PermissionEntity, (p) => p.permissions)
+    @ManyToOne(() => PermissionEntity, (p) => p.permissions, {
+        eager: true
+    })
     @JoinColumn({ name: 'id_permission' })
     permission: PermissionEntity;
 

@@ -6,7 +6,9 @@ export class SecurityEntity {
   @PrimaryGeneratedColumn()
   id: number | null;
 
-  @ManyToOne(() => UserEntity, (u) => u.security)
+  @ManyToOne(() => UserEntity, (u) => u.security, {
+    eager: true
+  })
   @JoinColumn({ name: 'user_id' })
   user: UserEntity;
 

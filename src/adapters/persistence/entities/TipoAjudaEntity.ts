@@ -10,7 +10,7 @@ export class TipoAjudaEntity {
   descricao: string;
 
   @OneToMany(() => AjudaRecebidaEntity, ajuda => ajuda.tipoAjuda)
-  ajudas: AjudaRecebidaEntity[];
+  ajudas: AjudaRecebidaEntity[] = [];
 
   constructor(
     id: number,

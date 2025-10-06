@@ -1,3 +1,4 @@
+import { CronJob } from "cron";
 import { Auth } from "./adapters/http/authentication/Auth";
 import { Authorize } from "./adapters/http/authorization/Authorize";
 import { ExpressAdapter } from "./adapters/http/ExpressAdapter"
@@ -26,8 +27,8 @@ import { CadastrarFamiliaService } from "./application/service/CadastrarFamiliaS
 import { AuditoriaPostgresDatabase } from "./adapters/persistence/AuditoriaPostgresDatabase";
 import { GerarModeloTemplateProxy } from "./application/proxy/GerarModeloTemplateProxy";
 import { loggerAdapter, loggerHTTP } from './adapters/logger';
-import { config } from 'dotenv';
 import { CestaGeradaPostgresDatabase } from "./adapters/persistence/CestaGeradaPostgresDatabase";
+import { config } from 'dotenv';
 config();
 
 (async () => {
@@ -62,6 +63,8 @@ config();
     new MainController(httpClient, authUseCase);
     new EstoqueController(httpClient, auth, authorize, estoqueService, gerarModeloTemplateProxy);
     new FamiliaController(httpClient, auth, authorize, familiaAuditProxy, consultarFamiliaService);
+    const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => console.log("=============>>>>>>>>>>>>>>>> Executou") );
+    notificaProdutoVencidoJob.start();
     const PORT = parseInt(process.env.PORT as string);
     httpClient.listen(PORT, () => console.log(`Rodando na porta: ${PORT}`));
 })()

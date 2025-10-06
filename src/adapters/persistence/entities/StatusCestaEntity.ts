@@ -10,7 +10,7 @@ export class StatusCestaEntity {
   statusDesc: string | null;
 
   @OneToMany(() => CestaGeradaEntity, cestaGerada => cestaGerada.status)
-  cestasGeradas: CestaGeradaEntity[];
+  cestasGeradas: CestaGeradaEntity[] = [];
 
   constructor(
     id: number,

@@ -7,7 +7,9 @@ export class AcaoSocialTemplateEntity {
     @PrimaryGeneratedColumn({ name: 'id_acao_social_template' })
     id: number | null;
 
-    @ManyToOne(() => TemplateEntity, template => template.acoes)
+    @ManyToOne(() => TemplateEntity, template => template.acoes, {
+        eager: true
+    })
     @JoinColumn({ name: 'id_template' })
     template: TemplateEntity;
 
@@ -15,7 +17,7 @@ export class AcaoSocialTemplateEntity {
     quantidade: number;
 
     @OneToMany(() => ItemTemplateEntity, item => item.acaoSocialTemplate)
-    itensTemplate: ItemTemplateEntity[];
+    itensTemplate: ItemTemplateEntity[] = [];
 
     constructor(
         id: number | null,

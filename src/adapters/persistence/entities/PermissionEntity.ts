@@ -10,7 +10,7 @@ export class PermissionEntity {
     action: string;
 
     @OneToMany(() => RolePermissionsEntity, (p) => p.permission)
-    permissions: RolePermissionsEntity[];
+    permissions: RolePermissionsEntity[] = [];
 
     constructor(
         id: number,

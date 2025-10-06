@@ -15,12 +15,14 @@ export class UserEntity {
   password: string;
 
   @OneToMany(() => SecurityEntity, (t) => t.user)
-  security: SecurityEntity[];
+  security: SecurityEntity[] = [];
 
   @OneToMany(() => AuditoriaEntity, auditoria => auditoria.user)
-  auditorias: AuditoriaEntity[];
+  auditorias: AuditoriaEntity[] = [];
 
-  @ManyToOne(() => RoleEntity, (r) => r.users)
+  @ManyToOne(() => RoleEntity, (r) => r.users, {
+    eager: true
+  })
   @JoinColumn({ name: 'role_id' })
   role: RoleEntity | null;
 

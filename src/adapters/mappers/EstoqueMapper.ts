@@ -18,35 +18,34 @@ export class EstoqueMapper {
             dto.validade,
             null,
             null,
-            new LocalizacaoEntity(dto.idLocalizacao),
-            new ItemProdutoEntity(dto.itemProdutoId, '', [], new UnidadeMedidaEntity(dto.idUnidadeMedida, '', []), []),
+            new LocalizacaoEntity(dto.idLocalizacao, null, []),
+            new ItemProdutoEntity(dto.itemProdutoId, null, null, [], []),
+            [],
             []
-
         );
     }
 
     public static toUnidadeDeMedidaDTO(iterator: UnidadeMedidaEntity[]): UnidadeDeMedidadDTO[] {
-        return iterator.map(item => new UnidadeDeMedidadDTO(item.id, item.undMedidas));
+        return iterator.map(item => new UnidadeDeMedidadDTO(item.id, item.undMedidas!));
     }
 
     public static toLocalizacaoDTO(iterator: LocalizacaoEntity[]): LocalizacaoDTO[] {
-        return iterator.map(localizacao => new LocalizacaoDTO(localizacao.id, localizacao.localizacaoDesc));
+        return iterator.map(localizacao => new LocalizacaoDTO(localizacao.id, localizacao.localizacaoDesc!));
     }
 
     public static toItemProdutoDTO(iterator: ItemProdutoEntity[]): ItemProdutoDTO[] {
         return iterator.map(itemProduto => new ItemProdutoDTO(
             itemProduto.id, 
-            itemProduto.itemProdutoDesc, 
+            itemProduto.itemProdutoDesc!, 
             itemProduto.estoques.length,
-            (itemProduto.estoques != null && itemProduto.estoques.length > 0) ?
-                itemProduto.estoques.map(estok => new EstoqueDTO(
-                    estok.id,
-                    estok.validade,
-                    estok.dataEntrada, 
-                    estok.dataSaida,
-                    new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc),
-                    new UnidadeDeMedidadDTO(itemProduto.unidadeMedida.id, itemProduto.unidadeMedida.undMedidas))
-                ) : []
+            itemProduto.estoques.map(estok => new EstoqueDTO(
+                estok.id,
+                estok.validade,
+                estok.dataEntrada, 
+                estok.dataSaida,
+                new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc!),
+                new UnidadeDeMedidadDTO(itemProduto.unidadeMedida!.id, itemProduto.unidadeMedida!.undMedidas!))
+            )
         ));
     }
 
@@ -56,8 +55,8 @@ export class EstoqueMapper {
             estok.validade, 
             estok.dataEntrada, 
             estok.dataSaida, 
-            new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc), 
-            new UnidadeDeMedidadDTO(estok.itemProduto.unidadeMedida.id, estok.itemProduto.unidadeMedida.undMedidas))
+            new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc!), 
+            new UnidadeDeMedidadDTO(estok.itemProduto.unidadeMedida!.id, estok.itemProduto.unidadeMedida!.undMedidas!))
         );
     }
 }
