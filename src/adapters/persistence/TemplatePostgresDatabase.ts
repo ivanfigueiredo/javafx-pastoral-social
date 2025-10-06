@@ -39,17 +39,7 @@ export class TemplatePostgresDatabase implements TemplateRepository {
         return this.templateRepository.findAndCount({
             skip: (currentPage - 1) * pageSize,
             take: currentPageSize,
-            order: { id: "ASC" },
-            relations: {
-                acoes: {
-                    itensTemplate: {
-                        acaoSocialTemplate: true, 
-                        estoque: {
-                            itemProduto : true
-                        }
-                    }
-                }
-            }
+            order: { id: "ASC" }
         });
     }
 }

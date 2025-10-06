@@ -7,14 +7,18 @@ export class LocalizacaoEntity {
   id: number;
 
   @Column({ name: 'localizacao_desc', type: 'varchar', unique: true })
-  localizacaoDesc!: string;
+  localizacaoDesc: string | null;
 
   @OneToMany(() => EstoqueEntity, estoque => estoque.localizacao)
-  alimentos!: EstoqueEntity[];
+  alimentos: EstoqueEntity[] = [];
 
   constructor(
-    id: number
+    id: number,
+    localizacaoDesc: string | null = null,
+    alimentos: EstoqueEntity[]
   ) {
     this.id = id;
+    this.localizacaoDesc = localizacaoDesc;
+    this.alimentos = alimentos;
   }
 }

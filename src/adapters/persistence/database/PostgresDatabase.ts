@@ -22,6 +22,9 @@ import { UserEntity } from "../entities/UserEntity";
 import { TipoAjudaEntity } from "../entities/TipoAjudaEntity";
 import { RolePermissionsEntity } from "../entities/RolePermissionsEntity";
 import { AuditoriaEntity } from "../entities/AuditoriaEntity";
+import { DoadorEntity } from '../entities/DoadorEntity';
+import { DoacaoRecebidaEntity } from '../entities/DoacaoRecebidaEntity';
+import { DoacaoEstoqueEntity } from '../entities/DoacaoEstoqueEntity';
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -56,7 +59,10 @@ export class PostgresDatabase implements Connection {
                 TemplateEntity,
                 UnidadeMedidaEntity,
                 UserEntity,
-                AuditoriaEntity
+                AuditoriaEntity,
+                DoadorEntity,
+                DoacaoRecebidaEntity,
+                DoacaoEstoqueEntity
             ]
         });
     }

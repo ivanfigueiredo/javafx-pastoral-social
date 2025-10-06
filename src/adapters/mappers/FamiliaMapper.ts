@@ -23,14 +23,14 @@ export class FamiliaMapper {
             dto.desejaParticiparCursos,
             dto.observacao,
             new Date(),
-            new ComunidadeEntity(dto.idComunidade),
+            new ComunidadeEntity(dto.idComunidade, null, [], [], []),
             [],
             []
         );
     }
 
     public static toListComunidadeDTO(iterator: ComunidadeEntity[]): ComunidadeDTO[] {
-        return iterator.map(com => new ComunidadeDTO(com.id, com.descricao));
+        return iterator.map(com => new ComunidadeDTO(com.id, com.descricao!));
     }
 
     public static toListDifilculdadeDTO(iterator: DificuldadeEntity[]): DificuldadeDTO[] {

@@ -2,17 +2,22 @@ import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, OneToMan
 import { LocalizacaoEntity } from "./LocalizacaoEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
 import { ItemTemplateEntity } from "./ItemTemplateEntity";
+import { DoacaoEstoqueEntity } from "./DoacaoEstoqueEntity";
 
 @Entity('tps_estoque')
 export class EstoqueEntity {
     @PrimaryGeneratedColumn({ name: 'id_estoque' })
     id: number | null;
 
-    @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.estoques)
+    @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.estoques, {
+      eager: true
+    })
     @JoinColumn({ name: 'id_item_produto' })
     itemProduto: ItemProdutoEntity;
 
-    @ManyToOne(() => LocalizacaoEntity, localizacao => localizacao.alimentos)
+    @ManyToOne(() => LocalizacaoEntity, localizacao => localizacao.alimentos, {
+      eager: true
+    })
     @JoinColumn({ name: 'id_localizacao' })
     localizacao: LocalizacaoEntity;
 
@@ -23,7 +28,10 @@ export class EstoqueEntity {
     isDisponivel: boolean | null;
 
     @OneToMany(() => ItemTemplateEntity, item => item.estoque)
-    itensTemplate: ItemTemplateEntity[];
+    itensTemplate: ItemTemplateEntity[] = [];
+
+    @OneToMany(() => DoacaoEstoqueEntity, (doacaoEstoque) => doacaoEstoque.estoque)
+    doacoesEstoque: DoacaoEstoqueEntity[] = [];
 
     @Column({ name: 'data_entrada', type: 'date' })
     dataEntrada: Date;
@@ -35,11 +43,12 @@ export class EstoqueEntity {
     id: number | null,
     dataEntrada: Date,
     validade: Date,
-    isDisponivel: boolean | null,
-    dataSaida: Date | null,
+    isDisponivel: boolean | null = null,
+    dataSaida: Date | null = null,
     localizacao: LocalizacaoEntity,
     itemProduto: ItemProdutoEntity,
-    itensTemplate: ItemTemplateEntity[]
+    itensTemplate: ItemTemplateEntity[],
+    doacoesEstoque: DoacaoEstoqueEntity[]
   ) {
     this.id = id;
     this.dataEntrada = dataEntrada;
@@ -49,5 +58,6 @@ export class EstoqueEntity {
     this.localizacao = localizacao;
     this.itemProduto = itemProduto;
     this.itensTemplate = itensTemplate;
+    this.doacoesEstoque = doacoesEstoque;
   }
 }

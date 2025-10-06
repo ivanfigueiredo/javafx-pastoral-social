@@ -4,17 +4,21 @@ import { FamiliaEntity } from "./FamiliaEntity";
 
 @Entity('tps_familia_dificuldade')
 export class FamiliaDificuldadeEntity {
-   @PrimaryColumn({ name: 'id_familia', type: 'int' })
+  @PrimaryColumn({ name: 'id_familia', type: 'int' })
   familiaId: number;
 
   @PrimaryColumn({ name: 'id_dificuldade', type: 'int' })
   dificuldadeId: number;
   
-  @ManyToOne(() => FamiliaEntity, (f) => f.dificuldades)
+  @ManyToOne(() => FamiliaEntity, (f) => f.dificuldades, {
+    eager: true
+  })
   @JoinColumn({ name: 'id_familia' })
   familia: FamiliaEntity | null;
 
-  @ManyToOne(() => DificuldadeEntity, (d) => d.familias)
+  @ManyToOne(() => DificuldadeEntity, (d) => d.familias, {
+    eager: true
+  })
   @JoinColumn({ name: 'id_dificuldade' })
   dificuldade: DificuldadeEntity | null;
 

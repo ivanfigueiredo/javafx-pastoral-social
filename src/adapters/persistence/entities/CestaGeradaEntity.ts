@@ -18,7 +18,7 @@ export class CestaGeradaEntity {
   familia: FamiliaEntity | null;
 
   @OneToMany(() => AjudaRecebidaEntity, ajuda => ajuda.cestaGerada)
-  ajudas: AjudaRecebidaEntity[];
+  ajudas: AjudaRecebidaEntity[] = [];
 
   @Column({ name: 'data_criacao', type: 'timestamptz' })
   dataCriacao: Date;

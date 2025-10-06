@@ -11,10 +11,10 @@ export class RoleEntity {
   description: string;
 
   @OneToMany(() => RolePermissionsEntity, (p) => p.rolePermission)
-  rolePermissions: RolePermissionsEntity[];
+  rolePermissions: RolePermissionsEntity[] = [];
 
   @OneToMany(() => UserEntity, (user) => user.role)
-  users: UserEntity[];
+  users: UserEntity[] = [];
 
   constructor(
     id: number,
