@@ -18,11 +18,12 @@ export class FamiliaAuditProxy implements AuditProxy<CadastrarFamiliaDTO, any> {
         const user = new UserEntity(userLogged.userId, userLogged.nickName, '', null, [], []);
         const auditoriaEntity = new AuditoriaEntity(null, null, null, action.valueOf(), user, dto, null, StatusOperacaoEnum.SUCESSO, new Date());
         try {
-            //await this.cadastrarFamiliaUseCase.execute(dto);
+            await this.cadastrarFamiliaUseCase.execute(dto);
             await this.auditoriaRepository.registrarAuditoria(auditoriaEntity);
-        } catch (error) {
+        } catch (e) {
             const auditoriaEntity = new AuditoriaEntity(null, null, null, action.valueOf(), user, dto, null, StatusOperacaoEnum.FALHA, new Date());
             await this.auditoriaRepository.registrarAuditoria(auditoriaEntity);
+            throw e;
         }
     }
 }

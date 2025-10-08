@@ -6,7 +6,7 @@ import { CestaGeradaEntity } from "./CestaGeradaEntity";
 @Entity('tps_ajuda_recebida')
 export class AjudaRecebidaEntity {
   @PrimaryGeneratedColumn({ name: 'id_ajuda_recebida' })
-  id: number;
+  id: number | null;
 
   @ManyToOne(() => FamiliaEntity, familia => familia.ajudasRecebidas, {
     eager: true
@@ -42,7 +42,7 @@ export class AjudaRecebidaEntity {
   autoridadeNome: string | null;
 
   constructor(
-    id: number,
+    id: number | null,
     dataEntrega: Date | null,
     envolveuAutoridade: boolean,
     entregaAprovada: boolean,

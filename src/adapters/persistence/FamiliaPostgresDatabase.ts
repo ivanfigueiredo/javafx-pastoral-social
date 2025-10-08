@@ -44,10 +44,16 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
         return FamiliaMapper.toListComunidadeDTO(listComunidades);
     }
 
-    public async findFamilias(): Promise<any> {}
+    public async findFamilias(): Promise<any> {
+        return this.familiaRepository.find();
+    }
 
     public async findDificuldades(): Promise<DificuldadeDTO[]> {
         const listDificuldades = await this.dificuldadeRepository.find();
         return FamiliaMapper.toListDifilculdadeDTO(listDificuldades);
+    }
+
+    public async findFamiliaById(idFamilia: number): Promise<FamiliaEntity | null> {
+        return this.familiaRepository.findOne({ where: { id: idFamilia }});
     }
 }
