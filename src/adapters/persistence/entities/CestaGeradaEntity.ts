@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToMany } from "typeorm";
-import { FamiliaEntity } from "./FamiliaEntity";
 import { TemplateEntity } from "./TemplateEntity";
 import { StatusCestaEntity } from "./StatusCestaEntity";
 import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
@@ -12,10 +11,6 @@ export class CestaGeradaEntity {
   @ManyToOne(() => TemplateEntity)
   @JoinColumn({ name: 'id_template' })
   template: TemplateEntity;
-
-  @ManyToOne(() => FamiliaEntity, { nullable: true })
-  @JoinColumn({ name: 'id_familia' })
-  familia: FamiliaEntity | null;
 
   @OneToMany(() => AjudaRecebidaEntity, ajuda => ajuda.cestaGerada)
   ajudas: AjudaRecebidaEntity[] = [];
@@ -30,7 +25,6 @@ export class CestaGeradaEntity {
   constructor(
     id: number | null,
     dataCriacao: Date,
-    familia: FamiliaEntity | null,
     template: TemplateEntity,
     status: StatusCestaEntity,
     ajudas: AjudaRecebidaEntity[]
@@ -38,7 +32,6 @@ export class CestaGeradaEntity {
     this.id = id;
     this.dataCriacao = dataCriacao;
     this.status = status;
-    this.familia = familia;
     this.template = template;
     this.ajudas = ajudas;
   }

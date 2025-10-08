@@ -21,6 +21,8 @@ type ActionType =
   | 'ListarItemProduto'
   | 'ListarDificuldade'
   | 'ConsultarGeracaoModelo'
+  | 'ListarComunidades'
+  | 'AssociarFamiliaAjuda'
 
 export type Action = 
     | 'cadastrar_familia'
@@ -41,6 +43,8 @@ export type Action =
     | 'listar_item_produto'
     | 'listar_dificuldade'
     | 'consultar_geracao_modelo'
+    | 'listar_comunidade'
+    | 'associar_familia_ajuda'
 
 export const ActionType: Record<ActionType, Action> = {
     CadastrarFamilia: 'cadastrar_familia',
@@ -60,7 +64,9 @@ export const ActionType: Record<ActionType, Action> = {
     ListarItemProduto: 'listar_item_produto',
     DeletarEstoque: 'deletar_estoque',
     ListarDificuldade: 'listar_dificuldade',
-    ConsultarGeracaoModelo: 'consultar_geracao_modelo'
+    ConsultarGeracaoModelo: 'consultar_geracao_modelo',
+    AssociarFamiliaAjuda: 'associar_familia_ajuda',
+    ListarComunidades: 'listar_comunidade'
 }
 
 export type Role = 

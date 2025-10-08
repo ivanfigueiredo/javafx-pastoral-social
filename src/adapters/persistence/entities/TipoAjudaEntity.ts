@@ -7,14 +7,14 @@ export class TipoAjudaEntity {
   id: number;
 
   @Column({ name: 'tipo_descricao', type: "varchar", unique: true })
-  descricao: string;
+  descricao: string | null;
 
   @OneToMany(() => AjudaRecebidaEntity, ajuda => ajuda.tipoAjuda)
   ajudas: AjudaRecebidaEntity[] = [];
 
   constructor(
     id: number,
-    descricao: string,
+    descricao: string | null,
     ajudas: AjudaRecebidaEntity[]
   ) {
     this.id = id;

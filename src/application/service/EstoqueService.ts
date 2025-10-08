@@ -105,7 +105,7 @@ export class EstoqueService implements EstoqueUseCase {
                     this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
                     if (dto.template.gerarCestas) {
                         const statusCesta = new StatusCestaEntity(StatusCestaEnum.CRIADA, null, []);
-                        const gerarCestas = new CestaGeradaEntity(null, new Date(), null, templateEntity, statusCesta, []);
+                        const gerarCestas = new CestaGeradaEntity(null, new Date(), templateEntity, statusCesta, []);
                         cestas.push(gerarCestas);
                     }
                 }
