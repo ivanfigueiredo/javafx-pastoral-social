@@ -24,6 +24,9 @@ export class EstoqueEntity {
     @Column({ type: 'date', nullable: false })
     validade: Date;
 
+    @Column({ name: 'valor_medida', type: 'int4', nullable: false })
+    valorMedida: number;
+
     @Column({name: 'is_disponivel', type: 'boolean', nullable: false})
     isDisponivel: boolean | null;
 
@@ -43,6 +46,7 @@ export class EstoqueEntity {
     id: number | null,
     dataEntrada: Date,
     validade: Date,
+    valorMedida: number,
     isDisponivel: boolean | null = null,
     dataSaida: Date | null = null,
     localizacao: LocalizacaoEntity,
@@ -55,6 +59,7 @@ export class EstoqueEntity {
     this.dataSaida = dataSaida;
     this.isDisponivel = isDisponivel;
     this.validade = validade;
+    this.valorMedida = valorMedida;
     this.localizacao = localizacao;
     this.itemProduto = itemProduto;
     this.itensTemplate = itensTemplate;

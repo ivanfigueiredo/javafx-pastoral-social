@@ -11,6 +11,9 @@ export class UserEntity {
   @Column({ name: 'nick_name', type: 'varchar', nullable: false })
   nickName: string;
 
+  @Column({ name: 'name', type: 'varchar', nullable: false })
+  nome: string;
+
   @Column({ name: 'password', type: 'varchar', nullable: false })
   password: string;
 
@@ -29,6 +32,7 @@ export class UserEntity {
   constructor(
     id: number,
     nickName: string,
+    nome: string,
     password: string,
     role: RoleEntity | null,
     security: SecurityEntity[],
@@ -36,6 +40,7 @@ export class UserEntity {
   ) {
     this.id = id;
     this.nickName = nickName;
+    this.nome = nome;
     this.password = password;
     this.role = role;
     this.security = security;

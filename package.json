@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./dist/main.js",
     "dev": "nodemon --exec ts-node ./src/main.ts",
-    "build": "esbuild src/main.ts --bundle --outfile=dist/main.js --platform=node"
+    "build": "rm -rf ./dist && node esbuild.config.mjs"
   },
   "keywords": [],
   "author": "",
@@ -13,9 +13,9 @@
   "description": "",
   "dependencies": {
     "@casl/ability": "^6.7.3",
+    "axios": "^1.12.2",
     "bcrypt": "^6.0.0",
     "cron": "^4.3.3",
-    "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "pg": "^8.11.5",
     "pino": "^9.11.0",
@@ -26,14 +26,16 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.4",
     "@types/bcrypt": "^5.0.2",
     "@types/cron": "^2.4.3",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.14",
     "@types/pino": "^7.0.5",
     "@types/pino-http": "^6.1.0",
-    "esbuild": "^0.25.4",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2"
+    "dotenv": "^17.2.3",
+    "esbuild": "^0.25.10",
+    "esbuild-plugin-node-externals": "^1.0.1",
+    "nodemon": "^3.1.10"
   }
 }

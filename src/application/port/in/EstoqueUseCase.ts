@@ -14,7 +14,7 @@ export interface EstoqueUseCase {
     listarUnidadeMedida: () => Promise<UnidadeDeMedidadDTO[]>;
     listarLocalizacao: () => Promise<LocalizacaoDTO[]>;
     listarItemProduto: () => Promise<ItemProdutoDTO[]>;
-    listarEstoque: () => Promise<EstoqueDTO[]>;
+    listarEstoqueByIdItemProduto: (idItemProduto: number) => Promise<EstoqueDTO[]>;
     consultarGeracaoTemplate: (dto: ConsultaGeracaoTemplateDTO) => Promise<RespostaConsultaGeracaoTemplateDTO>;
     gerarModeloTemplate: (dto: GeracaoModeloTemplateDTO) => Promise<ModeloTemplateCriadoResponse>;
 }

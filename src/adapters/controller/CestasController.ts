@@ -7,7 +7,7 @@ import { GerarCestasUseCase } from "../../application/port/in/GerarCestasUseCase
 import { GerarCestasDTO } from "../../application/dto/GerarCestasDTO";
 import { ActionType } from "../http/authorization/Permission";
 
-export class GerarCestasController {
+export class CestasController {
     constructor(
         readonly httpClient: HttpClient,
         readonly auth: Auth,

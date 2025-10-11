@@ -26,7 +26,7 @@ export class SecurityPostgresDatabase implements SecurityRepository {
             .where({ id: userId })
             .getOne();
         return new RevokedTokenResponseDTO(
-            {userId: user!.id, nickName: user!.nickName, password: user!.password},
+            {userId: user!.id, nickName: user!.nickName, nome: user!.nome, password: user!.password},
              user!.security.map(sec => new SecurityRevokedTokenDTO(sec.id!, sec.tokenHash, sec.revoked, sec.expiresAt)) 
         );
     }

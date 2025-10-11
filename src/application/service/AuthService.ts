@@ -34,7 +34,7 @@ export class AuthService implements AuthUseCase {
         const securityRefreshToken = new SecurityDTO(user, hashRefreshToken, this.generateRefreshTokenExpiry());
         await this.securityRepository.save(securityAccessToken);
         await this.securityRepository.save(securityRefreshToken);
-        return new LoginResponseDTO(new UserDTO(user.userId, user.nickName, user.permissions), new PermissinSecurityDTO(hashAccessToken, hashRefreshToken));
+        return new LoginResponseDTO(new UserDTO(user.userId, user.nickName, user.nome, user.permissions), new PermissinSecurityDTO(hashAccessToken, hashRefreshToken));
     }
 
     public async refreshToken(dto: RefreshTokenDTO): Promise<RefreshTokenResponseDTO> {

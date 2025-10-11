@@ -12,6 +12,7 @@ export class SecurityMapper {
         return new UserResponseDTO(
             user.id, 
             user.nickName,
+            user.nome,
             user.password,
             user.role!.rolePermissions.map(roleP => roleP.permission.action)
         );
@@ -23,14 +24,14 @@ export class SecurityMapper {
             dto.token,
             dto.expiresAt,
             false,
-            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.password, null, [], []),
+            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.nome, dto.user.password, null, [], []),
             new Date()
         );
     }
 
     public static toValidateRefreshTokenResponseDTO(security: SecurityEntity): ValidateRefreshTokenResponseDTO {
         return new ValidateRefreshTokenResponseDTO(
-            {userId: security.user.id, nickName: security.user.nickName, password: security.user.password},
+            {userId: security.user.id, nickName: security.user.nickName, nome: security.user.nome, password: security.user.password},
             security.expiresAt,
             security.revoked
         );
@@ -42,7 +43,7 @@ export class SecurityMapper {
             sec.tokenHash,
             sec.expiresAt,
             true,
-            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.password, null, [], [])
+            new UserEntity(dto.user.userId, dto.user.nickName, dto.user.nome, dto.user.password, null, [], [])
         ));
     }
 }

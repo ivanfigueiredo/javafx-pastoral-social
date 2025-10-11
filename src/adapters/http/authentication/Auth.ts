@@ -22,6 +22,7 @@ export class Auth {
             req.user = {
                 userId: security.userId,
                 nickName: userInfo!.nickName,
+                nome: userInfo!.nome,
                 role: security.role
             }
             next();
