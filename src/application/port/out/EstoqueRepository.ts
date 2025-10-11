@@ -13,7 +13,7 @@ export interface EstoqueRepository {
     findUnidadeDeMedidas: () => Promise<UnidadeDeMedidadDTO[]>;
     findLocalizacao: () => Promise<LocalizacaoDTO[]>;
     findITemProduto: () => Promise<ItemProdutoDTO[]>;
-    findEstoque: () => Promise<EstoqueDTO[]>;
+    findEstoqueByIdItemProduto: (idItemProduto: number) => Promise<EstoqueDTO[]>;
     consultaGeracaoTemplate: (templateItens: TemplateItemDTO[]) => Promise<number>;
     findEstoqueByItemProdutoIdAndQtdGeracaoTemplate: (itemProdutoId: number, qtdGeracaoTemplate: number) => Promise<EstoqueEntity[]>;
 }

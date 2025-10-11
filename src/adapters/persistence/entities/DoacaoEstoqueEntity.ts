@@ -1,20 +1,20 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 import { EstoqueEntity } from "./EstoqueEntity";
 
 @Entity('tps_doacao_estoque')
 export class DoacaoEstoqueEntity {
-    @PrimaryColumn({ name: 'id_doacao' })
+    @PrimaryGeneratedColumn({ name: 'id_doacao' })
     idDoacao: number;
 
-    @Column({ name: 'id_estoque' })
+    @PrimaryColumn({ name: 'id_estoque', type: "int4" })
     idEstoque: number;
 
-    @ManyToOne(() => DoacaoRecebidaEntity, (doacaoReceb) => doacaoReceb.doacoesEstoque, {createForeignKeyConstraints: true})
+    @ManyToOne(() => DoacaoRecebidaEntity, (doacaoReceb) => doacaoReceb.doacoesEstoque)
     @JoinColumn({ name: 'id_doacao' })
     doacao: DoacaoRecebidaEntity;
 
-    @ManyToOne(() => EstoqueEntity, (estok) => estok.doacoesEstoque, {createForeignKeyConstraints: true})
+    @ManyToOne(() => EstoqueEntity, (estok) => estok.doacoesEstoque)
     @JoinColumn({ name: 'id_estoque' })
     estoque: EstoqueEntity;
 

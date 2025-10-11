@@ -67,8 +67,8 @@ export class EstoqueService implements EstoqueUseCase {
         return await this.estoqueRepository.findITemProduto();
     }
 
-    public async listarEstoque(): Promise<EstoqueDTO[]> {
-        return await this.estoqueRepository.findEstoque();
+    public async listarEstoqueByIdItemProduto(idItemProduto: number): Promise<EstoqueDTO[]> {
+        return await this.estoqueRepository.findEstoqueByIdItemProduto(idItemProduto);
     }
 
     public async consultarGeracaoTemplate(dto: ConsultaGeracaoTemplateDTO): Promise<RespostaConsultaGeracaoTemplateDTO> {

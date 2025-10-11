@@ -11,7 +11,7 @@ export class ItemProdutoEntity {
   @Column({ name: 'item_produto_desc', type: 'varchar', unique: true, nullable: false })
   itemProdutoDesc: string | null;
 
-  @OneToMany(() => EstoqueEntity, estoque => estoque.localizacao)
+  @OneToMany(() => EstoqueEntity, estoque => estoque.itemProduto)
   estoques: EstoqueEntity[] = [];
 
   @OneToMany(() => DoacaoRecebidaEntity, (dbRecebida) => dbRecebida.itemProduto)

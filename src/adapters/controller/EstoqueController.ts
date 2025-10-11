@@ -81,11 +81,11 @@ export class EstoqueController {
 
             httpClient.on(
                 "get", 
-                "/estoque/listar", 
+                "/estoque/listar/:idItemProduto", 
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarEstoque),
                 async function (params: any, data: any) {
-                    const output = await estoqueUseCase.listarEstoque();
+                    const output = await estoqueUseCase.listarEstoqueByIdItemProduto(params.idItemProduto);
                     return {
                         statusCode: 200,
                         timeStampe: new Date().toISOString(),
