@@ -17,7 +17,7 @@ export class EstoqueMapper {
             new Date(),
             dto.validade,
             dto.valorMedida,
-            null,
+            true,
             null,
             new LocalizacaoEntity(dto.idLocalizacao, null, []),
             new ItemProdutoEntity(dto.itemProdutoId, null, null, [], []),
