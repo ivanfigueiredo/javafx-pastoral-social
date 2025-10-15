@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToMany, BeforeInsert } from "typeorm";
 import { TemplateEntity } from "./TemplateEntity";
 import { StatusCestaEntity } from "./StatusCestaEntity";
 import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
@@ -19,25 +19,31 @@ export class CestaGeradaEntity {
   dataCriacao: Date;
 
   @Column({ name: 'identificador_cesta', type: 'varchar', nullable: false })
-  identificadorCesta: string;
+  identificadorCesta?: string;
 
   @ManyToOne(() => StatusCestaEntity)
   @JoinColumn({ name: 'id_status' })
   status: StatusCestaEntity;
+
+  @BeforeInsert()
+  private gerarIdentificador(): void {
+    this.identificadorCesta = this.geradorIdentificadorCesta();
+  }
 
   constructor(
     id: number | null,
     dataCriacao: Date,
     template: TemplateEntity,
     status: StatusCestaEntity,
-    ajudas: AjudaRecebidaEntity[]
+    ajudas: AjudaRecebidaEntity[],
+    identificadorCesta?: string
   ) {
     this.id = id;
     this.dataCriacao = dataCriacao;
     this.status = status;
     this.template = template;
     this.ajudas = ajudas;
-    this.identificadorCesta = this.geradorIdentificadorCesta();
+    this.identificadorCesta = identificadorCesta;
   }
 
   private geradorIdentificadorCesta(): string {
