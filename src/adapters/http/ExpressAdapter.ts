@@ -49,6 +49,6 @@ export class ExpressAdapter implements HttpClient {
     }
 
     listen(port: number, callback: Function): void {
-        this.connect.listen(port, callback());
+        this.connect.listen(port, "0.0.0.0", callback());
     }
 }

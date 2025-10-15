@@ -9,7 +9,12 @@ export class Authorize {
         if (result) {
             next();
         } else {
-            res.status(403).json({ message: "Não autorizado." });
+            const response = {
+                timestamp: new Date().toISOString(),
+                message: 'Não Autorizado',
+                path: req.path
+            }
+            res.status(403).json(response);
         }
     }
 }

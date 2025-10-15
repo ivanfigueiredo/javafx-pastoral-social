@@ -35,11 +35,16 @@ export class EstoqueMapper {
     }
 
     public static toItemProdutoDTO(iterator: ItemProdutoEntity[]): ItemProdutoDTO[] {
-        return iterator.map(itemProduto => new ItemProdutoDTO(
-            itemProduto.id, 
-            itemProduto.itemProdutoDesc!, 
-            itemProduto.estoques.length
-        ));
+        return iterator.map(itemProduto => {
+            const qtdDisponivelEstoque = itemProduto.estoques.map(estok => estok.isDisponivel ? estok : null)
+                .filter(item => item != null)
+                .length;
+            return new ItemProdutoDTO(
+                itemProduto.id, 
+                itemProduto.itemProdutoDesc!, 
+                qtdDisponivelEstoque
+            )
+        });
     }
 
     public static toEstoqueDTO(iterator: EstoqueEntity[]): EstoqueDTO[] {

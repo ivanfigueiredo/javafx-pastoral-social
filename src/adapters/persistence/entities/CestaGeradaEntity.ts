@@ -18,6 +18,9 @@ export class CestaGeradaEntity {
   @Column({ name: 'data_criacao', type: 'timestamptz' })
   dataCriacao: Date;
 
+  @Column({ name: 'identificador_cesta', type: 'varchar', nullable: false })
+  identificadorCesta: string;
+
   @ManyToOne(() => StatusCestaEntity)
   @JoinColumn({ name: 'id_status' })
   status: StatusCestaEntity;
@@ -34,5 +37,13 @@ export class CestaGeradaEntity {
     this.status = status;
     this.template = template;
     this.ajudas = ajudas;
+    this.identificadorCesta = this.geradorIdentificadorCesta();
+  }
+
+  private geradorIdentificadorCesta(): string {
+    const date = new Date();
+    return "CST" + 
+          `${date.getFullYear()}${date.getMonth()+1}${date.getDate()}` + 
+          `${Math.random()}`.substring(3, 9)
   }
 }
