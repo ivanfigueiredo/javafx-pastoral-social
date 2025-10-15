@@ -36,6 +36,7 @@ import { AjudaRecebidaPostgresDatabase } from "./adapters/persistence/AjudaReceb
 import { GetFamiliaService } from "./application/service/GetFamiliaService";
 import { NotificacaoWhatsAppGatewayImpl } from "./adapters/http/gateway/NotificacaoWhatsAppGatewayImpl";
 import { NotificacaoProdutoVencidoService } from "./application/service/NotificacaoProdutoVencidoService";
+import { GetCestasService } from "./application/service/GetCestasService";
 import { config } from 'dotenv';
 config();
 
@@ -66,6 +67,7 @@ config();
     const notificacaoWhatsAppGateway = new NotificacaoWhatsAppGatewayImpl();
     const notificacaoProdutoVencidoService = new NotificacaoProdutoVencidoService(notificacaoWhatsAppGateway);
     const getFamiliaService = new GetFamiliaService(familiaRepository);
+    const getCestasService = new GetCestasService(logger, cestaGeradaRepository);
     const gerarCestasService = new GerarCestasService(logger, templateRepository, cestaGeradaRepository, estoqueService);
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, ajudaRepository, cestaGeradaRepository, familiaRepository);
     const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
@@ -77,7 +79,7 @@ config();
     new MainController(httpClient, authUseCase);
     new EstoqueController(httpClient, auth, authorize, estoqueService, gerarModeloTemplateProxy);
     new FamiliaController(httpClient, auth, authorize, familiaAuditProxy, consultarFamiliaService, getFamiliaService);
-    new CestasController(httpClient, auth, authorize, gerarCestasService);
+    new CestasController(httpClient, auth, authorize, gerarCestasService, getCestasService);
     new AjudaController(httpClient, auth, authorize, associarAjudaFamiliaService);
     const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
     // notificaProdutoVencidoJob.start();

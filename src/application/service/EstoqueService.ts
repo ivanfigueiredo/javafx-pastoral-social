@@ -90,7 +90,6 @@ export class EstoqueService implements EstoqueUseCase {
                 throw new UnprocessableException(`Estoque indisponível para o modelo de template informado: '${dto.template.templateDesc}'.`);
             }
             const templateEntity = await this.templateRepository.save(dto.template);
-            const cestas: CestaGeradaEntity[] = [];
             for (const templateItem of dto.templateItens) {
                 const qtdNecessarioTotal = templateItem.quantidade * dto.qtdGeracaoPossivel;
                 const estoqueItens = await this.estoqueRepository.findEstoqueByItemProdutoIdAndQtdGeracaoTemplate(templateItem.itemProdutoId, qtdNecessarioTotal);
@@ -103,17 +102,16 @@ export class EstoqueService implements EstoqueUseCase {
                     const itemTemplate = new ItemTemplateEntity(null, acaoSocialTemplate, estoque);
                     await this.itemTemplateRepository.save(itemTemplate);
                     this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
-                    if (dto.template.gerarCestas) {
-                        const statusCesta = new StatusCestaEntity(StatusCestaEnum.CRIADA, null, []);
-                        const gerarCestas = new CestaGeradaEntity(null, new Date(), templateEntity, statusCesta, []);
-                        cestas.push(gerarCestas);
-                    }
-                }
-                if (cestas.length > 0) {
-                    await this.cestaGeradaRepository.saveMany(cestas);
-                    this.logger.info({ QtdCestasGeradas: cestas.length, templateId: templateEntity.id, descricao: dto.template.templateDesc }, "Cestas geradas para o template informado");
                 }
                 await this.estoqueRepository.saveMany(estoqueItens);
+            }
+            if (dto.template.gerarCestas) {
+                for (let i = 0; i < dto.qtdGeracaoPossivel; i++) {
+                    const statusCesta = new StatusCestaEntity(StatusCestaEnum.CRIADA, null, []);
+                    const cesta = new CestaGeradaEntity(null, new Date(), templateEntity, statusCesta, []);
+                    await this.cestaGeradaRepository.save(cesta);
+                    this.logger.info({ templateId: templateEntity.id, descricao: dto.template.templateDesc }, "Cesta gerada para o template informado");
+                }
             }
             await this.unitOfWork.commit();
             return new ModeloTemplateCriadoResponse(templateEntity.id!);

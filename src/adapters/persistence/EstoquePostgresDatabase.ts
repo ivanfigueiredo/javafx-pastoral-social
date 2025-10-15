@@ -60,7 +60,7 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
     }
 
     public async findEstoqueByIdItemProduto(idItemProduto: number): Promise<EstoqueDTO[]> {
-        const estoqueLista = await this.estoqueRepository.find({ where: { itemProduto: {id: idItemProduto} } });
+        const estoqueLista = await this.estoqueRepository.find({ where: { isDisponivel: true, itemProduto: {id: idItemProduto} } });
         return EstoqueMapper.toEstoqueDTO(estoqueLista);
     }
 

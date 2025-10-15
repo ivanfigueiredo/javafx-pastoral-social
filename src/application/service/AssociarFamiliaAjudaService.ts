@@ -36,9 +36,9 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
                 if (!cesta) throw new NotFoundException('Cesta não encontrada.');
                 const tipoAjuda = new TipoAjudaEntity(TipoAjudaEnum.CESTA_BASICA, null, []);
                 const ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, null, null, familia, tipoAjuda, cesta);
-                cesta.status = new StatusCestaEntity(StatusCestaEnum.ENTREGA_PENDENTE, null, []);
-                this.logger.info({ statusCesta: StatusCestaEnum.ENTREGA_PENDENTE }, 'Atualizando status da cesta para: ');
-                await this.cestaGeradaRepository.saveMany([cesta]);
+                cesta.status = new StatusCestaEntity(StatusCestaEnum.RESERVADA, null, []);
+                this.logger.info({ statusCesta: StatusCestaEnum.RESERVADA }, 'Atualizando status da cesta para: ');
+                await this.cestaGeradaRepository.save(cesta);
                 this.logger.info('Salvando ajuda');
                 await this.ajudaRepository.criarAjuda([ajudaRecebida]);
             }
