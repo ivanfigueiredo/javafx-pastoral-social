@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToMany, BeforeInsert } from "typeorm";
+import { createHash } from 'crypto';
 import { TemplateEntity } from "./TemplateEntity";
 import { StatusCestaEntity } from "./StatusCestaEntity";
 import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
@@ -47,9 +48,14 @@ export class CestaGeradaEntity {
   }
 
   private geradorIdentificadorCesta(): string {
-    const date = new Date();
-    return "CST" + 
-          `${date.getFullYear()}${date.getMonth()+1}${date.getDate()}` + 
-          `${Math.random()}`.substring(3, 9)
+    const dateNow = new Date();
+    const data = `${dateNow.getFullYear()}` +
+      `${dateNow.getMonth() + 1}`.toString().padStart(2, '0') +
+      `${dateNow.getDate()}`.toString().padStart(2, '0');
+    const hash = createHash('md5')
+      .update(`${Date.now()}${Math.random()}`)
+      .digest('hex')
+      .substring(0, 4);
+    return `CB${data}${hash}`
   }
 }
