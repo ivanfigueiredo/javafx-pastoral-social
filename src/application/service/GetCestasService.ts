@@ -45,7 +45,7 @@ export class GetCestasService implements GetCestasUseCase {
                 const removeDuplicate = new Set(output.map(item => JSON.stringify(item)));
                 cesta = {
                     idCesta: cestas[i].id!,
-                    identificadorCesta: cestas[i].identificadorCesta,
+                    identificadorCesta: cestas[i].identificadorCesta!,
                     descricao: cestas[i].template.descricao,
                     status: cestas[i].status.statusDesc!,
                     progresso: CalculateProgressoEnum[cestas[i].status.statusDesc!],
