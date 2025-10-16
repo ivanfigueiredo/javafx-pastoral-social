@@ -26,6 +26,7 @@ export class GetCestasService implements GetCestasUseCase {
             identificadorCesta: '',
             descricao: '',
             progresso: '',
+            totalItensCesta: 0,
             status: '',
             itens: []
         }
@@ -43,13 +44,16 @@ export class GetCestasService implements GetCestasUseCase {
                     })) as ItemsData[];
                 });
                 const removeDuplicate = new Set(output.map(item => JSON.stringify(item)));
+                const newListItensData = Array.from(removeDuplicate).map(item => JSON.parse(item)) as ItemsData[];
+                const qtdItens = newListItensData.reduce((acc, item) => acc + item.quantidade, 0);
                 cesta = {
                     idCesta: cestas[i].id!,
                     identificadorCesta: cestas[i].identificadorCesta!,
                     descricao: cestas[i].template.descricao,
                     status: cestas[i].status.statusDesc!,
+                    totalItensCesta: qtdItens,
                     progresso: CalculateProgressoEnum[cestas[i].status.statusDesc!],
-                    itens: Array.from(removeDuplicate).map(item => JSON.parse(item))
+                    itens: newListItensData
                 }
                 cestasResult.push(cesta);
             }
