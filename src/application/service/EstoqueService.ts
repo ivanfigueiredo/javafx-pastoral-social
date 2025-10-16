@@ -94,8 +94,10 @@ export class EstoqueService implements EstoqueUseCase {
                 const qtdNecessarioTotal = templateItem.quantidade * dto.qtdGeracaoPossivel;
                 const estoqueItens = await this.estoqueRepository.findEstoqueByItemProdutoIdAndQtdGeracaoTemplate(templateItem.itemProdutoId, qtdNecessarioTotal);
                 for (const estoque of estoqueItens) {
-                    estoque.dataSaida = new Date();
-                    estoque.isDisponivel = false;
+                    if (dto.template.gerarCestas) {
+                        estoque.dataSaida = new Date();
+                        estoque.isDisponivel = false;
+                    }
                     const acaoSocialTemplate = new AcaoSocialTemplateEntity(null, templateItem.quantidade, templateEntity, []);
                     await this.acaoSocialTemplateRepository.save(acaoSocialTemplate);
                     this.logger.info({idAcaoSocial: acaoSocialTemplate.id}, 'Acao social cadastrada com sucesso.');
@@ -103,7 +105,9 @@ export class EstoqueService implements EstoqueUseCase {
                     await this.itemTemplateRepository.save(itemTemplate);
                     this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
                 }
-                await this.estoqueRepository.saveMany(estoqueItens);
+                if (dto.template.gerarCestas) {
+                    await this.estoqueRepository.saveMany(estoqueItens);
+                }
             }
             if (dto.template.gerarCestas) {
                 for (let i = 0; i < dto.qtdGeracaoPossivel; i++) {

@@ -4,6 +4,7 @@ export class CestasDTO {
         readonly identificadorCesta: string,
         readonly descricao: string,
         readonly progresso: string,
+        readonly totalItensCesta: number,
         readonly status: string,
         readonly itens: ItemsData[]
     ) {}
@@ -14,7 +15,7 @@ export class ItemsData {
         readonly itemProdutoId: number, 
         readonly nomeProduto: string,
         readonly quantidade: number,
-        readonly valor: number,
-        readonly unidadeMedida: string
+        readonly valor?: number,
+        readonly unidadeMedida?: string
     ) {}
 }
