@@ -11,15 +11,18 @@ import { TipoAjudaEntity } from "../../adapters/persistence/entities/TipoAjudaEn
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
 import { StatusCestaEntity } from "../../adapters/persistence/entities/StatusCestaEntity";
 import { StatusCestaEnum } from "../dto/enuns/StatusCestaEnum";
+import { UnprocessableException } from "../exceptions/UnprocessableException";
+import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
 
 export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase {
     private readonly logger: Logger;
 
     constructor(
         logger: Logger,
-        private readonly ajudaRepository: AjudaRepository,
         private readonly cestaGeradaRepository: CestaGeradaRepository,
-        private readonly familiaRepository: FamiliaRepository
+        private readonly ajudaRepository: AjudaRepository,
+        private readonly familiaRepository: FamiliaRepository,
+        private readonly unitOfWork: UnitOfWorkPort
     ) {
         this.logger = logger.child({ service: 'AssociarFamiliaAjudaUseCase' });
     }
@@ -27,26 +30,36 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
     public async execute(dto: AssociarAjudaFamiliaDTO[]): Promise<void> {
         this.logger.info('Iniciando fluxo de associacao da ajuda para familia');
         try {
-            for (const ajuda of dto) {
-                this.logger.info({idFamilia: ajuda.idFamilia}, 'Buscando familia pelo id');
-                const familia = await this.familiaRepository.findFamiliaById(ajuda.idFamilia);
+            await this.unitOfWork.startTransaction();
+            const ajudasDoada: AjudaRecebidaEntity[] = [];
+            for (const item of dto) {
+                this.logger.info({idFamilia: item.idFamilia}, 'Buscando familia pelo id');
+                const familia = await this.familiaRepository.findFamiliaById(item.idFamilia);
+                let ajudaRecebida: AjudaRecebidaEntity;
+                const detalhe = JSON.stringify({detalhe: item.ajuda.observacao})
                 if (!familia) throw new NotFoundException('Familia não encontrada.');
-                this.logger.info({idCesta: ajuda.idCesta}, 'Buscando cesta pelo id');
-                const cesta = await this.cestaGeradaRepository.findCestaById(ajuda.idCesta);
-                if (!cesta) throw new NotFoundException('Cesta não encontrada.');
-                const tipoAjuda = new TipoAjudaEntity(TipoAjudaEnum.CESTA_BASICA, null, []);
-                const ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, null, null, familia, tipoAjuda, cesta);
-                cesta.status = new StatusCestaEntity(StatusCestaEnum.RESERVADA, null, []);
-                this.logger.info({ statusCesta: StatusCestaEnum.RESERVADA }, 'Atualizando status da cesta para: ');
-                await this.cestaGeradaRepository.save(cesta);
-                this.logger.info('Salvando ajuda');
-                await this.ajudaRepository.criarAjuda([ajudaRecebida]);
+                if (item.ajuda.tipoAjuda == TipoAjudaEnum.CESTA_BASICA) {
+                    const cestas = await this.cestaGeradaRepository.findCestasByIdTemplate(item.ajuda.idTemplate);
+                    if (cestas === null || cestas.length === 0) throw new UnprocessableException("O template informado não tem cestas disponíveis");
+                    const cesta = cestas[0];
+                    cesta.status = new StatusCestaEntity(StatusCestaEnum.RESERVADA, null, []);
+                    await this.cestaGeradaRepository.save(cesta);
+                    this.logger.info({ statusCesta: StatusCestaEnum.RESERVADA }, 'Atualizando status da cesta para: ');
+                    const tipoAjuda = new TipoAjudaEntity(TipoAjudaEnum.CESTA_BASICA, null, []);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, null, detalhe, familia, tipoAjuda, cesta);
+                } else {
+                    const tipoAjuda = new TipoAjudaEntity(item.ajuda.tipoAjuda, null, []);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, null, detalhe, familia, tipoAjuda, null);
+                }
+                ajudasDoada.push(ajudaRecebida);
             }
+            await this.ajudaRepository.criarAjuda(ajudasDoada);
+            this.logger.info('Ajudas doadas salvas com sucesso.');
+            await this.unitOfWork.commit();
         } catch (e: any) {
-            this.logger.error({err: e.getMessage()}, 'Erro ao associar familia a ajuda');
-            if (e instanceof NotFoundException) {
-                throw e;
-            }
+            this.logger.error({err: e.message}, 'Erro ao associar familia a ajuda');
+            await this.unitOfWork.rollBack();
+            if (e instanceof NotFoundException || e instanceof UnprocessableException) throw e;
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
         }
     }

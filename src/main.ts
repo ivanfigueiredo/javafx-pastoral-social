@@ -39,6 +39,7 @@ import { GetCestasService } from "./application/service/GetCestasService";
 import { CancelarCestaService } from "./application/service/CancelarCestaService";
 import { CestaEstoqueItemPostgresDatabase } from "./adapters/persistence/CestaEstoqueItemPostgresDatabase";
 import { config } from 'dotenv';
+import { ListarTemplatesComCestasDisponiveisService } from "./application/service/ListarTemplatesComCestasDisponiveisService";
 config();
 
 (async () => {
@@ -70,14 +71,15 @@ config();
     const notificacaoProdutoVencidoService = new NotificacaoProdutoVencidoService(notificacaoWhatsAppGateway);
     const getFamiliaService = new GetFamiliaService(familiaRepository);
     const getCestasService = new GetCestasService(logger, cestaGeradaRepository);
+    const listarTemplatesComCestasDisponiveisService = new ListarTemplatesComCestasDisponiveisService(logger, templateRepository);
     const cancelarCestaService = new CancelarCestaService(logger, cestaGeradaRepository, estoqueRepositiory, unitOfWork);
-    const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, ajudaRepository, cestaGeradaRepository, familiaRepository);
+    const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
     const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
     const gerarModeloTemplateProxy = new GerarModeloTemplateProxy(logger, estoqueService, auditoriaRepository);
     const authUseCase = new AuthService(logger, userRepository, securityRepository, authRepository);
     const auth = new Auth(authRepository);
     const authorize = new Authorize(abilityPermission.getAppAbility());
-    new TemplateController(httpClient, auth, authorize, templateService);
+    new TemplateController(httpClient, auth, authorize, templateService, listarTemplatesComCestasDisponiveisService);
     new MainController(httpClient, authUseCase);
     new EstoqueController(httpClient, auth, authorize, estoqueService, gerarModeloTemplateProxy);
     new FamiliaController(httpClient, auth, authorize, familiaAuditProxy, consultarFamiliaService, getFamiliaService);
