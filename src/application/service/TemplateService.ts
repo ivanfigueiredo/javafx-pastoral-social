@@ -5,9 +5,8 @@ import { TemplateUseCase } from "../port/in/TemplateUseCase";
 import { TemplateRepository } from "../port/out/TemplateRepository";
 import { PaginatedDTO } from "../dto/PaginatedDTO";
 import { ItemsData } from "../dto/CestasDTO";
-import { EstoqueEntity } from "../../adapters/persistence/entities/EstoqueEntity";
-import { AcaoSocialTemplateEntity } from "../../adapters/persistence/entities/AcaoSocialTemplateEntity";
 import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
+import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
 
 export class TemplateService implements TemplateUseCase {
     constructor(
@@ -22,30 +21,23 @@ export class TemplateService implements TemplateUseCase {
     public async listarTemplates(dto: GetTemplatesDTO): Promise<any> {
         const [templates, total] = await this.templateRepository.findPaginatedTemplate(dto.page, dto.pageSize);
         const result = await Promise.all(templates.map(async template => {
-            let data: result = {
+            let data: Result = {
                 idTemplate: template.id!,
                 descricao: template.descricao,
                 itensTemplate: []
             }
-            template.acoes
-                .map(acao => acao.itensTemplate)
-                    .map(itensTemplate => itensTemplate.flatMap(
-                        item => data.itensTemplate.push({
-                            itemProdutoId: item.estoque.itemProduto.id,
-                            quantidade: item.acaoSocialTemplate.quantidade,
-                        })
-                    )
-                )
+            template.itensTemplate.forEach(item => data.itensTemplate.push({
+                itemProdutoId: item.itemProduto.id,
+                quantidade: item.quantidade,
+            }))
             const result = await this.estoqueUseCase.consultarGeracaoTemplate(new ConsultaGeracaoTemplateDTO(data.itensTemplate));
-            const output = template.acoes.flatMap(acao => {
-                return acao.itensTemplate.map(item => ({
-                    itemProdutoId: item.estoque.itemProduto.id,
-                    nomeProduto: `${item.estoque.itemProduto.itemProdutoDesc} (${this.calculatePeso(item.estoque, item.acaoSocialTemplate)})`,
-                    quantidade: item.acaoSocialTemplate.quantidade,
-                    unidadeMedida: item.estoque.itemProduto.unidadeMedida!.undMedidas,
-                    valor: item.estoque.valorMedida
-                })) as ItemsData[];
-            });
+            const output = template.itensTemplate.map(item => ({
+                itemProdutoId: item.itemProduto.id,
+                nomeProduto: `${item.itemProduto.itemProdutoDesc} (${this.calculatePeso(item)})`,
+                quantidade: item.quantidade,
+                unidadeMedida: item.itemProduto.unidadeMedida!.undMedidas,
+                valor: item.itemProduto.valorMedida
+            })) as ItemsData[];
             const removeDuplicate = new Set(output.map(item => JSON.stringify(item)));
             const newListItensData = Array.from(removeDuplicate).map(item => JSON.parse(item)) as ItemsData[];
             const qtdItens = newListItensData.reduce((acc, item) => acc + item.quantidade, 0);
@@ -61,18 +53,24 @@ export class TemplateService implements TemplateUseCase {
         return paginated;
     }
 
-    private calculatePeso(estoque: EstoqueEntity, acao: AcaoSocialTemplateEntity): any {
-        if (estoque.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.KG) {
-            return `${estoque.valorMedida * acao.quantidade}KG`;
-        } else if (estoque.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.G) {
-            const sum = estoque.valorMedida * acao.quantidade;
+    private calculatePeso(itemTemplate: ItemTemplateEntity): any {
+        if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.KG) {
+            return `${itemTemplate.quantidade}${itemTemplate.itemProduto.unidadeMedida!.undMedidas}`;
+        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.G) {
+            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
             const converteKG = (sum / 1000);
-            return (converteKG > 1) ? `${converteKG}KG` : `${sum}G`;
+            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.KG}` : `${sum}${UnidadeMedidaEnum.G}`;
+        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.ML) {
+            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
+            const converteKG = (sum / 1000);
+            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.L}` : `${sum}${UnidadeMedidaEnum.ML}`;
+        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.L) {
+            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.L}`;
         }
     }
 }
 
-type result = {
+type Result = {
     idTemplate: number;
     descricao: string;
     itensTemplate: {quantidade: number, itemProdutoId: number}[];

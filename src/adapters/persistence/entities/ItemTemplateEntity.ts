@@ -1,31 +1,32 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from "typeorm";
-import { AcaoSocialTemplateEntity } from "./AcaoSocialTemplateEntity";
-import { EstoqueEntity } from "./EstoqueEntity";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "typeorm";
+import { TemplateEntity } from "./TemplateEntity";
+import { ItemProdutoEntity } from "./ItemProdutoEntity";
 
 @Entity('tps_item_template')
 export class ItemTemplateEntity {
   @PrimaryGeneratedColumn({ name: 'id_item_template' })
   id: number | null;
 
-  @ManyToOne(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.itensTemplate, {
-    eager: true
-  })
-  @JoinColumn({ name: 'id_acao_social_template' })
-  acaoSocialTemplate: AcaoSocialTemplateEntity;
+  @ManyToOne(() => TemplateEntity, template => template.itensTemplate)
+  @JoinColumn({ name: 'id_template' })
+  template: TemplateEntity;
 
-  @ManyToOne(() => EstoqueEntity, estoque => estoque.itensTemplate, {
-    eager: true
-  })
-  @JoinColumn({ name: 'id_estoque' })
-  estoque: EstoqueEntity;
+  @Column({ type: 'int4' })
+  quantidade: number;
+
+  @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.estoques)
+  @JoinColumn({ name: 'id_item_produto' })
+  itemProduto: ItemProdutoEntity;
 
   constructor(
     id: number | null,
-    acaoSocialTemplate: AcaoSocialTemplateEntity,
-    estoque: EstoqueEntity
+    quantidade: number,
+    template: TemplateEntity,
+    itemProduto: ItemProdutoEntity
   ) {
     this.id = id;
-    this.acaoSocialTemplate = acaoSocialTemplate;
-    this.estoque = estoque;
+    this.quantidade = quantidade;
+    this.template = template;
+    this.itemProduto = itemProduto;
   }
 }

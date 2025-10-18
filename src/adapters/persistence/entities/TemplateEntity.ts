@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { AcaoSocialTemplateEntity } from "./AcaoSocialTemplateEntity";
 import { TemplateTypeEnum } from "./TemplateTypeEnum";
+import { ItemTemplateEntity } from "./ItemTemplateEntity";
 
 @Entity('tps_template')
 export class TemplateEntity {
@@ -13,18 +13,18 @@ export class TemplateEntity {
   @Column({ name: 'template_type', type: 'enum', enum: TemplateTypeEnum })
   templateType: TemplateTypeEnum;
 
-  @OneToMany(() => AcaoSocialTemplateEntity, acaoSocial => acaoSocial.template)
-  acoes: AcaoSocialTemplateEntity[] = [];
+  @OneToMany(() => ItemTemplateEntity, itemTemplate => itemTemplate.template)
+  itensTemplate: ItemTemplateEntity[] = [];
 
   constructor(
     id: number | null,
     descricao: string,
     templateType: TemplateTypeEnum,
-    acoes: AcaoSocialTemplateEntity[]
+    itensTemplate: ItemTemplateEntity[]
   ) {
     this.id = id;
     this.descricao = descricao;
     this.templateType = templateType;
-    this.acoes = acoes;
+    this.itensTemplate = itensTemplate;
   }
 }

@@ -11,6 +11,9 @@ export class ItemProdutoEntity {
   @Column({ name: 'item_produto_desc', type: 'varchar', unique: true, nullable: false })
   itemProdutoDesc: string | null;
 
+  @Column({ name: 'valor_medida', type: 'int4', nullable: false })
+  valorMedida: number | null;
+
   @OneToMany(() => EstoqueEntity, estoque => estoque.itemProduto)
   estoques: EstoqueEntity[] = [];
 
@@ -25,6 +28,7 @@ export class ItemProdutoEntity {
 
   constructor(
     id: number,
+    valorMedida: number | null = null,
     itemProdutoDesc: string | null = null,
     unidadeMedida: UnidadeMedidaEntity | null = null,
     estoques: EstoqueEntity[],
@@ -35,5 +39,6 @@ export class ItemProdutoEntity {
     this.unidadeMedida = unidadeMedida;
     this.estoques = estoques;
     this.doacoes = doacoes;
+    this.valorMedida = valorMedida;
   }
 }

@@ -6,7 +6,7 @@ import { InternalServerErrorException } from "../../application/exceptions/Inter
 import { Connection } from "./database/Connection";
 import { Repository } from "typeorm";
 import { CestaFilterQueryDTO } from "../../application/dto/CestaFilterQueryDTO";
-import { StatusCesta, StatusCestaEnum } from "../../application/dto/enuns/StatusCestaEnum";
+import { StatusCestaEnum } from "../../application/dto/enuns/StatusCestaEnum";
 
 export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
     private readonly cestaRepository: Repository<CestaGeradaEntity>;
@@ -21,9 +21,9 @@ export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
         this.cestaRepository = connection.getDataSourcer().getRepository(CestaGeradaEntity);
     }
 
-    public async save(cesta: CestaGeradaEntity): Promise<void> {
+    public async save(cesta: CestaGeradaEntity): Promise<CestaGeradaEntity> {
         try {
-            await this.unitOfWork.transaction(CestaGeradaEntity, cesta);
+            return await this.unitOfWork.transaction(CestaGeradaEntity, cesta);
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao salvar cestas");
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
@@ -31,18 +31,22 @@ export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
     }
 
     public async findCestaById(id: number): Promise<CestaGeradaEntity | null> {
-        return this.cestaRepository.findOne({ where: { id } })
+        return this.cestaRepository.findOne({ 
+            where: { id },
+            relations: {cestaItens: {cestaEstoqueItem: true}}
+        })
     }
 
     public async filterCestas(filter: CestaFilterQueryDTO): Promise<[CestaGeradaEntity[], number]> {
         try {
+            this.logger.info({id: filter.statusCesta}, 'ID status cesta ')
             const { page, pageSize, statusCesta } = filter;
             return this.cestaRepository.findAndCount({
                 skip: (page - 1) * pageSize,
                 take: pageSize,
                 order: { id: "ASC" },
-                where: {status: {id: StatusCesta[statusCesta]}},
-                relations: {template: {acoes: {itensTemplate: {estoque: {itemProduto: {unidadeMedida: true}}}}}, status: true}
+                where: {status: {id: statusCesta}},
+                relations: {cestaItens: {cestaEstoqueItem: {itemProduto: {unidadeMedida: true}}}, template: {itensTemplate: {itemProduto: true}}, status: true}
             });
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao consultar cestas");

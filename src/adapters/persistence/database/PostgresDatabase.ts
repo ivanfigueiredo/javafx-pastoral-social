@@ -3,7 +3,6 @@ import "reflect-metadata";
 import { Connection } from "./Connection";
 import { AjudaRecebidaEntity } from "../entities/AjudaRecebidaEntity";
 import { CestaGeradaEntity } from "../entities/CestaGeradaEntity";
-import { AcaoSocialTemplateEntity } from "../entities/AcaoSocialTemplateEntity";
 import { ComunidadeEntity } from "../entities/ComunidadeEntity";
 import { DificuldadeEntity } from "../entities/DificuldadeEntity";
 import { EstoqueEntity } from "../entities/EstoqueEntity";
@@ -25,6 +24,7 @@ import { AuditoriaEntity } from "../entities/AuditoriaEntity";
 import { DoadorEntity } from '../entities/DoadorEntity';
 import { DoacaoRecebidaEntity } from '../entities/DoacaoRecebidaEntity';
 import { DoacaoEstoqueEntity } from '../entities/DoacaoEstoqueEntity';
+import { CestaEstoqueItemEntity } from "../entities/CestaEstoqueItemEntity";
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -44,7 +44,6 @@ export class PostgresDatabase implements Connection {
                 FamiliaEntity,
                 TipoAjudaEntity,
                 CestaGeradaEntity,
-                AcaoSocialTemplateEntity,
                 ComunidadeEntity,
                 DificuldadeEntity,
                 EstoqueEntity,
@@ -62,7 +61,8 @@ export class PostgresDatabase implements Connection {
                 AuditoriaEntity,
                 DoadorEntity,
                 DoacaoRecebidaEntity,
-                DoacaoEstoqueEntity
+                DoacaoEstoqueEntity,
+                CestaEstoqueItemEntity
             ]
         });
     }
