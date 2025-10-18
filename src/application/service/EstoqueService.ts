@@ -1,11 +1,7 @@
 import { Logger } from 'pino';
-import { AcaoSocialTemplateEntity } from "../../adapters/persistence/entities/AcaoSocialTemplateEntity";
-import { CestaGeradaEntity } from "../../adapters/persistence/entities/CestaGeradaEntity";
 import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
-import { StatusCestaEntity } from "../../adapters/persistence/entities/StatusCestaEntity";
 import { CadastroEstoqueDTO } from "../dto/CadastroEstoqueDTO";
 import { ConsultaGeracaoTemplateDTO } from "../dto/ConsultaGeracaoTemplateDTO";
-import { StatusCestaEnum } from "../dto/enuns/StatusCestaEnum";
 import { TemplateTypeEnum } from "../dto/enuns/TemplateTypeEnum";
 import { EstoqueDTO } from "../dto/EstoqueDTO";
 import { GeracaoModeloTemplateDTO } from "../dto/GeracaoModeloTemplateDTO";
@@ -17,12 +13,17 @@ import { UnidadeDeMedidadDTO } from "../dto/UnidadeDeMedidaDTO";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
 import { UnprocessableException } from "../exceptions/UnprocessableException";
 import { EstoqueUseCase } from "../port/in/EstoqueUseCase";
-import { AcaoSocialTemplateRepository } from "../port/out/AcaoSocialTemplateRepository";
 import { EstoqueRepository } from "../port/out/EstoqueRepository";
 import { ItemTemplateRepository } from "../port/out/ItemTemplateRepository";
 import { TemplateRepository } from "../port/out/TemplateRepository";
 import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
+import { ItemProdutoEntity } from '../../adapters/persistence/entities/ItemProdutoEntity';
+import { StatusCestaEntity } from '../../adapters/persistence/entities/StatusCestaEntity';
+import { StatusCestaEnum } from '../dto/enuns/StatusCestaEnum';
+import { CestaGeradaEntity } from '../../adapters/persistence/entities/CestaGeradaEntity';
 import { CestaGeradaRepository } from '../port/out/CestaGeradaRepository';
+import { CestaEstoqueItemRepository } from '../port/out/CestaEstoqueItemRepository';
+import { CestaEstoqueItemEntity } from '../../adapters/persistence/entities/CestaEstoqueItemEntity';
 
 export class EstoqueService implements EstoqueUseCase {
     private readonly logger: Logger;
@@ -30,10 +31,10 @@ export class EstoqueService implements EstoqueUseCase {
     constructor(
         logger: Logger,
         private readonly estoqueRepository: EstoqueRepository,
-        private readonly acaoSocialTemplateRepository: AcaoSocialTemplateRepository,
         private readonly itemTemplateRepository: ItemTemplateRepository,
         private readonly templateRepository: TemplateRepository,
-        private readonly cestaGeradaRepository: CestaGeradaRepository, 
+        private readonly cestaGeradaRepository: CestaGeradaRepository,
+        private readonly cestaEstoqueItemRepository: CestaEstoqueItemRepository,
         private readonly unitOfWork: UnitOfWorkPort
     ) {
         this.logger = logger.child({ service: "EstoqueUseCase" });
@@ -91,35 +92,36 @@ export class EstoqueService implements EstoqueUseCase {
             }
             const templateEntity = await this.templateRepository.save(dto.template);
             for (const templateItem of dto.templateItens) {
-                const qtdNecessarioTotal = templateItem.quantidade * dto.qtdGeracaoPossivel;
-                const estoqueItens = await this.estoqueRepository.findEstoqueByItemProdutoIdAndQtdGeracaoTemplate(templateItem.itemProdutoId, qtdNecessarioTotal);
-                for (const estoque of estoqueItens) {
-                    if (dto.template.gerarCestas) {
-                        estoque.dataSaida = new Date();
-                        estoque.isDisponivel = false;
-                    }
-                    const acaoSocialTemplate = new AcaoSocialTemplateEntity(null, templateItem.quantidade, templateEntity, []);
-                    await this.acaoSocialTemplateRepository.save(acaoSocialTemplate);
-                    this.logger.info({idAcaoSocial: acaoSocialTemplate.id}, 'Acao social cadastrada com sucesso.');
-                    const itemTemplate = new ItemTemplateEntity(null, acaoSocialTemplate, estoque);
-                    await this.itemTemplateRepository.save(itemTemplate);
-                    this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
-                }
-                if (dto.template.gerarCestas) {
-                    await this.estoqueRepository.saveMany(estoqueItens);
-                }
+                templateItem.itemProdutoId
+                const itemProdutoEntity = new ItemProdutoEntity(templateItem.itemProdutoId, null, null, null, [], []);
+                const itemTemplate = new ItemTemplateEntity(null, templateItem.quantidade, templateEntity, itemProdutoEntity);
+                await this.itemTemplateRepository.save(itemTemplate);
+                this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
             }
             if (dto.template.gerarCestas) {
                 for (let i = 0; i < dto.qtdGeracaoPossivel; i++) {
                     const statusCesta = new StatusCestaEntity(StatusCestaEnum.CRIADA, null, []);
-                    const cesta = new CestaGeradaEntity(null, new Date(), templateEntity, statusCesta, []);
-                    await this.cestaGeradaRepository.save(cesta);
-                    this.logger.info({ templateId: templateEntity.id, descricao: dto.template.templateDesc }, "Cesta gerada para o template informado");
+                    const cesta = new CestaGeradaEntity(null, new Date(), templateEntity, statusCesta, [], []);
+                    const cestaGerada = await this.cestaGeradaRepository.save(cesta);
+                    this.logger.info({idCesta: cestaGerada.id}, 'Cesta gerada com sucesso');
+                    for (const templateItem of dto.templateItens) {
+                        const qtdNecessarioTotal = templateItem.quantidade;
+                        const estoqueItens = await this.estoqueRepository.findEstoqueByItemProdutoIdAndQtdGeracaoTemplate(templateItem.itemProdutoId, qtdNecessarioTotal);
+                        for (const estoque of estoqueItens) {
+                            estoque.dataSaida = new Date();
+                            estoque.isDisponivel = false;
+                            const cestaEstoqueItem = new CestaEstoqueItemEntity(cestaGerada.id!, estoque.id!, estoque, cestaGerada);
+                            await this.cestaEstoqueItemRepository.save(cestaEstoqueItem);
+                        }
+                        await this.estoqueRepository.saveMany(estoqueItens);
+                    }
                 }
             }
             await this.unitOfWork.commit();
+            await this.unitOfWork.release();
             return new ModeloTemplateCriadoResponse(templateEntity.id!);
         } catch(e: any) {
+            this.logger.error({error: e.message}, 'Error ')
             await this.unitOfWork.rollBack();
             if (e instanceof InternalServerErrorException) {
                 throw e;

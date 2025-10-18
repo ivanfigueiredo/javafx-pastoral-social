@@ -2,7 +2,7 @@ import { CestaGeradaEntity } from "../../../adapters/persistence/entities/CestaG
 import { CestaFilterQueryDTO } from "../../dto/CestaFilterQueryDTO";
 
 export interface CestaGeradaRepository {
-    save: (cesta: CestaGeradaEntity) => Promise<void>;
+    save: (cesta: CestaGeradaEntity) => Promise<CestaGeradaEntity>;
     findCestaById: (idCesta: number) => Promise<CestaGeradaEntity | null>;
     filterCestas: (filter: CestaFilterQueryDTO) => Promise<[CestaGeradaEntity[], number]>;
     countCestasEntregue: () => Promise<number>;

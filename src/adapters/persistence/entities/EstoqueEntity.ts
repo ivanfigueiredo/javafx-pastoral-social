@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
 import { LocalizacaoEntity } from "./LocalizacaoEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
-import { ItemTemplateEntity } from "./ItemTemplateEntity";
 import { DoacaoEstoqueEntity } from "./DoacaoEstoqueEntity";
+import { CestaEstoqueItemEntity } from "./CestaEstoqueItemEntity";
 
 @Entity('tps_estoque')
 export class EstoqueEntity {
@@ -24,14 +24,8 @@ export class EstoqueEntity {
     @Column({ type: 'date', nullable: false })
     validade: Date;
 
-    @Column({ name: 'valor_medida', type: 'int4', nullable: false })
-    valorMedida: number;
-
     @Column({name: 'is_disponivel', type: 'boolean', nullable: false})
     isDisponivel: boolean | null;
-
-    @OneToMany(() => ItemTemplateEntity, item => item.estoque)
-    itensTemplate: ItemTemplateEntity[] = [];
 
     @OneToMany(() => DoacaoEstoqueEntity, (doacaoEstoque) => doacaoEstoque.estoque)
     doacoesEstoque: DoacaoEstoqueEntity[] = [];
@@ -42,16 +36,19 @@ export class EstoqueEntity {
     @Column({ name: 'data_saida', type: 'date', nullable: true })
     dataSaida: Date | null;
 
+    @OneToOne(() => CestaEstoqueItemEntity, (cestaEstoque) => cestaEstoque.cestaEstoqueItem)
+    cestaItemEstoque: CestaEstoqueItemEntity | null;
+
+
   constructor(
     id: number | null,
     dataEntrada: Date,
     validade: Date,
-    valorMedida: number,
     isDisponivel: boolean | null = null,
     dataSaida: Date | null = null,
     localizacao: LocalizacaoEntity,
     itemProduto: ItemProdutoEntity,
-    itensTemplate: ItemTemplateEntity[],
+    cestaItemEstoque: CestaEstoqueItemEntity | null,
     doacoesEstoque: DoacaoEstoqueEntity[]
   ) {
     this.id = id;
@@ -59,10 +56,9 @@ export class EstoqueEntity {
     this.dataSaida = dataSaida;
     this.isDisponivel = isDisponivel;
     this.validade = validade;
-    this.valorMedida = valorMedida;
     this.localizacao = localizacao;
     this.itemProduto = itemProduto;
-    this.itensTemplate = itensTemplate;
     this.doacoesEstoque = doacoesEstoque;
+    this.cestaItemEstoque = cestaItemEstoque;
   }
 }

@@ -71,7 +71,7 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
                 qb => qb
                     .leftJoinAndSelect("e.itemProduto", "p")
                     .where("e.data_saida IS NULL")
-                    .andWhere("e.validade >= CURRENT_DATE")
+                    .andWhere("e.validade > CURRENT_DATE")
                     .andWhere("e.id_item_produto = :idProduto", { idProduto: itemProdutoId })
                     .orderBy("e.data_entrada")
                     .limit(qtdGeracaoTemplate),
@@ -83,7 +83,7 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
             .createQueryBuilder("e")
             .innerJoin(ItemProdutoEntity, "p", "e.id_item_produto = p.id_produto")
             .where("e.data_saida IS NULL")
-            .andWhere("e.validade >= CURRENT_DATE")
+            .andWhere("e.validade > CURRENT_DATE")
             .andWhere("e.is_disponivel IS TRUE")
             .select("e.id_item_produto", "id_item_produto")
             .addSelect("COUNT(*)", "disponivel")

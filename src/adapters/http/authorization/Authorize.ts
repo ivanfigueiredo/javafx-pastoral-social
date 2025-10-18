@@ -11,7 +11,7 @@ export class Authorize {
         } else {
             const response = {
                 timestamp: new Date().toISOString(),
-                message: 'Não Autorizado',
+                message: 'Acesso negado',
                 path: req.path
             }
             res.status(403).json(response);

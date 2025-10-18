@@ -21,7 +21,8 @@ export class TemplatePostgresDatabase implements TemplateRepository {
     }
 
     public async findTemplateById(templateId: number): Promise<TemplateEntity | null> {
-        return this.templateRepository.findOne({where: {id: templateId}, relations: {acoes: {itensTemplate: {acaoSocialTemplate: true, estoque: {itemProduto: {unidadeMedida: true}}}}}});
+        // return this.templateRepository.findOne({where: {id: templateId}, relations: {acoes: {itensTemplate: {acaoSocialTemplate: true, estoque: {itemProduto: {unidadeMedida: true}}}}}});
+        return null;
     }
 
     public async save(dto: CriarTemplateDTO): Promise<TemplateEntity> {
@@ -40,7 +41,7 @@ export class TemplatePostgresDatabase implements TemplateRepository {
             skip: (currentPage - 1) * pageSize,
             take: currentPageSize,
             order: { id: "ASC" },
-            relations: {acoes: {itensTemplate: {acaoSocialTemplate: true, estoque: {itemProduto: {unidadeMedida: true}}}}}
+            relations: {itensTemplate: {itemProduto: true}}
         });
     }
 }

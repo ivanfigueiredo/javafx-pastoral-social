@@ -3,6 +3,7 @@ import { createHash } from 'crypto';
 import { TemplateEntity } from "./TemplateEntity";
 import { StatusCestaEntity } from "./StatusCestaEntity";
 import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
+import { CestaEstoqueItemEntity } from "./CestaEstoqueItemEntity";
 
 @Entity('tps_cesta_gerada')
 export class CestaGeradaEntity {
@@ -26,6 +27,9 @@ export class CestaGeradaEntity {
   @JoinColumn({ name: 'id_status' })
   status: StatusCestaEntity;
 
+  @OneToMany(() => CestaEstoqueItemEntity, cestaEstoqueItem => cestaEstoqueItem.cesta)
+  cestaItens: CestaEstoqueItemEntity[] = [];
+
   @BeforeInsert()
   private gerarIdentificador(): void {
     this.identificadorCesta = this.geradorIdentificadorCesta();
@@ -36,6 +40,7 @@ export class CestaGeradaEntity {
     dataCriacao: Date,
     template: TemplateEntity,
     status: StatusCestaEntity,
+    cestaItens: CestaEstoqueItemEntity[],
     ajudas: AjudaRecebidaEntity[],
     identificadorCesta?: string
   ) {
@@ -45,6 +50,7 @@ export class CestaGeradaEntity {
     this.template = template;
     this.ajudas = ajudas;
     this.identificadorCesta = identificadorCesta;
+    this.cestaItens = cestaItens;
   }
 
   private geradorIdentificadorCesta(): string {
