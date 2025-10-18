@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { TemplateTypeEnum } from "./TemplateTypeEnum";
 import { ItemTemplateEntity } from "./ItemTemplateEntity";
+import { CestaGeradaEntity } from "./CestaGeradaEntity";
 
 @Entity('tps_template')
 export class TemplateEntity {
@@ -16,15 +17,20 @@ export class TemplateEntity {
   @OneToMany(() => ItemTemplateEntity, itemTemplate => itemTemplate.template)
   itensTemplate: ItemTemplateEntity[] = [];
 
+  @OneToMany(() => CestaGeradaEntity, cesta => cesta.template)
+  cestas: CestaGeradaEntity[] = [];
+
   constructor(
     id: number | null,
     descricao: string,
     templateType: TemplateTypeEnum,
-    itensTemplate: ItemTemplateEntity[]
+    itensTemplate: ItemTemplateEntity[],
+    cestas: CestaGeradaEntity[]
   ) {
     this.id = id;
     this.descricao = descricao;
     this.templateType = templateType;
     this.itensTemplate = itensTemplate;
+    this.cestas = cestas;
   }
 }

@@ -10,7 +10,7 @@ export class CestaGeradaEntity {
   @PrimaryGeneratedColumn({ name: 'id_cesta' })
   id: number | null;
 
-  @ManyToOne(() => TemplateEntity)
+  @ManyToOne(() => TemplateEntity, (template) => template.cestas)
   @JoinColumn({ name: 'id_template' })
   template: TemplateEntity;
 

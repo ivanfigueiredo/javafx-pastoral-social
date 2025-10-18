@@ -7,6 +7,7 @@ import { Connection } from "./database/Connection";
 import { Repository } from "typeorm";
 import { CestaFilterQueryDTO } from "../../application/dto/CestaFilterQueryDTO";
 import { StatusCestaEnum } from "../../application/dto/enuns/StatusCestaEnum";
+import { TemplateTypeEnum } from "./entities/TemplateTypeEnum";
 
 export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
     private readonly cestaRepository: Repository<CestaGeradaEntity>;
@@ -44,7 +45,7 @@ export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
             return this.cestaRepository.findAndCount({
                 skip: (page - 1) * pageSize,
                 take: pageSize,
-                order: { id: "ASC" },
+                order: { id: "DESC" },
                 where: {status: {id: statusCesta}},
                 relations: {cestaItens: {cestaEstoqueItem: {itemProduto: {unidadeMedida: true}}}, template: {itensTemplate: {itemProduto: true}}, status: true}
             });
@@ -56,5 +57,9 @@ export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
 
     public async countCestasEntregue(): Promise<number> {
         return this.cestaRepository.count({where: {status: {id: StatusCestaEnum.ENTREGUE}}});
+    }
+
+    public async findCestasByIdTemplate(idTemplate: number): Promise<CestaGeradaEntity[]> {
+        return this.cestaRepository.find({where: {template: {id: idTemplate, templateType: TemplateTypeEnum.CESTA_BASICA}, status: {id: StatusCestaEnum.CRIADA}}});
     }
 }
