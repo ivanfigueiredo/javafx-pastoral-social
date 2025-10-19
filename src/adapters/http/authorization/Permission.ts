@@ -26,6 +26,7 @@ type ActionType =
   | 'ListarTipoTemplate'
   | 'ListarCesta'
   | 'CancelarCesta'
+  | 'AtualizarUsuario'
 
 export type Action = 
     | 'cadastrar_familia'
@@ -51,6 +52,7 @@ export type Action =
     | 'listar_tipo_template'
     | 'listar_cesta'
     | 'cancelar_cesta'
+    | 'atualizar_usuario'
 
 export const ActionType: Record<ActionType, Action> = {
     CadastrarFamilia: 'cadastrar_familia',
@@ -75,7 +77,8 @@ export const ActionType: Record<ActionType, Action> = {
     ListarComunidades: 'listar_comunidade',
     ListarTipoTemplate: 'listar_tipo_template',
     ListarCesta: 'listar_cesta',
-    CancelarCesta: 'cancelar_cesta'
+    CancelarCesta: 'cancelar_cesta',
+    AtualizarUsuario: 'atualizar_usuario'
 }
 
 export type Role = 

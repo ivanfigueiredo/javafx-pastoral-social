@@ -7,7 +7,7 @@ import { RefreshTokenDTO } from "../dto/RefreshTokenDTO";
 import { RefreshTokenResponseDTO } from "../dto/RefreshTokenResponseDTO";
 import { AuthUseCase } from "../port/in/AuthUseCase";
 import { SecurityRepository } from "../port/out/SecurityRepository";
-import { UserRepository } from "../port/out/UserRepository";
+import { UsuarioRepository } from "../port/out/UsuarioRepository";
 import { SecurityDTO } from '../dto/SecurityDTO';
 import { AuthRepository } from '../port/out/AuthRepository';
 import { UnauthorizedException } from '../exceptions/UnauthorizedException';
@@ -17,7 +17,7 @@ export class AuthService implements AuthUseCase {
 
     constructor(
         logger: Logger,
-        private readonly userRepository: UserRepository,
+        private readonly usuarioRepository: UsuarioRepository,
         private readonly securityRepository: SecurityRepository,
         private readonly authRepository: AuthRepository
     ) {
@@ -25,7 +25,7 @@ export class AuthService implements AuthUseCase {
     }
 
     public async login(dto: LoginDTO): Promise<LoginResponseDTO> {
-        const user = await this.userRepository.findUserByNickName(dto.nickName);
+        const user = await this.usuarioRepository.findUserByNickName(dto.nickName);
         const passwordIsValid = await this.isSenhaValida(dto.senha, user.password);
         if (!passwordIsValid) throw new UnauthorizedException("Usuário ou senha inválidos");
         const hashAccessToken = await this.generateHash(randomUUID());
@@ -59,8 +59,8 @@ export class AuthService implements AuthUseCase {
     }
 
     private async generateHash(uuid: string): Promise<string> {
-        const saltRounds = 12;
-        return hash(uuid, saltRounds);
+        const SALT_ROUNDS = 12;
+        return hash(uuid, SALT_ROUNDS);
     }
 
     private generateAccessTokenExpiry(): Date {
