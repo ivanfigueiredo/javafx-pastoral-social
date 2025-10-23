@@ -9,6 +9,8 @@ import { EstoqueRepository } from "../port/out/EstoqueRepository";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
 import { EstoqueEntity } from "../../adapters/persistence/entities/EstoqueEntity";
 import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
+import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
+import { AjudaRepository } from "../port/out/AjudaRepository";
 
 export class CancelarCestaService implements CancelarCestaUseCase {
     private readonly logger: Logger;
@@ -16,6 +18,7 @@ export class CancelarCestaService implements CancelarCestaUseCase {
     constructor(
         logger: Logger,
         private readonly cestaGeradaRepository: CestaGeradaRepository,
+        private readonly ajudaRepository: AjudaRepository,
         private readonly estoqueRepository: EstoqueRepository,
         private readonly unitOfWork: UnitOfWorkPort
     ) {
@@ -34,6 +37,10 @@ export class CancelarCestaService implements CancelarCestaUseCase {
                 estoque.push(itemCesta.cestaEstoqueItem);
             }
             cesta.status = new StatusCestaEntity(StatusCestaEnum.CANCELADA, null, []);
+            if (dto.cancelarAjuda && cesta.ajuda != null) {
+                cesta.ajuda.statusAjuda = StatusAjudaEnum.CANCELADA;
+                await this.ajudaRepository.save(cesta.ajuda);
+            }
             await this.cestaGeradaRepository.save(cesta);
             await this.estoqueRepository.saveMany(estoque);
             await this.unitOfWork.commit();

@@ -34,7 +34,7 @@ export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
     public async findCestaById(id: number): Promise<CestaGeradaEntity | null> {
         return this.cestaRepository.findOne({ 
             where: { id },
-            relations: {cestaItens: {cestaEstoqueItem: true}}
+            relations: {cestaItens: {cestaEstoqueItem: true}, ajuda: true}
         })
     }
 

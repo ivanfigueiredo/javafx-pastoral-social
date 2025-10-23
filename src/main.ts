@@ -75,7 +75,7 @@ config();
     const getCestasService = new GetCestasService(logger, cestaGeradaRepository);
     const updateUsuarioService = new UpdateUsuarioService(logger, usuarioRepository);
     const listarTemplatesComCestasDisponiveisService = new ListarTemplatesComCestasDisponiveisService(logger, templateRepository);
-    const cancelarCestaService = new CancelarCestaService(logger, cestaGeradaRepository, estoqueRepositiory, unitOfWork);
+    const cancelarCestaService = new CancelarCestaService(logger, cestaGeradaRepository, ajudaRepository, estoqueRepositiory, unitOfWork);
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
     const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
     const gerarModeloTemplateProxy = new GerarModeloTemplateProxy(logger, estoqueService, auditoriaRepository);

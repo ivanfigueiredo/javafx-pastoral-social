@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToMany, BeforeInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToMany, BeforeInsert, OneToOne } from "typeorm";
 import { createHash } from 'crypto';
 import { TemplateEntity } from "./TemplateEntity";
 import { StatusCestaEntity } from "./StatusCestaEntity";
@@ -14,8 +14,8 @@ export class CestaGeradaEntity {
   @JoinColumn({ name: 'id_template' })
   template: TemplateEntity;
 
-  @OneToMany(() => AjudaRecebidaEntity, ajuda => ajuda.cestaGerada)
-  ajudas: AjudaRecebidaEntity[] = [];
+  @OneToOne(() => AjudaRecebidaEntity, ajuda => ajuda.cestaGerada)
+  ajuda: AjudaRecebidaEntity | null;
 
   @Column({ name: 'data_criacao', type: 'timestamptz' })
   dataCriacao: Date;
@@ -41,14 +41,14 @@ export class CestaGeradaEntity {
     template: TemplateEntity,
     status: StatusCestaEntity,
     cestaItens: CestaEstoqueItemEntity[],
-    ajudas: AjudaRecebidaEntity[],
+    ajuda: AjudaRecebidaEntity | null,
     identificadorCesta?: string
   ) {
     this.id = id;
     this.dataCriacao = dataCriacao;
     this.status = status;
     this.template = template;
-    this.ajudas = ajudas;
+    this.ajuda = ajuda;
     this.identificadorCesta = identificadorCesta;
     this.cestaItens = cestaItens;
   }

@@ -101,7 +101,7 @@ export class EstoqueService implements EstoqueUseCase {
             if (dto.template.gerarCestas) {
                 for (let i = 0; i < dto.qtdGeracaoPossivel; i++) {
                     const statusCesta = new StatusCestaEntity(StatusCestaEnum.CRIADA, null, []);
-                    const cesta = new CestaGeradaEntity(null, new Date(), templateEntity, statusCesta, [], []);
+                    const cesta = new CestaGeradaEntity(null, new Date(), templateEntity, statusCesta, [], null);
                     const cestaGerada = await this.cestaGeradaRepository.save(cesta);
                     this.logger.info({idCesta: cestaGerada.id}, 'Cesta gerada com sucesso');
                     for (const templateItem of dto.templateItens) {

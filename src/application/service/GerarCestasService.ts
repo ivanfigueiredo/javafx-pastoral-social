@@ -43,7 +43,7 @@ export class GerarCestasService implements GerarCestasUseCase {
             if (qtdGeracaoCestas.quantidadePossivel <= 0) throw new UnprocessableException('O template informado é invalio ou estoque insuficiente para gerar o modelo.');
             for (let i = 0; i < qtdGeracaoCestas.quantidadePossivel; i++) {
                 const statusCesta = new StatusCestaEntity(StatusCestaEnum.CRIADA, null, []);
-                let cesta = new CestaGeradaEntity(null, new Date(), template, statusCesta, [], []);
+                let cesta = new CestaGeradaEntity(null, new Date(), template, statusCesta, [], null);
                 this.logger.info('Gerando cestas');
                 cesta = await this.cestaGeradaRepository.save(cesta);
                 for (const templateItem of result) {

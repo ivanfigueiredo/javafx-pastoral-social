@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToOne } from "typeorm";
 import { TipoAjudaEntity } from "./TipoAjudaEntity";
 import { FamiliaEntity } from "./FamiliaEntity";
 import { CestaGeradaEntity } from "./CestaGeradaEntity";
+import { StatusAjudaEnum } from "./StatusAjudaEnum";
 
 @Entity('tps_ajuda_recebida')
 export class AjudaRecebidaEntity {
@@ -20,10 +21,8 @@ export class AjudaRecebidaEntity {
   @JoinColumn({ name: 'id_tipo_ajuda' })
   tipoAjuda: TipoAjudaEntity;
 
-  @ManyToOne(() => CestaGeradaEntity, cesta => cesta.ajudas, {
-    eager: true
-  })
-  @JoinColumn({ name: 'id_cesta_gerada' })
+  @OneToOne(() => CestaGeradaEntity, cesta => cesta.ajuda, { eager: true, nullable: true, cascade: true })
+  @JoinColumn({ name: 'id_cesta' })
   cestaGerada: CestaGeradaEntity | null;
 
   @Column({ name: 'data_entrega', nullable: true, type: 'date' })
@@ -34,6 +33,9 @@ export class AjudaRecebidaEntity {
 
   @Column({ name: 'observacao', nullable: true, type: 'varchar' })
   observacao: string | null;
+
+  @Column({ name: 'status_ajuda', type: 'enum', enum: StatusAjudaEnum })
+  statusAjuda: StatusAjudaEnum;
 
   @Column({ name: 'envolveu_autoridade', type: 'bool', default: false })
   envolveuAutoridade: boolean;
@@ -46,6 +48,7 @@ export class AjudaRecebidaEntity {
     dataEntrega: Date | null,
     envolveuAutoridade: boolean,
     entregaAprovada: boolean,
+    statusAjuda: StatusAjudaEnum,
     autoridadeNome: string | null,
     observacao: string | null,
     familia: FamiliaEntity,
@@ -58,6 +61,7 @@ export class AjudaRecebidaEntity {
     this.entregaAprovada = entregaAprovada;
     this.autoridadeNome = autoridadeNome;
     this.familia = familia;
+    this.statusAjuda = statusAjuda;
     this.observacao = observacao;
     this.tipoAjuda = tipoAjuda;
     this.cestaGerada = cestaGerada;
