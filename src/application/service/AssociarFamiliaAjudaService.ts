@@ -13,6 +13,7 @@ import { StatusCestaEntity } from "../../adapters/persistence/entities/StatusCes
 import { StatusCestaEnum } from "../dto/enuns/StatusCestaEnum";
 import { UnprocessableException } from "../exceptions/UnprocessableException";
 import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
+import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
 
 export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase {
     private readonly logger: Logger;
@@ -43,13 +44,12 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
                     if (cestas === null || cestas.length === 0) throw new UnprocessableException("O template informado não tem cestas disponíveis");
                     const cesta = cestas[0];
                     cesta.status = new StatusCestaEntity(StatusCestaEnum.RESERVADA, null, []);
-                    await this.cestaGeradaRepository.save(cesta);
                     this.logger.info({ statusCesta: StatusCestaEnum.RESERVADA }, 'Atualizando status da cesta para: ');
                     const tipoAjuda = new TipoAjudaEntity(TipoAjudaEnum.CESTA_BASICA, null, []);
-                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, null, detalhe, familia, tipoAjuda, cesta);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, familia, tipoAjuda, cesta);
                 } else {
                     const tipoAjuda = new TipoAjudaEntity(item.ajuda.tipoAjuda, null, []);
-                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, null, detalhe, familia, tipoAjuda, null);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, familia, tipoAjuda, null);
                 }
                 ajudasDoada.push(ajudaRecebida);
             }

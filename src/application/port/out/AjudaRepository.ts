@@ -2,4 +2,5 @@ import { AjudaRecebidaEntity } from "../../../adapters/persistence/entities/Ajud
 
 export interface AjudaRepository {
     criarAjuda: (ajuda: AjudaRecebidaEntity[]) => Promise<void>;
+    save: (ajuda: AjudaRecebidaEntity) => Promise<void>;
 }

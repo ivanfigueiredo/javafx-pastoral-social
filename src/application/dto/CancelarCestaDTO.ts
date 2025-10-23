@@ -1,3 +1,3 @@
 export class CancelarCestaDTO {
-    constructor(readonly idCesta: number) {}
+    constructor(readonly idCesta: number, readonly cancelarAjuda?: true) {}
 }

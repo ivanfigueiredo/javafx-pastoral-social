@@ -21,7 +21,16 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
         try {
             await this.ajudaRepository.save(ajudas);
         } catch(e: any) {
-            this.logger.error({err: e.getMessage()}, 'Error ao persistir ajuda');
+            this.logger.error({err: e.message}, 'Error ao persistir ajuda');
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
+    }
+
+    public async save(ajuda: AjudaRecebidaEntity): Promise<void> {
+        try {
+            await this.ajudaRepository.save(ajuda);
+        } catch(e: any) {
+            this.logger.error({err: e.message}, 'Error ao persistir ajuda');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
