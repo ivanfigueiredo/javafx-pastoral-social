@@ -4,6 +4,7 @@ import { AjudaRecebidaEntity } from "./entities/AjudaRecebidaEntity";
 import { Connection } from "./database/Connection";
 import { Logger } from "pino";
 import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
+import { UnitOfWork } from "./unitOfWork/UnitOfWork";
 
 export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     private readonly ajudaRepository: Repository<AjudaRecebidaEntity>;
@@ -11,7 +12,8 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
 
     constructor(
         logger: Logger,
-        private readonly connection: Connection
+        private readonly connection: Connection,
+        private readonly unitOfWork: UnitOfWork
     ) {
         this.logger = logger.child({ service: 'AjudaRepository' });
         this.ajudaRepository = connection.getDataSourcer().getRepository(AjudaRecebidaEntity);
@@ -19,7 +21,7 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
 
     public async criarAjuda(ajudas: AjudaRecebidaEntity[]): Promise<void> {
         try {
-            await this.ajudaRepository.save(ajudas);
+            await this.unitOfWork.transactionMany(AjudaRecebidaEntity, ajudas)
         } catch(e: any) {
             this.logger.error({err: e.message}, 'Error ao persistir ajuda');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
@@ -28,10 +30,14 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
 
     public async save(ajuda: AjudaRecebidaEntity): Promise<void> {
         try {
-            await this.ajudaRepository.save(ajuda);
+            await this.unitOfWork.transaction(AjudaRecebidaEntity, ajuda);
         } catch(e: any) {
             this.logger.error({err: e.message}, 'Error ao persistir ajuda');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
+    }
+
+    public async findAjudaById(idAjuda: number): Promise<AjudaRecebidaEntity | null> {
+        return this.ajudaRepository.findOne({where: {id: idAjuda}, relations: {cestaGerada: true}})
     }
 }
