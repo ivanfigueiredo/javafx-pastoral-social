@@ -1,14 +1,12 @@
 import { Repository } from "typeorm";
 import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
-import { LocalizacaoDTO } from "../../application/dto/LocalizacaoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
 import { EstoqueRepository } from "../../application/port/out/EstoqueRepository";
 import { Connection } from "./database/Connection";
 import { EstoqueEntity } from "./entities/EstoqueEntity";
 import { EstoqueMapper } from "../mappers/EstoqueMapper";
 import { UnidadeMedidaEntity } from "./entities/UnidadeDeMedidaEntity";
-import { LocalizacaoEntity } from "./entities/LocalizacaoEntity";
 import { ItemProdutoEntity } from "./entities/ItemProdutoEntity";
 import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 import { TemplateItemDTO } from "../../application/dto/TemplateItemDTO";
@@ -17,7 +15,6 @@ import { UnitOfWork } from "./unitOfWork/UnitOfWork";
 export class EstoquePostgresDatabase implements EstoqueRepository {
     private readonly estoqueRepository: Repository<EstoqueEntity>;
     private readonly unidadeDeMedidaRepository: Repository<UnidadeMedidaEntity>;
-    private readonly localizacaoRepository: Repository<LocalizacaoEntity>;
     private readonly itemProdutoRepository: Repository<ItemProdutoEntity>;
 
     constructor(
@@ -26,16 +23,20 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
     ) {
         this.estoqueRepository = this.connection.getDataSourcer().getRepository(EstoqueEntity);
         this.unidadeDeMedidaRepository = this.connection.getDataSourcer().getRepository(UnidadeMedidaEntity);
-        this.localizacaoRepository = this.connection.getDataSourcer().getRepository(LocalizacaoEntity);
+
         this.itemProdutoRepository = this.connection.getDataSourcer().getRepository(ItemProdutoEntity);
     }
 
     public async save(dto: CadastroEstoqueDTO): Promise<void> {
-        await this.estoqueRepository.save(EstoqueMapper.toEstoqueEntity(dto));
+        // await this.estoqueRepository.save(EstoqueMapper.toEstoqueEntity(dto));
     }
 
-    public async saveMany(estoque: EstoqueEntity[]): Promise<void> {
-        await this.unitOfWork.transactionMany(EstoqueEntity, estoque);
+    public async findItemProdutoById(itemProdutoId: number): Promise<ItemProdutoEntity | null> {
+        return this.itemProdutoRepository.findOne({ where: {id: itemProdutoId} });
+    }
+
+    public async saveMany(estoques: EstoqueEntity[]): Promise<void> {
+        await this.unitOfWork.transactionMany(EstoqueEntity, estoques);
     }
 
     public async deleteOne(idEstoque: number): Promise<void> {
@@ -49,18 +50,16 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
         return EstoqueMapper.toUnidadeDeMedidaDTO(listUnd);
     }
 
-    public async findLocalizacao(): Promise<LocalizacaoDTO[]> {
-        const listLocalizacao = await this.localizacaoRepository.find();;
-        return EstoqueMapper.toLocalizacaoDTO(listLocalizacao);
-    }
-
     public async findITemProduto(): Promise<ItemProdutoDTO[]> {
         const listItemProduto = await this.itemProdutoRepository.find({relations: {estoques: true}});
         return EstoqueMapper.toItemProdutoDTO(listItemProduto);
     }
 
     public async findEstoqueByIdItemProduto(idItemProduto: number): Promise<EstoqueDTO[]> {
-        const estoqueLista = await this.estoqueRepository.find({ where: { isDisponivel: true, itemProduto: {id: idItemProduto} } });
+        const estoqueLista = await this.estoqueRepository.find({ 
+            where: { isDisponivel: true, itemProduto: {id: idItemProduto} },
+            relations: {itemProduto: {unidadeMedida: true}, localizacao: true, }
+        });
         return EstoqueMapper.toEstoqueDTO(estoqueLista);
     }
 

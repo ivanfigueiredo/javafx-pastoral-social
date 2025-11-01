@@ -2,7 +2,7 @@ import { Entity, ManyToOne, JoinColumn, PrimaryColumn } from "typeorm";
 import { RoleEntity } from "./RoleEntity";
 import { PermissionEntity } from "./PermissionEntity";
 
-@Entity('tps_role_permissions')
+@Entity('tps_role_permissions', {schema: 'permissao'})
 export class RolePermissionsEntity {
     @PrimaryColumn({ name: 'role_id', type: 'int' })
     roleId: number;

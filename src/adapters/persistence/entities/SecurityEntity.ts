@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "typeorm";
 import { UserEntity } from "./UserEntity";
 
-@Entity('tps_security')
+@Entity('tps_security', {schema: 'usuario'})
 export class SecurityEntity {
   @PrimaryGeneratedColumn()
   id: number | null;

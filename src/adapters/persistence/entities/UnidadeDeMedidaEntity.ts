@@ -3,7 +3,7 @@ import { ItemProdutoEntity } from "./ItemProdutoEntity";
 import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
 
-@Entity('tps_unidade_medida')
+@Entity('tps_unidade_medida', {schema: 'estoque'})
 export class UnidadeMedidaEntity {
   @PrimaryGeneratedColumn()
   id: number;

@@ -4,7 +4,7 @@ import { FamiliaEntity } from "./FamiliaEntity";
 import { CestaGeradaEntity } from "./CestaGeradaEntity";
 import { StatusAjudaEnum } from "./StatusAjudaEnum";
 
-@Entity('tps_ajuda_recebida')
+@Entity('tps_ajuda_recebida', {schema: 'ajuda'})
 export class AjudaRecebidaEntity {
   @PrimaryGeneratedColumn({ name: 'id_ajuda_recebida' })
   id: number | null;
@@ -27,6 +27,9 @@ export class AjudaRecebidaEntity {
 
   @Column({ name: 'data_entrega', nullable: true, type: 'date' })
   dataEntrega: Date | null;
+
+  @Column({ name: 'data_criacao', type: 'timestamptz' })
+  dataCriacao: Date | null;
 
   @Column({ name: 'entrega_aprovada', type: 'bool', default: false })
   entregaAprovada: boolean;
@@ -51,6 +54,7 @@ export class AjudaRecebidaEntity {
     statusAjuda: StatusAjudaEnum,
     autoridadeNome: string | null,
     observacao: string | null,
+    dataCriacao: Date | null,
     familia: FamiliaEntity,
     tipoAjuda: TipoAjudaEntity,
     cestaGerada: CestaGeradaEntity | null
@@ -61,6 +65,7 @@ export class AjudaRecebidaEntity {
     this.entregaAprovada = entregaAprovada;
     this.autoridadeNome = autoridadeNome;
     this.familia = familia;
+    this.dataCriacao = dataCriacao;
     this.statusAjuda = statusAjuda;
     this.observacao = observacao;
     this.tipoAjuda = tipoAjuda;

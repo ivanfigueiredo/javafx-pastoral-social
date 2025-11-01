@@ -3,7 +3,7 @@ import { TemplateTypeEnum } from "./TemplateTypeEnum";
 import { ItemTemplateEntity } from "./ItemTemplateEntity";
 import { CestaGeradaEntity } from "./CestaGeradaEntity";
 
-@Entity('tps_template')
+@Entity('tps_template', {schema: 'ajuda'})
 export class TemplateEntity {
   @PrimaryGeneratedColumn({ name: 'id_template' })
   id: number | null;

@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "t
 import { UserEntity } from "./UserEntity";
 import { StatusOperacaoEnum } from "./StatusOperacaoEnum";
 
-@Entity('tps_auditoria')
+@Entity('tps_auditoria', {schema: 'auditoria'})
 export class AuditoriaEntity {
     @PrimaryGeneratedColumn({ name: 'id_auditoria' })
     id: number | null;

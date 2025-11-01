@@ -8,7 +8,7 @@ import { FamiliaCadastradaDTO } from "../../dto/FamiliaCadastradaDTO";
 export interface FamiliaRepository {
     save: (dto: CadastrarFamiliaDTO) => Promise<FamiliaCadastradaDTO>;
     findFamiliaById: (idFamilia: number) => Promise<FamiliaEntity | null>;
-    saveFamiliaDificuldade: (dto: AssociarFamiliaComDificuldadeDTO) => Promise<void>;
+    saveFamiliaDificuldade: (dto: AssociarFamiliaComDificuldadeDTO[]) => Promise<void>;
     findComunidades: () => Promise<ComunidadeDTO[]>;
     findFamilias: () => Promise<any>;
     findDificuldades: () => Promise<DificuldadeDTO[]>;

@@ -45,11 +45,11 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
                     const cesta = cestas[0];
                     cesta.status = new StatusCestaEntity(StatusCestaEnum.RESERVADA, null, []);
                     this.logger.info({ statusCesta: StatusCestaEnum.RESERVADA }, 'Atualizando status da cesta para: ');
-                    const tipoAjuda = new TipoAjudaEntity(TipoAjudaEnum.CESTA_BASICA, null, []);
-                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, familia, tipoAjuda, cesta);
+                    const tipoAjuda = new TipoAjudaEntity(TipoAjudaEnum.CESTA_BASICA, null, null, []);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, new Date(), familia, tipoAjuda, cesta);
                 } else {
-                    const tipoAjuda = new TipoAjudaEntity(item.ajuda.tipoAjuda, null, []);
-                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, familia, tipoAjuda, null);
+                    const tipoAjuda = new TipoAjudaEntity(item.ajuda.tipoAjuda, null, null, []);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, new Date(), familia, tipoAjuda, null);
                 }
                 ajudasDoada.push(ajudaRecebida);
             }

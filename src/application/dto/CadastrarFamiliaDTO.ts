@@ -5,7 +5,7 @@ export class CadastrarFamiliaDTO extends BaseDTO {
         readonly nomeRepresentante: string,
         readonly idade: number,
         readonly idComunidade: number,
-        readonly idDificuldade: number,
+        readonly dificuldades: number[],
         readonly cpfRg: string | null,
         readonly telefone: string | null,
         readonly endereco: string | null,

@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column } from "t
 import { TemplateEntity } from "./TemplateEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
 
-@Entity('tps_item_template')
+@Entity('tps_item_template', {schema: 'ajuda'})
 export class ItemTemplateEntity {
   @PrimaryGeneratedColumn({ name: 'id_item_template' })
   id: number | null;
