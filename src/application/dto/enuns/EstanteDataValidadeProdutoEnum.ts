@@ -1,0 +1,5 @@
+export enum EstanteDataValidadeProdutoEnum {
+    ESTANTE_PRODUTO_COM_MENOS_60_DIAS = 1,
+    ESTANTE_PRODUTO_COM_MAIS_60_DIAS = 2,
+    ESTANTE_PRODUTO_COM_MAIS_120_DIAS = 3
+}

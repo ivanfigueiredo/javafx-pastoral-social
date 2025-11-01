@@ -6,7 +6,7 @@ import { ComunidadeEntity } from "./ComunidadeEntity";
 import { TipoDoacaoEnum } from "./TipoDoacaoEnum";
 import { DoacaoEstoqueEntity } from "./DoacaoEstoqueEntity";
 
-@Entity('tps_doacao_recebida')
+@Entity('tps_doacao_recebida', {schema: 'doador'})
 export class DoacaoRecebidaEntity {
     @PrimaryGeneratedColumn({name: 'id_doacao'})
     id: number | null;

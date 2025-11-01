@@ -8,6 +8,9 @@ import { UserLogged } from "../http/types/express";
 import { AssociarFamiliaAjudaUseCase } from "../../application/port/in/AssociarFamiliaAjudaUseCase";
 import { CancelarAjudaDTO } from "../../application/dto/CancelarAjudaDTO";
 import { CancelarAjudaUseCase } from "../../application/port/in/CancelarAjudaUseCase";
+import { AjudaFilterQueryDTO } from "../../application/dto/AjudaFilterQueryDTO";
+import { StatusAjudaEnum } from "../persistence/entities/StatusAjudaEnum";
+import { ListarAjudasUseCase } from "../../application/port/in/ListarAjudasUseCase";
 
 export class AjudaController {
     constructor(
@@ -15,7 +18,8 @@ export class AjudaController {
         readonly auth: Auth,
         readonly authorize: Authorize,
         readonly associarFamiliaAjudaUseCase: AssociarFamiliaAjudaUseCase,
-        readonly cancelarAjudaUseCase: CancelarAjudaUseCase
+        readonly cancelarAjudaUseCase: CancelarAjudaUseCase,
+        readonly listarAjudasUseCase: ListarAjudasUseCase
     ) {
         httpClient.on(
             "post", 
@@ -39,6 +43,24 @@ export class AjudaController {
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CancelarAjuda),
             async function (params: any, data: CancelarAjudaDTO, userLogged?: UserLogged) {
                 const output = await cancelarAjudaUseCase.execute(data);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
+        httpClient.on(
+            "get", 
+            "/ajuda/listar", 
+            // auth.authentication.bind(auth),
+            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarAjuda),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            async function (_params: any, _data: any, _userLogged?: UserLogged, query?: AjudaFilterQueryDTO) {
+                const dtoQuery = new AjudaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, query?.statusAjuda ?? StatusAjudaEnum.AGUARDANDO_APROVACAO, query?.tipoAjuda);
+                const output = await listarAjudasUseCase.execute(dtoQuery);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),

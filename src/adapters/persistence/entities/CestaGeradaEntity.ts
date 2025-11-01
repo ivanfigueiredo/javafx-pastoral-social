@@ -5,7 +5,7 @@ import { StatusCestaEntity } from "./StatusCestaEntity";
 import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
 import { CestaEstoqueItemEntity } from "./CestaEstoqueItemEntity";
 
-@Entity('tps_cesta_gerada')
+@Entity('tps_cesta_gerada', {schema: 'ajuda'})
 export class CestaGeradaEntity {
   @PrimaryGeneratedColumn({ name: 'id_cesta' })
   id: number | null;

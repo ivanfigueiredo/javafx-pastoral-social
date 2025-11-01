@@ -5,6 +5,7 @@ import { Connection } from "./database/Connection";
 import { Logger } from "pino";
 import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
+import { AjudaFilterQueryDTO } from "../../application/dto/AjudaFilterQueryDTO";
 
 export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     private readonly ajudaRepository: Repository<AjudaRecebidaEntity>;
@@ -39,5 +40,21 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
 
     public async findAjudaById(idAjuda: number): Promise<AjudaRecebidaEntity | null> {
         return this.ajudaRepository.findOne({where: {id: idAjuda}, relations: {cestaGerada: true}})
+    }
+
+    public async findAjudas(filter: AjudaFilterQueryDTO): Promise<[AjudaRecebidaEntity[], number]> {
+        try {
+            const { page, pageSize, statusAjuda } = filter;
+            return this.ajudaRepository.findAndCount({
+                skip: (page - 1) * pageSize,
+                take: pageSize,
+                order: { id: "DESC" },
+                where: { statusAjuda: statusAjuda, tipoAjuda: {id: filter?.tipoAjuda} },
+                relations: {tipoAjuda: true, cestaGerada: {cestaItens: true}, familia: true}
+            });
+        } catch (e: any) {
+            this.logger.error({err: e.message}, "Erro ao consultar cestas");
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
     }
 }

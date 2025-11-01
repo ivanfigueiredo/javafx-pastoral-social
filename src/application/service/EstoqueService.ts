@@ -6,7 +6,6 @@ import { TemplateTypeEnum } from "../dto/enuns/TemplateTypeEnum";
 import { EstoqueDTO } from "../dto/EstoqueDTO";
 import { GeracaoModeloTemplateDTO } from "../dto/GeracaoModeloTemplateDTO";
 import { ItemProdutoDTO } from "../dto/ItemProdutoDTO";
-import { LocalizacaoDTO } from "../dto/LocalizacaoDTO";
 import { ModeloTemplateCriadoResponse } from "../dto/ModeloTemplateCriadoResponseDTO";
 import { RespostaConsultaGeracaoTemplateDTO } from "../dto/RespostaConsultaGeracaoTemplateDTO";
 import { UnidadeDeMedidadDTO } from "../dto/UnidadeDeMedidaDTO";
@@ -24,6 +23,10 @@ import { CestaGeradaEntity } from '../../adapters/persistence/entities/CestaGera
 import { CestaGeradaRepository } from '../port/out/CestaGeradaRepository';
 import { CestaEstoqueItemRepository } from '../port/out/CestaEstoqueItemRepository';
 import { CestaEstoqueItemEntity } from '../../adapters/persistence/entities/CestaEstoqueItemEntity';
+import { LocalizacaoRepository } from '../port/out/LocalizacaoRepository';
+import { EstanteDataValidadeProdutoEnum } from '../dto/enuns/EstanteDataValidadeProdutoEnum';
+import { EstoqueMapper } from '../../adapters/mappers/EstoqueMapper';
+import { EstoqueEntity } from '../../adapters/persistence/entities/EstoqueEntity';
 
 export class EstoqueService implements EstoqueUseCase {
     private readonly logger: Logger;
@@ -35,6 +38,7 @@ export class EstoqueService implements EstoqueUseCase {
         private readonly templateRepository: TemplateRepository,
         private readonly cestaGeradaRepository: CestaGeradaRepository,
         private readonly cestaEstoqueItemRepository: CestaEstoqueItemRepository,
+        private readonly localizacaoRepository: LocalizacaoRepository,
         private readonly unitOfWork: UnitOfWorkPort
     ) {
         this.logger = logger.child({ service: "EstoqueUseCase" });
@@ -42,11 +46,36 @@ export class EstoqueService implements EstoqueUseCase {
 
     public async cadastrar(dto: CadastroEstoqueDTO): Promise<void> {
         try {
-            await this.estoqueRepository.save(dto);
+            await this.unitOfWork.startTransaction();
+            const diasDeValidadeProduto = this.calcularValidadeProduto(dto.validade);
+            const estanteValidadeProdutoEnum: EstanteDataValidadeProdutoEnum = (diasDeValidadeProduto <= 60) ?
+                EstanteDataValidadeProdutoEnum.ESTANTE_PRODUTO_COM_MENOS_60_DIAS
+                : ((diasDeValidadeProduto > 60) ? EstanteDataValidadeProdutoEnum.ESTANTE_PRODUTO_COM_MAIS_60_DIAS
+                    : EstanteDataValidadeProdutoEnum.ESTANTE_PRODUTO_COM_MAIS_120_DIAS);
+            const qtdLocalizacaoDisponivel = await this.localizacaoRepository.countLocalizacaoDisponivel(estanteValidadeProdutoEnum);
+            const iterator = (dto.quantidade > qtdLocalizacaoDisponivel) ? qtdLocalizacaoDisponivel : dto.quantidade;
+            const localizacoes = await this.localizacaoRepository.findLocalizacao(estanteValidadeProdutoEnum, iterator);
+            const estoques: EstoqueEntity[] = [];
+            for (const localizacao of localizacoes) {
+                localizacao.isDisponivel = false;
+                const estoque = EstoqueMapper.toEstoqueEntity(dto, localizacao);
+                estoques.push(estoque);
+            }
+            await this.estoqueRepository.saveMany(estoques);
+            await this.unitOfWork.commit();
         } catch (e: any) {
             this.logger.error({ err: e.message }, 'Erro ao persistir ')
+            await this.unitOfWork.rollBack();
         }
     };
+
+    private calcularValidadeProduto(data: Date): number {
+        const dataAtual = new Date();
+        const dataValidade = new Date(data);
+        const diferencaMs = (dataValidade.getTime() - dataAtual.getTime());
+        const diasPassados = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
+        return diasPassados;
+    }
 
     public async deletar(idEstoque: number): Promise<void> {
         try {
@@ -58,10 +87,6 @@ export class EstoqueService implements EstoqueUseCase {
 
     public async listarUnidadeMedida(): Promise<UnidadeDeMedidadDTO[]> {
         return await this.estoqueRepository.findUnidadeDeMedidas();
-    }
-
-    public async listarLocalizacao(): Promise<LocalizacaoDTO[]> {
-        return await this.estoqueRepository.findLocalizacao();
     }
 
     public async listarItemProduto(): Promise<ItemProdutoDTO[]> {

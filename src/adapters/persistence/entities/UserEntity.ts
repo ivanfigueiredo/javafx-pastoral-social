@@ -3,7 +3,7 @@ import { SecurityEntity } from "./SecurityEntity";
 import { RoleEntity } from "./RoleEntity";
 import { AuditoriaEntity } from "./AuditoriaEntity";
 
-@Entity('tps_users')
+@Entity('tps_users', {schema: 'usuario'})
 export class UserEntity {
   @PrimaryGeneratedColumn({ name: 'user_id' })
   id: number;

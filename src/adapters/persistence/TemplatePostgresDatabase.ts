@@ -21,8 +21,7 @@ export class TemplatePostgresDatabase implements TemplateRepository {
     }
 
     public async findTemplateById(templateId: number): Promise<TemplateEntity | null> {
-        // return this.templateRepository.findOne({where: {id: templateId}, relations: {acoes: {itensTemplate: {acaoSocialTemplate: true, estoque: {itemProduto: {unidadeMedida: true}}}}}});
-        return null;
+        return this.templateRepository.findOne({where: {id: templateId}, relations: {itensTemplate: {itemProduto: true}}});
     }
 
     public async save(dto: CriarTemplateDTO): Promise<TemplateEntity> {

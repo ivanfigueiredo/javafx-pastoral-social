@@ -2,7 +2,7 @@ import { Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGenerate
 import { EstoqueEntity } from "./EstoqueEntity";
 import { CestaGeradaEntity } from "./CestaGeradaEntity";
 
-@Entity('tps_cesta_item')
+@Entity('tps_cesta_item', {schema: 'ajuda'})
 export class CestaEstoqueItemEntity {
     @PrimaryColumn({ name: 'id_cesta' })
     idCesta: number;

@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
-@Entity('tps_doador')
+@Entity('tps_doador', {schema: 'doador'})
 export class DoadorEntity {
     @PrimaryGeneratedColumn({ name: 'id_estoque' })
     id: number | null;

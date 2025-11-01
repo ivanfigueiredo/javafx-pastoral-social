@@ -11,14 +11,14 @@ import { UnidadeMedidaEntity } from "../persistence/entities/UnidadeDeMedidaEnti
 export class EstoqueMapper {
     private EstoqueMapper() {}
 
-    public static toEstoqueEntity(dto: CadastroEstoqueDTO): EstoqueEntity {
+    public static toEstoqueEntity(dto: CadastroEstoqueDTO, localizacaoEntity: LocalizacaoEntity): EstoqueEntity {
         return new EstoqueEntity(
             null,
             new Date(),
             dto.validade,
             true,
             null,
-            new LocalizacaoEntity(dto.idLocalizacao, null, []),
+            localizacaoEntity,
             new ItemProdutoEntity(dto.itemProdutoId, null, null, null, [], []),
             null,
             []
@@ -26,11 +26,8 @@ export class EstoqueMapper {
     }
 
     public static toUnidadeDeMedidaDTO(iterator: UnidadeMedidaEntity[]): UnidadeDeMedidadDTO[] {
-        return iterator.map(item => new UnidadeDeMedidadDTO(item.id, item.undMedidas!));
-    }
-
-    public static toLocalizacaoDTO(iterator: LocalizacaoEntity[]): LocalizacaoDTO[] {
-        return iterator.map(localizacao => new LocalizacaoDTO(localizacao.id, localizacao.localizacaoDesc!));
+        return iterator.map(item => new UnidadeDeMedidadDTO(item.id, item.undMedidas!))
+            .sort((a, b) => a.idUnidadeDeMedida - b.idUnidadeDeMedida);
     }
 
     public static toItemProdutoDTO(iterator: ItemProdutoEntity[]): ItemProdutoDTO[] {
@@ -43,7 +40,8 @@ export class EstoqueMapper {
                 itemProduto.itemProdutoDesc!, 
                 qtdDisponivelEstoque
             )
-        });
+        })
+        .sort((a, b) => a.idItemProduto - b.idItemProduto);
     }
 
     public static toEstoqueDTO(iterator: EstoqueEntity[]): EstoqueDTO[] {
@@ -53,7 +51,7 @@ export class EstoqueMapper {
             estok.itemProduto.valorMedida!,
             estok.dataEntrada, 
             estok.dataSaida, 
-            new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.localizacaoDesc!), 
+            new LocalizacaoDTO(estok.localizacao.id, estok.localizacao.descricao!), 
             new UnidadeDeMedidadDTO(estok.itemProduto.unidadeMedida!.id, estok.itemProduto.unidadeMedida!.undMedidas!))
         );
     }

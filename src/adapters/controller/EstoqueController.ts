@@ -22,8 +22,10 @@ export class EstoqueController {
             httpClient.on(
                 "post", 
                 "/estoque/cadastrar", 
-                auth.authentication.bind(auth),
-                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
+                // auth.authentication.bind(auth),
+                // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
+                (req: Request, res: Response, next: NextFunction) => next(),
+                (req: Request, res: Response, next: NextFunction) => next(),
                 async function (params: any, data: CadastroEstoqueDTO) {
                     const output = await estoqueUseCase.cadastrar(data);
                     return {
@@ -96,7 +98,7 @@ export class EstoqueController {
 
             httpClient.on(
                 "get", 
-                "/und-medidas/listar", 
+                "/estoque/und-medidas/listar", 
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarUND),
                 async function (params: any, data: any) {
@@ -111,22 +113,7 @@ export class EstoqueController {
 
             httpClient.on(
                 "get", 
-                "/estoque/localizacao/listar", 
-                auth.authentication.bind(auth),
-                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarLocalizacao),
-                async function (params: any, data: any) {
-                    const output = await estoqueUseCase.listarLocalizacao();
-                    return {
-                        statusCode: 200,
-                        timeStampe: new Date().toISOString(),
-                        data: output
-                    };
-                }
-            );
-
-            httpClient.on(
-                "get", 
-                "/itens/listar", 
+                "/estoque/itens/listar", 
                 auth.authentication.bind(auth),
                 async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarItemProduto),
                 async function (params: any, data: any) {

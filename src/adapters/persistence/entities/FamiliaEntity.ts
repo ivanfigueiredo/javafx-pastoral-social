@@ -3,7 +3,7 @@ import { FamiliaDificuldadeEntity } from "./FamiliaDificuldadeEntity";
 import { AjudaRecebidaEntity } from "./AjudaRecebidaEntity";
 import { ComunidadeEntity } from "./ComunidadeEntity";
 
-@Entity('tps_familia')
+@Entity('tps_familia', {schema: 'familia'})
 export class FamiliaEntity {
   @PrimaryGeneratedColumn({ name: 'id_familia' })
   id!: number;

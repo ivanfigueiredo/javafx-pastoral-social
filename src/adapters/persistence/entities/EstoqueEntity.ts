@@ -4,7 +4,7 @@ import { ItemProdutoEntity } from "./ItemProdutoEntity";
 import { DoacaoEstoqueEntity } from "./DoacaoEstoqueEntity";
 import { CestaEstoqueItemEntity } from "./CestaEstoqueItemEntity";
 
-@Entity('tps_estoque')
+@Entity('tps_estoque', {schema: 'estoque'})
 export class EstoqueEntity {
     @PrimaryGeneratedColumn({ name: 'id_estoque' })
     id: number | null;
@@ -15,8 +15,8 @@ export class EstoqueEntity {
     @JoinColumn({ name: 'id_item_produto' })
     itemProduto: ItemProdutoEntity;
 
-    @ManyToOne(() => LocalizacaoEntity, localizacao => localizacao.alimentos, {
-      eager: true
+    @ManyToOne(() => LocalizacaoEntity, localizacao => localizacao.estoques, {
+      cascade: true
     })
     @JoinColumn({ name: 'id_localizacao' })
     localizacao: LocalizacaoEntity;

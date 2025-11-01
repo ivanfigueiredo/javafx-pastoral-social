@@ -72,7 +72,7 @@ export class FamiliaController {
             async function (_params: any, _data: any) {
                 const output = await getFamiliaUseCase.listarFamilias();;
                 return {
-                    statusCode: 200,
+                    statusCode: 201,
                     timeStampe: new Date().toISOString(),
                     data: output
                 };

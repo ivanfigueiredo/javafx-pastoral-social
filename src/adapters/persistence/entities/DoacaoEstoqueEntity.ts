@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedC
 import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 import { EstoqueEntity } from "./EstoqueEntity";
 
-@Entity('tps_doacao_estoque')
+@Entity('tps_doacao_estoque', {schema: 'doador'})
 export class DoacaoEstoqueEntity {
     @PrimaryGeneratedColumn({ name: 'id_doacao' })
     idDoacao: number;
