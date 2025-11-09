@@ -49,7 +49,6 @@ export class GerarCestasService implements GerarCestasUseCase {
                 let cesta = new CestaGeradaEntity(null, new Date(), template, statusCesta, [], null);
                 this.logger.info('Gerando cestas');
                 cesta = await this.cestaGeradaRepository.save(cesta);
-                console.log("============================>>>>>>>>>>>>>>>>>>>>>>>>>>> CHEGOU");
                 for (const templateItem of result) {
                     const qtdNecessarioTotal = templateItem.quantidade;
                     const estoqueItens = await this.estoqueRepository.findEstoqueByItemProdutoIdAndQtdGeracaoTemplate(templateItem.itemProdutoId, qtdNecessarioTotal);

@@ -8,6 +8,7 @@ import { ConsultarFamiliaUseCase } from "../../application/port/in/ConsultarFami
 import { UserLogged } from "../http/types/express";
 import { AuditProxy } from "../../application/port/in/AuditProxy";
 import { GetFamiliaUseCase } from "../../application/port/in/GetFamiliaUseCase";
+import { QueryTipoAjudaDTO } from "../../application/dto/QueryTipoAjudaDTO";
 
 export class FamiliaController {
     constructor(
@@ -72,9 +73,27 @@ export class FamiliaController {
             async function (_params: any, _data: any) {
                 const output = await getFamiliaUseCase.listarFamilias();;
                 return {
-                    statusCode: 201,
+                    statusCode: 200,
                     timeStampe: new Date().toISOString(),
                     data: output
+                };
+            }
+        );
+
+        httpClient.on(
+            "get", 
+            "/familia/consulta-familia-prioridade", 
+            // auth.authentication.bind(auth),
+            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarFamilia),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            async function (_params: any, _data: any, userLogged?: UserLogged, query?: QueryTipoAjudaDTO) {
+                console.log("=======================>>>>>>>>>>>>>>> ", JSON.stringify(query?.tipoAjuda.valueOf()));
+                await getFamiliaUseCase.consultarFamiliaPrioridade(query!.tipoAjuda);
+                return {
+                    statusCode: 200,
+                    timeStampe: new Date().toISOString(),
+                    data: {}
                 };
             }
         );

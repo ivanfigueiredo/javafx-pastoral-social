@@ -14,6 +14,8 @@ import { FamiliaDificuldadeEntity } from "./entities/FamiliaDificuldadeEntity";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
 import { Logger } from "pino";
 import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
+import { TipoAjudaEnum } from "../../application/dto/enuns/TipoAjudaEnum";
+import { TipoAjudaEntity } from "./entities/TipoAjudaEntity";
 
 export class FamiliaPostgresDatabase implements FamiliaRepository {
     private readonly logger: Logger;
@@ -21,6 +23,7 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
     private readonly dificuldadeRepository: Repository<DificuldadeEntity>;
     private readonly comunidadeRepository: Repository<ComunidadeEntity>;
     private readonly familiaDificuldadeRepository: Repository<FamiliaDificuldadeEntity>;
+    private readonly tipoAjudaRepository: Repository<TipoAjudaEntity>;
 
     constructor(
         logger: Logger,
@@ -32,6 +35,7 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
         this.dificuldadeRepository = this.connection.getDataSourcer().getRepository(DificuldadeEntity);
         this.comunidadeRepository = this.connection.getDataSourcer().getRepository(ComunidadeEntity);
         this.familiaDificuldadeRepository = this.connection.getDataSourcer().getRepository(FamiliaDificuldadeEntity);
+        this.tipoAjudaRepository = this.connection.getDataSourcer().getRepository(TipoAjudaEntity);
     }
     
     public async saveFamiliaDificuldade(dto: AssociarFamiliaComDificuldadeDTO[]): Promise<void> {
@@ -60,7 +64,16 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
     }
 
     public async findFamilias(): Promise<any> {
-        return this.familiaRepository.find({relations: {dificuldades: true, ajudasRecebidas: true}});
+        return await this.familiaRepository.find({
+            relations: {
+                ajudasRecebidas: true,
+                dificuldades: {
+                    dificuldade: {
+                        dificuldadeTipoAjuda: true
+                    }
+                }
+            }
+        });
     }
 
     public async findDificuldades(): Promise<DificuldadeDTO[]> {
@@ -70,5 +83,15 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
 
     public async findFamiliaById(idFamilia: number): Promise<FamiliaEntity | null> {
         return this.familiaRepository.findOne({ where: { id: idFamilia }});
+    }
+
+    public async getFamiliasPorTipoAjuda(tipoAjuda: TipoAjudaEnum): Promise<FamiliaEntity[]> {
+        const result = await this.tipoAjudaRepository.findOne({
+            where: {id: tipoAjuda}, 
+            relations: {tipoAjudaDificuldade: {dificuldade: {familias: {familia: {ajudasRecebidas: true, dificuldades: {dificuldade: {dificuldadeTipoAjuda: true}}}}}}}
+        });
+        if (!result) return [];
+        return result.tipoAjudaDificuldade!.dificuldade!.familias.map(familiaDificuldade => familiaDificuldade.familia)
+            .filter(familia => familia != null);
     }
 }
