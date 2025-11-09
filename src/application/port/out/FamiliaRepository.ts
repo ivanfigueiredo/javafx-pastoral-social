@@ -3,6 +3,7 @@ import { AssociarFamiliaComDificuldadeDTO } from "../../dto/AssociarFamiliaComDi
 import { CadastrarFamiliaDTO } from "../../dto/CadastrarFamiliaDTO";
 import { ComunidadeDTO } from "../../dto/ComunidadeDTO";
 import { DificuldadeDTO } from "../../dto/DificuldadeDTO";
+import { TipoAjudaEnum } from "../../dto/enuns/TipoAjudaEnum";
 import { FamiliaCadastradaDTO } from "../../dto/FamiliaCadastradaDTO";
 
 export interface FamiliaRepository {
@@ -12,4 +13,5 @@ export interface FamiliaRepository {
     findComunidades: () => Promise<ComunidadeDTO[]>;
     findFamilias: () => Promise<any>;
     findDificuldades: () => Promise<DificuldadeDTO[]>;
+    getFamiliasPorTipoAjuda: (tipoAjuda: TipoAjudaEnum) => Promise<FamiliaEntity[]>
 }

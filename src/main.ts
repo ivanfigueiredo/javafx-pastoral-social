@@ -38,13 +38,13 @@ import { NotificacaoProdutoVencidoService } from "./application/service/Notifica
 import { GetCestasService } from "./application/service/GetCestasService";
 import { CancelarCestaService } from "./application/service/CancelarCestaService";
 import { CestaEstoqueItemPostgresDatabase } from "./adapters/persistence/CestaEstoqueItemPostgresDatabase";
-import { config } from 'dotenv';
 import { ListarTemplatesComCestasDisponiveisService } from "./application/service/ListarTemplatesComCestasDisponiveisService";
 import { UsuarioController } from "./adapters/controller/UsuarioController";
 import { UpdateUsuarioService } from "./application/service/UpdateUsuarioService";
 import { CancelarAjudaService } from "./application/service/CancelarAjudaService";
 import { ListarAjudasService } from "./application/service/ListarAjudasService";
 import { LocalizacaoPostgresDatabase } from "./adapters/persistence/LocalizacaoPostgresDatabase";
+import { config } from 'dotenv';
 config();
 
 (async () => {

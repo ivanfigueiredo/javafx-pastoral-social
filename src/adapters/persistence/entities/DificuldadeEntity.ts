@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne } from "typ
 import { FamiliaDificuldadeEntity } from "./FamiliaDificuldadeEntity";
 import { DificuldadeTipoAjudaEntity } from "./DificuldadeTipoAjudaEntity";
 
-@Entity('tps_dificuldade')
+@Entity('tps_dificuldade', {schema: 'familia'})
 export class DificuldadeEntity {
   @PrimaryGeneratedColumn({ name: 'id_dificuldade' })
   id: number;
