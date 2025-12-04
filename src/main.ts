@@ -45,6 +45,7 @@ import { CancelarAjudaService } from "./application/service/CancelarAjudaService
 import { ListarAjudasService } from "./application/service/ListarAjudasService";
 import { LocalizacaoPostgresDatabase } from "./adapters/persistence/LocalizacaoPostgresDatabase";
 import { config } from 'dotenv';
+import { WebhookWhatsappController } from "./adapters/controller/WebhookWhatsappController";
 config();
 
 (async () => {
@@ -95,6 +96,7 @@ config();
     new CestasController(httpClient, auth, authorize, gerarCestasService, getCestasService, cancelarCestaService);
     new AjudaController(httpClient, auth, authorize, associarAjudaFamiliaService, cancelarAjudaService, listarAjudasService);
     new UsuarioController(httpClient, auth, authorize, updateUsuarioService);
+    new WebhookWhatsappController(httpClient);
     const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
     // notificaProdutoVencidoJob.start();
     const PORT = parseInt(process.env.PORT as string);
