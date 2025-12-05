@@ -39,6 +39,9 @@ export class PostgresDatabase implements Connection {
             password: process.env.PASSWORD_DATABASE,
             database: process.env.POSTGRES_DB,
             synchronize: false,
+            ssl: {
+                rejectUnauthorized: false
+            },
             entities: [
                 AjudaRecebidaEntity,
                 RolePermissionsEntity,
