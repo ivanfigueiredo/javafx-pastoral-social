@@ -4,10 +4,10 @@ import { PermissionEntity } from "./PermissionEntity";
 
 @Entity('tps_role_permissions', {schema: 'permissao'})
 export class RolePermissionsEntity {
-    @PrimaryColumn({ name: 'role_id', type: 'int' })
+    @PrimaryColumn({ name: 'role_id', type: "int4" })
     roleId: number;
 
-    @PrimaryColumn({ name: 'id_permission', type: 'int' })
+    @PrimaryColumn({ name: 'id_permission', type: "int4" })
     permissionId: number;
     
     @ManyToOne(() => RoleEntity, (r) => r.rolePermissions, {

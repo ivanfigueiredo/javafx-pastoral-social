@@ -42,6 +42,7 @@ export class PostgresDatabase implements Connection {
             entities: [
                 AjudaRecebidaEntity,
                 RolePermissionsEntity,
+                RoleEntity,
                 FamiliaEntity,
                 TipoAjudaEntity,
                 CestaGeradaEntity,
@@ -53,7 +54,6 @@ export class PostgresDatabase implements Connection {
                 ItemProdutoEntity,
                 LocalizacaoEntity,
                 PermissionEntity,
-                RoleEntity,
                 SecurityEntity,
                 StatusCestaEntity,
                 TemplateEntity,

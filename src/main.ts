@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { CronJob } from "cron";
 import { Auth } from "./adapters/http/authentication/Auth";
 import { Authorize } from "./adapters/http/authorization/Authorize";
@@ -46,6 +47,7 @@ import { ListarAjudasService } from "./application/service/ListarAjudasService";
 import { LocalizacaoPostgresDatabase } from "./adapters/persistence/LocalizacaoPostgresDatabase";
 import { config } from 'dotenv';
 import { WebhookWhatsappController } from "./adapters/controller/WebhookWhatsappController";
+import { HealthCheckController } from "./adapters/controller/HealthcheckController";
 config();
 
 (async () => {
@@ -97,6 +99,7 @@ config();
     new AjudaController(httpClient, auth, authorize, associarAjudaFamiliaService, cancelarAjudaService, listarAjudasService);
     new UsuarioController(httpClient, auth, authorize, updateUsuarioService);
     new WebhookWhatsappController(httpClient);
+    new HealthCheckController(httpClient);
     const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
     // notificaProdutoVencidoJob.start();
     const PORT = parseInt(process.env.PORT as string);

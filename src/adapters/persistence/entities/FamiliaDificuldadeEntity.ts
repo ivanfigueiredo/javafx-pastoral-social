@@ -4,10 +4,10 @@ import { FamiliaEntity } from "./FamiliaEntity";
 
 @Entity('tps_familia_dificuldade', {schema: 'familia'})
 export class FamiliaDificuldadeEntity {
-  @PrimaryColumn({ name: 'id_familia', type: 'int' })
+  @PrimaryColumn({ name: 'id_familia', type: "int4" })
   familiaId: number;
 
-  @PrimaryColumn({ name: 'id_dificuldade', type: 'int' })
+  @PrimaryColumn({ name: 'id_dificuldade', type: "int4" })
   dificuldadeId: number;
   
   @ManyToOne(() => FamiliaEntity, (f) => f.dificuldades, {
