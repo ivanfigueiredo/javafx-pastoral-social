@@ -26,9 +26,7 @@ export class WebhookWhatsappController {
                         return {
                             statusCode: 200,
                             timeStampe: new Date().toISOString(),
-                            data: {
-                                challenge
-                            }
+                            data: challenge
                         };
                     } else {
                         console.error('Falha na verificação. Token inválido.');
