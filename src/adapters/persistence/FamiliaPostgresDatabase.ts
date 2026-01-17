@@ -63,8 +63,8 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
         return FamiliaMapper.toListComunidadeDTO(listComunidades);
     }
 
-    public async findFamilias(): Promise<any> {
-        return await this.familiaRepository.find({
+    public async findFamilias(): Promise<[FamiliaEntity[], number]> {
+        return await this.familiaRepository.findAndCount({
             relations: {
                 ajudasRecebidas: true,
                 dificuldades: {

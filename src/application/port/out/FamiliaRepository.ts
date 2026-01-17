@@ -11,7 +11,7 @@ export interface FamiliaRepository {
     findFamiliaById: (idFamilia: number) => Promise<FamiliaEntity | null>;
     saveFamiliaDificuldade: (dto: AssociarFamiliaComDificuldadeDTO[]) => Promise<void>;
     findComunidades: () => Promise<ComunidadeDTO[]>;
-    findFamilias: () => Promise<any>;
+    findFamilias: () => Promise<[FamiliaEntity[], number]>;
     findDificuldades: () => Promise<DificuldadeDTO[]>;
     getFamiliasPorTipoAjuda: (tipoAjuda: TipoAjudaEnum) => Promise<FamiliaEntity[]>
 }

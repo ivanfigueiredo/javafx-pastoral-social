@@ -1,6 +1,8 @@
 import { FamiliaEntity } from "../../adapters/persistence/entities/FamiliaEntity";
 import { ComunidadeDTO } from "../dto/ComunidadeDTO";
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
+import { FamiliaDTO } from "../dto/FamiliaDTO";
+import { ListarFamiliaDTO } from "../dto/ListarFamiliaDTO";
 import { GetFamiliaUseCase } from "../port/in/GetFamiliaUseCase";
 import { FamiliaRepository } from "../port/out/FamiliaRepository";
 import { CalcularPrioridadeAjuda } from "./CalcularPrioridadeAjuda";
@@ -12,13 +14,14 @@ export class GetFamiliaService implements GetFamiliaUseCase {
         return this.familiaRepository.findComunidades();
     }
 
-    public async listarFamilias(): Promise<any> {
-        const result = await this.familiaRepository.findFamilias();
-        for (const familia of result) {
-            const calculo = new CalcularPrioridadeAjuda(familia);
-            console.log("====================>>>>>>>>>>>>>>>>>>>>>>>>>>>  ", JSON.stringify(calculo.prioridade));
+    public async listarFamilias(): Promise<ListarFamiliaDTO> {
+        const [familias, totalFamilias] = await this.familiaRepository.findFamilias();
+        const familiaDTO: FamiliaDTO[] = []
+        for (const familia of familias) {
+            const dtoFamilia = new FamiliaDTO(familia.nomeRepresentante, familia.endereco, familia.qtdPessoasResidencia, familia.qtdPessoasEmpregadas);
+            familiaDTO.push(dtoFamilia);
         }
-        return result;
+        return new ListarFamiliaDTO(totalFamilias, familiaDTO);
     }
 
     public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<any> {
