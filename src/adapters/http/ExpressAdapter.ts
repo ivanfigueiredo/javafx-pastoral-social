@@ -25,6 +25,10 @@ export class ExpressAdapter implements HttpClient {
         this.connect[method](url, middlewareAuth, middlewareAuthorize, async (req: Request, res: Response) => {
             try {
                 const output = await callback(req.params, req.body, req?.user, req.query);
+                if (typeof output?.data === 'string') {
+                    res.status(output.statusCode).send(output.data);
+                    return;
+                }
                 res.status(output.statusCode).json(output);
             } catch (error: any) {
                 if (error instanceof UnauthorizedException) {

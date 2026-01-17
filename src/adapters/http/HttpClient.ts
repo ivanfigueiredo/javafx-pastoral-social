@@ -7,6 +7,7 @@ export type OutputType = {
     timeStampe: string;
     data: any;
 }
+
 export type Callback = (params: any, data: any, userLogged?: UserLogged, query?: any) => Promise<OutputType>;
 
 export interface HttpClient {

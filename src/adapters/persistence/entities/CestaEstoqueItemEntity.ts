@@ -4,7 +4,7 @@ import { CestaGeradaEntity } from "./CestaGeradaEntity";
 
 @Entity('tps_cesta_item', {schema: 'ajuda'})
 export class CestaEstoqueItemEntity {
-    @PrimaryColumn({ name: 'id_cesta' })
+    @PrimaryColumn({ name: 'id_cesta', type: "int4" })
     idCesta: number;
 
     @PrimaryColumn({ name: 'id_estoque', type: "int4" })

@@ -39,9 +39,13 @@ export class PostgresDatabase implements Connection {
             password: process.env.PASSWORD_DATABASE,
             database: process.env.POSTGRES_DB,
             synchronize: false,
+            ssl: {
+                rejectUnauthorized: true
+            },
             entities: [
                 AjudaRecebidaEntity,
                 RolePermissionsEntity,
+                RoleEntity,
                 FamiliaEntity,
                 TipoAjudaEntity,
                 CestaGeradaEntity,
@@ -53,7 +57,6 @@ export class PostgresDatabase implements Connection {
                 ItemProdutoEntity,
                 LocalizacaoEntity,
                 PermissionEntity,
-                RoleEntity,
                 SecurityEntity,
                 StatusCestaEntity,
                 TemplateEntity,
