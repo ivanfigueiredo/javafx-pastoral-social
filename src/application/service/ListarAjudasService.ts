@@ -3,6 +3,8 @@ import { ListarAjudasUseCase } from "../port/in/ListarAjudasUseCase";
 import { AjudaRepository } from "../port/out/AjudaRepository";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
 import { AjudaFilterQueryDTO } from "../dto/AjudaFilterQueryDTO";
+import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
+import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
 
 export class ListarAjudasService implements ListarAjudasUseCase {
     private readonly logger: Logger;
@@ -16,10 +18,31 @@ export class ListarAjudasService implements ListarAjudasUseCase {
 
     public async execute(dto: AjudaFilterQueryDTO): Promise<any> {
         try {
-
+            const [ajudas, totalAjuda] = await this.ajudaRepository.findAjudas(dto);
+            const result: Result[] = ajudas.map(ajuda => ({
+                familiaDescricao: ajuda.familia.nomeRepresentante,
+                statusAjuda: ajuda.statusAjuda.valueOf(),
+                tipoAjuda: ajuda.tipoAjuda.descricao!,
+                dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega.toISOString() : null,
+                descricaoItemAjuda: (ajuda.tipoAjuda.id === TipoAjudaEnum.CESTA_BASICA) ? ajuda.cestaGerada?.cestaItens.length + " items" : null
+            }));
+            return {
+                total: totalAjuda,
+                pendentes: ajudas.filter(ajuda => ajuda.statusAjuda === StatusAjudaEnum.AGUARDANDO_APROVACAO).length,
+                concluidas: ajudas.filter(ajuda => ajuda.statusAjuda === StatusAjudaEnum.ENTREGUE).length,
+                data: result
+            }
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao cancelar cesta');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
+}
+
+type Result = {
+    familiaDescricao: string,
+    statusAjuda: string,
+    tipoAjuda: string,
+    dataEntrega: string | null,
+    descricaoItemAjuda: string | null
 }

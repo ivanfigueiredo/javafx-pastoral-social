@@ -27,9 +27,11 @@ import { LocalizacaoRepository } from '../port/out/LocalizacaoRepository';
 import { EstanteDataValidadeProdutoEnum } from '../dto/enuns/EstanteDataValidadeProdutoEnum';
 import { EstoqueMapper } from '../../adapters/mappers/EstoqueMapper';
 import { EstoqueEntity } from '../../adapters/persistence/entities/EstoqueEntity';
+import { EstoqueDisponivelDTO } from '../dto/EstoqueDisponivelDTO';
 
 export class EstoqueService implements EstoqueUseCase {
     private readonly logger: Logger;
+    private readonly QUANTIDADE_MAXIMA = 2;
 
     constructor(
         logger: Logger,
@@ -42,6 +44,36 @@ export class EstoqueService implements EstoqueUseCase {
         private readonly unitOfWork: UnitOfWorkPort
     ) {
         this.logger = logger.child({ service: "EstoqueUseCase" });
+    }
+
+    public async sugerirModeloTemplate(): Promise<any> {
+        const result = await this.estoqueRepository.buscarEstoqueDisponivel();
+        if (result == null || result == undefined || result.length < 0) {
+            return {templates: []}
+        }
+        const ordenandoListaProdutos: EstoqueDisponivelDTO[] = result.filter(r => r.quantidade > 0)
+            .sort((a, b) => a.quantidade - b.quantidade)
+            .map(r => ({itemProdutoId: r.itemProdutoId, quantidade: r.quantidade}));
+        const modeloRestricaoPrimario = {
+            templateItens: ordenandoListaProdutos.map(r => new EstoqueDisponivelDTO(r.itemProdutoId, this.getMenorQuantidade(ordenandoListaProdutos)))
+        }
+        const modeloRestricaoSecundario = this.getRestricaoModelo([...ordenandoListaProdutos]);
+        const modeloRestricaoTerciario = this.getRestricaoModelo([...modeloRestricaoSecundario.templateItens])
+        return {
+            templates: [modeloRestricaoPrimario, modeloRestricaoSecundario, modeloRestricaoTerciario]
+        }
+    }
+
+    private getRestricaoModelo(listEstoqueDisponivel: EstoqueDisponivelDTO[]): {[key: string]: EstoqueDisponivelDTO[]} {
+        listEstoqueDisponivel.shift();
+        return {
+            templateItens: listEstoqueDisponivel.map(r => new EstoqueDisponivelDTO(r.itemProdutoId, this.getMenorQuantidade(listEstoqueDisponivel)))
+        }
+    }
+
+    private getMenorQuantidade(estoqueDisponivel: EstoqueDisponivelDTO[]): number {
+        const menorQuantidade = estoqueDisponivel[0].quantidade;
+        return (menorQuantidade < this.QUANTIDADE_MAXIMA) ? menorQuantidade : this.QUANTIDADE_MAXIMA;
     }
 
     public async cadastrar(dto: CadastroEstoqueDTO): Promise<void> {

@@ -29,6 +29,7 @@ import { DificuldadeTipoAjudaEntity } from "../entities/DificuldadeTipoAjudaEnti
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
+    private isProduction: boolean = process.env.ENVIRONMENT === 'production';
 
     constructor() {
         this.connection = new DataSource({
@@ -39,9 +40,9 @@ export class PostgresDatabase implements Connection {
             password: process.env.PASSWORD_DATABASE,
             database: process.env.POSTGRES_DB,
             synchronize: false,
-            ssl: {
-                rejectUnauthorized: true
-            },
+            ssl: this.isProduction 
+                ? { rejectUnauthorized: true } 
+                : false,
             entities: [
                 AjudaRecebidaEntity,
                 RolePermissionsEntity,

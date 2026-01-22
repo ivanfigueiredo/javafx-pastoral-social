@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Repository, SelectQueryBuilder } from "typeorm";
 import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
@@ -11,6 +11,7 @@ import { ItemProdutoEntity } from "./entities/ItemProdutoEntity";
 import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
 import { TemplateItemDTO } from "../../application/dto/TemplateItemDTO";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
+import { EstoqueDisponivelDTO } from "../../application/dto/EstoqueDisponivelDTO";
 
 export class EstoquePostgresDatabase implements EstoqueRepository {
     private readonly estoqueRepository: Repository<EstoqueEntity>;
@@ -77,8 +78,13 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
             );
     }
 
-    public async consultaGeracaoTemplate(templateItens: TemplateItemDTO[]): Promise<number> {
-        const result = await this.estoqueRepository
+    public async buscarEstoqueDisponivel(): Promise<EstoqueDisponivelDTO[]> { 
+        const result = await this.getFilterEstoque();
+        return result.map(r => new EstoqueDisponivelDTO(r.id_item_produto, r.disponivel));
+    }
+
+    private async getFilterEstoque() {
+        return this.estoqueRepository
             .createQueryBuilder("e")
             .innerJoin(ItemProdutoEntity, "p", "e.id_item_produto = p.id_produto")
             .where("e.data_saida IS NULL")
@@ -88,6 +94,10 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
             .addSelect("COUNT(*)", "disponivel")
             .groupBy("e.id_item_produto")
             .getRawMany();
+    }
+
+    public async consultaGeracaoTemplate(templateItens: TemplateItemDTO[]): Promise<number> {
+        const result = await this.getFilterEstoque();
         const estoqueMap: Record<number, number> = {};
         for (const row of result) {
             const id = Number(row.id_item_produto);
@@ -102,7 +112,7 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
         let total = Infinity;
         for (const item of templateItens) {
             const disponivel = estoque[item.itemProdutoId] ?? 0;
-            const possivel = Math.floor(disponivel / item.quantidade);
+            const possivel = Math.floor(disponivel / item.quantidade); 
             total = Math.min(total, possivel);
         }
         return total === Infinity ? 0 : total;
