@@ -125,5 +125,22 @@ export class EstoqueController {
                     };
                 }
             );
+
+            httpClient.on(
+            "post", 
+            "/estoque/sugerir-modelo", 
+            (req: Request, res: Response, next: NextFunction) => next(),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            // auth.authentication.bind(auth),
+            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarDificuldade),
+            async function (_params: any, _data: any, _userLogged?: UserLogged) {
+                const output = await estoqueUseCase.sugerirModeloTemplate();
+                return {
+                    statusCode: 200,
+                    timeStampe: new Date().toISOString(),
+                    data: output
+                };
+            }
+        );
         }
 }
