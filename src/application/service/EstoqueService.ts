@@ -28,6 +28,7 @@ import { EstanteDataValidadeProdutoEnum } from '../dto/enuns/EstanteDataValidade
 import { EstoqueMapper } from '../../adapters/mappers/EstoqueMapper';
 import { EstoqueEntity } from '../../adapters/persistence/entities/EstoqueEntity';
 import { EstoqueDisponivelDTO } from '../dto/EstoqueDisponivelDTO';
+import { SugerirModeloTemplateResponseDTO, TemplateModeloFilhosDTO } from '../dto/SugerirModeloTemplateResponseDTO';
 
 export class EstoqueService implements EstoqueUseCase {
     private readonly logger: Logger;
@@ -46,25 +47,29 @@ export class EstoqueService implements EstoqueUseCase {
         this.logger = logger.child({ service: "EstoqueUseCase" });
     }
 
-    public async sugerirModeloTemplate(): Promise<any> {
-        const result = await this.estoqueRepository.buscarEstoqueDisponivel();
-        if (result == null || result == undefined || result.length < 0) {
-            return {templates: []}
-        }
-        const ordenandoListaProdutos: EstoqueDisponivelDTO[] = result.filter(r => r.quantidade > 0)
-            .sort((a, b) => a.quantidade - b.quantidade)
-            .map(r => ({itemProdutoId: r.itemProdutoId, quantidade: r.quantidade}));
-        const modeloRestricaoPrimario = {
-            templateItens: ordenandoListaProdutos.map(r => new EstoqueDisponivelDTO(r.itemProdutoId, this.getMenorQuantidade(ordenandoListaProdutos)))
-        }
-        const modeloRestricaoSecundario = this.getRestricaoModelo([...ordenandoListaProdutos]);
-        const modeloRestricaoTerciario = this.getRestricaoModelo([...modeloRestricaoSecundario.templateItens])
-        return {
-            templates: [modeloRestricaoPrimario, modeloRestricaoSecundario, modeloRestricaoTerciario]
+    public async sugerirModeloTemplate(): Promise<SugerirModeloTemplateResponseDTO> {
+        try {
+            const result = await this.estoqueRepository.buscarEstoqueDisponivel();
+            if (result == null || result == undefined || result.length < 0) {
+                return new SugerirModeloTemplateResponseDTO([]);
+            }
+            const ordenandoListaProdutos: EstoqueDisponivelDTO[] = result.filter(r => r.quantidade > 0)
+                .sort((a, b) => a.quantidade - b.quantidade)
+                .map(r => ({itemProdutoId: r.itemProdutoId, quantidade: r.quantidade}));
+            const modeloRestricaoPrimario = {
+                templateItens: ordenandoListaProdutos.map(r => new EstoqueDisponivelDTO(r.itemProdutoId, this.getMenorQuantidade(ordenandoListaProdutos)))
+            }
+            const modeloRestricaoSecundario = this.getRestricaoModelo([...ordenandoListaProdutos]);
+            const modeloRestricaoTerciario = this.getRestricaoModelo([...modeloRestricaoSecundario.templateItens])
+            const response = new SugerirModeloTemplateResponseDTO([modeloRestricaoPrimario, modeloRestricaoSecundario, modeloRestricaoTerciario]);
+            return response;
+        } catch (e: any) {
+            this.logger.error({ err: e.message }, 'Erro ao sugerir modelo ');
+            return new SugerirModeloTemplateResponseDTO([]);
         }
     }
 
-    private getRestricaoModelo(listEstoqueDisponivel: EstoqueDisponivelDTO[]): {[key: string]: EstoqueDisponivelDTO[]} {
+    private getRestricaoModelo(listEstoqueDisponivel: EstoqueDisponivelDTO[]): TemplateModeloFilhosDTO {
         listEstoqueDisponivel.shift();
         return {
             templateItens: listEstoqueDisponivel.map(r => new EstoqueDisponivelDTO(r.itemProdutoId, this.getMenorQuantidade(listEstoqueDisponivel)))
