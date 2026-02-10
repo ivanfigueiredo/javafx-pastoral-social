@@ -27,8 +27,8 @@ export class ListarTemplatesComCestasDisponiveisService implements ListarTemplat
                 .filter(cesta => (cesta != null || cesta != undefined))
                 return  new ListarTemplatesComCestasDisponiveisDTO(
                     template.id!,
-                    template.descricao,
-                    template.templateType,
+                    template.descricao!,
+                    template.templateType!,
                     cestas.length ?? 0
                 )
             }) as ListarTemplatesComCestasDisponiveisDTO[]

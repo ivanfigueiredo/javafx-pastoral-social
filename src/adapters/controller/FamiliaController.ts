@@ -88,7 +88,6 @@ export class FamiliaController {
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (_params: any, _data: any, userLogged?: UserLogged, query?: QueryTipoAjudaDTO) {
-                console.log("=======================>>>>>>>>>>>>>>> ", JSON.stringify(query?.tipoAjuda.valueOf()));
                 await getFamiliaUseCase.consultarFamiliaPrioridade(query!.tipoAjuda);
                 return {
                     statusCode: 200,

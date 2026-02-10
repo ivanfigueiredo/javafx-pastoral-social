@@ -5,6 +5,7 @@ import { UnidadeMedidaEntity } from "./UnidadeDeMedidaEntity";
 import { ComunidadeEntity } from "./ComunidadeEntity";
 import { TipoDoacaoEnum } from "./TipoDoacaoEnum";
 import { DoacaoEstoqueEntity } from "./DoacaoEstoqueEntity";
+import { AcaoEntity } from "./AcaoEntity";
 
 @Entity('tps_doacao_recebida', {schema: 'doador'})
 export class DoacaoRecebidaEntity {
@@ -41,6 +42,10 @@ export class DoacaoRecebidaEntity {
     @JoinColumn({ name: 'id_comunidade', })
     comunidade: ComunidadeEntity | null;
 
+    @ManyToOne(() => AcaoEntity, (acao) => acao.doacoesRecebidas)
+    @JoinColumn({ name: 'id_acao_social', })
+    acao: AcaoEntity | null;
+
     @OneToMany(() => DoacaoEstoqueEntity, (doacaoEstoque) => doacaoEstoque)
     doacoesEstoque: DoacaoEstoqueEntity[] = [];
 
@@ -54,6 +59,7 @@ export class DoacaoRecebidaEntity {
         dataDoacao: Date | null,
         observacao: string | null,
         comunidade: ComunidadeEntity | null,
+        acao: AcaoEntity | null,
         doacoesEstoque: DoacaoEstoqueEntity[]
     ) {
         this.id = id;
@@ -66,5 +72,6 @@ export class DoacaoRecebidaEntity {
         this.comunidade = comunidade;
         this.tipoDoacao = tipoDoacao;
         this.doacoesEstoque = doacoesEstoque;
+        this.acao = acao;
     }
 }

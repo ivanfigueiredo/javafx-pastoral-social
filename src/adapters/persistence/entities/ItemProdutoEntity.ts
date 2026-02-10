@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, JoinColumn, OneToOne } from "typeorm";
 import { EstoqueEntity } from "./EstoqueEntity"
 import { UnidadeMedidaEntity } from "./UnidadeDeMedidaEntity";
 import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";

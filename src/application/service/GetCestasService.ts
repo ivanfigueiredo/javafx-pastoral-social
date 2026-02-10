@@ -49,7 +49,7 @@ export class GetCestasService implements GetCestasUseCase {
                 cesta = {
                     idCesta: cestas[i].id!,
                     identificadorCesta: cestas[i].identificadorCesta!,
-                    descricao: cestas[i].template.descricao,
+                    descricao: cestas[i].template.descricao!,
                     status: cestas[i].status.statusDesc!,
                     totalItensCesta: qtdItens,
                     progresso: CalculateProgressoEnum[cestas[i].status.statusDesc!],
