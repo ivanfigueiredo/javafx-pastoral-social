@@ -23,7 +23,7 @@ export class TemplateService implements TemplateUseCase {
         const result = await Promise.all(templates.map(async template => {
             let data: Result = {
                 idTemplate: template.id!,
-                descricao: template.descricao,
+                descricao: template.descricao!,
                 itensTemplate: []
             }
             template.itensTemplate.forEach(item => data.itensTemplate.push({

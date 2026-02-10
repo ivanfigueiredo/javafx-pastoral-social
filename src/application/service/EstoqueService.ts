@@ -29,6 +29,8 @@ import { EstoqueMapper } from '../../adapters/mappers/EstoqueMapper';
 import { EstoqueEntity } from '../../adapters/persistence/entities/EstoqueEntity';
 import { EstoqueDisponivelDTO } from '../dto/EstoqueDisponivelDTO';
 import { SugerirModeloTemplateResponseDTO, TemplateModeloFilhosDTO } from '../dto/SugerirModeloTemplateResponseDTO';
+import { TemplateItemDTO } from '../dto/TemplateItemDTO';
+import { CriarTemplateDTO } from '../dto/CriarTemplateDTO';
 
 export class EstoqueService implements EstoqueUseCase {
     private readonly logger: Logger;
@@ -137,6 +139,24 @@ export class EstoqueService implements EstoqueUseCase {
     public async consultarGeracaoTemplate(dto: ConsultaGeracaoTemplateDTO): Promise<RespostaConsultaGeracaoTemplateDTO> {
         const result = await this.estoqueRepository.consultaGeracaoTemplate(dto.templateItens);
         return new RespostaConsultaGeracaoTemplateDTO(result);
+    }
+
+    public async criarModeloTemplateAcao(templateItens: TemplateItemDTO[], templateType: TemplateTypeEnum): Promise<any> {
+        try {
+            const template = new CriarTemplateDTO("Template ação social", templateType);
+            const templateEntity = await this.templateRepository.save(template);
+            for (const templateItem of templateItens) {
+                templateItem.itemProdutoId
+                const itemProdutoEntity = new ItemProdutoEntity(templateItem.itemProdutoId, null, null, null, [], []);
+                const itemTemplate = new ItemTemplateEntity(null, templateItem.quantidade, templateEntity, itemProdutoEntity);
+                await this.itemTemplateRepository.save(itemTemplate);
+                this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
+            }
+            return { idTemplate: templateEntity.id }
+        } catch (e: any) {
+            this.logger.error({error: e.message}, 'Error ')
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        }
     }
 
     public async gerarModeloTemplate(dto: GeracaoModeloTemplateDTO): Promise<ModeloTemplateCriadoResponse> {

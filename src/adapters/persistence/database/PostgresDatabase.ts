@@ -26,6 +26,7 @@ import { DoacaoRecebidaEntity } from '../entities/DoacaoRecebidaEntity';
 import { DoacaoEstoqueEntity } from '../entities/DoacaoEstoqueEntity';
 import { CestaEstoqueItemEntity } from "../entities/CestaEstoqueItemEntity";
 import { DificuldadeTipoAjudaEntity } from "../entities/DificuldadeTipoAjudaEntity";
+import { AcaoEntity } from "../entities/AcaoEntity";
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -68,7 +69,8 @@ export class PostgresDatabase implements Connection {
                 DoacaoRecebidaEntity,
                 DoacaoEstoqueEntity,
                 CestaEstoqueItemEntity,
-                DificuldadeTipoAjudaEntity
+                DificuldadeTipoAjudaEntity,
+                AcaoEntity
             ]
         });
     }

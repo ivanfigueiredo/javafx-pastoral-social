@@ -26,7 +26,7 @@ export class TemplatePostgresDatabase implements TemplateRepository {
 
     public async save(dto: CriarTemplateDTO): Promise<TemplateEntity> {
         try {
-            return await this.unitOfWork.transaction(TemplateEntity, new TemplateEntity(null, dto.templateDesc, dto.templateType, [], []));
+            return await this.unitOfWork.transaction(TemplateEntity, new TemplateEntity(null, dto.templateDesc, dto.templateType, [], [], null));
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao persistir template")
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")

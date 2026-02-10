@@ -48,9 +48,15 @@ import { LocalizacaoPostgresDatabase } from "./adapters/persistence/LocalizacaoP
 import { config } from 'dotenv';
 import { WebhookWhatsappController } from "./adapters/controller/WebhookWhatsappController";
 import { HealthCheckController } from "./adapters/controller/HealthcheckController";
+import { AcaoController } from "./adapters/controller/AcaoController";
+import { AcaoPostgresDatabase } from "./adapters/persistence/AcaoPostgresDatabase";
+import { AcaoService } from "./application/service/AcaoService";
 config();
 
-(async () => {
+let cachedHttpClient: ExpressAdapter | null = null;
+
+export async function buildApp() {
+    if (cachedHttpClient) return cachedHttpClient;
     const logger = loggerAdapter;
     const postgresDatabase = new PostgresDatabase();
     await postgresDatabase.init();
@@ -67,6 +73,7 @@ config();
     const itemTemplateRepository = new ItemTemplatePostgresDatabase(logger, unitOfWork);
     const cestaGeradaRepository = new CestaGeradaPostgresDatabase(logger, postgresDatabase, unitOfWork);
     const ajudaRepository = new AjudaRecebidaPostgresDatabase(logger, postgresDatabase, unitOfWork);
+    const acaoRepository = new AcaoPostgresDatabase(postgresDatabase, unitOfWork);
     const cestaEstoqueItemRepository = new CestaEstoqueItemPostgresDatabase(logger, unitOfWork);
     const localizacaoRepository = new LocalizacaoPostgresDatabase(postgresDatabase, unitOfWork);
     const abilityPermission = new AbilityPermission(roleRepository);
@@ -88,6 +95,7 @@ config();
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
     const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
     const gerarModeloTemplateProxy = new GerarModeloTemplateProxy(logger, estoqueService, auditoriaRepository);
+    const acaoService = new AcaoService(estoqueService, acaoRepository, unitOfWork, logger);
     const authUseCase = new AuthService(logger, usuarioRepository, securityRepository, authRepository);
     const auth = new Auth(authRepository);
     const authorize = new Authorize(abilityPermission.getAppAbility());
@@ -100,8 +108,9 @@ config();
     new UsuarioController(httpClient, auth, authorize, updateUsuarioService);
     new WebhookWhatsappController(httpClient);
     new HealthCheckController(httpClient);
+    new AcaoController(httpClient, auth, authorize, acaoService);
     const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
     // notificaProdutoVencidoJob.start();
-    const PORT = parseInt(process.env.PORT as string);
-    httpClient.listen(PORT, () => console.log(`Rodando na porta: ${PORT}`));
-})()
+    cachedHttpClient = httpClient;
+    return httpClient;
+}
