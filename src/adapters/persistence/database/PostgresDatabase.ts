@@ -35,14 +35,10 @@ export class PostgresDatabase implements Connection {
     constructor() {
         this.connection = new DataSource({
             type: 'postgres',
-            host: process.env.HOST_DATABASE,
-            port: 5432,
-            username: process.env.USER_DATABASE,
-            password: process.env.PASSWORD_DATABASE,
-            database: process.env.POSTGRES_DB,
+            url: this.isProduction ? process.env.URL_PRODUCTION : process.env.URL_DEV,
             synchronize: false,
             ssl: this.isProduction 
-                ? { rejectUnauthorized: true } 
+                ? { rejectUnauthorized: false } 
                 : false,
             entities: [
                 AjudaRecebidaEntity,
