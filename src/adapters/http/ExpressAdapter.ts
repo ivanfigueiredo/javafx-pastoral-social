@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, Router, Express } from 'express';
 import { HttpLogger } from 'pino-http';
 import { Callback, CallbackFunction, HttpClient } from './HttpClient';
 import { UnauthorizedException } from '../../application/exceptions/UnauthorizedException';
@@ -6,23 +6,29 @@ import { UnprocessableException } from '../../application/exceptions/Unprocessab
 import { InternalServerErrorException } from '../../application/exceptions/InternalServerErrorException';
 import { NotFoundException } from '../../application/exceptions/NotFoundException';
 
+type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+
+
 export class ExpressAdapter implements HttpClient {
-    connect: any;
+    connect: Express;
+    router: Router
 
     constructor(private readonly httpLogger: HttpLogger) {
         this.connect = express();
+        this.router = express.Router();
         this.connect.use(express.json());
+        this.connect.use('/api', this.router);
         this.connect.use(httpLogger);
     }
 
     on(
-        method: string, 
+        method: HttpMethod, 
         url: string, 
         middlewareAuth: CallbackFunction,
         middlewareAuthorize: CallbackFunction, 
         callback: Callback,
     ): void {
-        this.connect[method](url, middlewareAuth, middlewareAuthorize, async (req: Request, res: Response) => {
+        this.router[method](url, middlewareAuth, middlewareAuthorize, async (req: Request, res: Response) => {
             try {
                 const output = await callback(req.params, req.body, req?.user, req.query);
                 if (typeof output?.data === 'string') {
@@ -52,7 +58,7 @@ export class ExpressAdapter implements HttpClient {
         });
     }
 
-    listen(port: number, callback: Function): void {
-        this.connect.listen(port, "0.0.0.0", callback());
+    public getExpress(): Express {
+        return this.connect;
     }
 }

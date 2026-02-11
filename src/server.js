@@ -1,7 +1,11 @@
 const {buildApp} = require("../dist/main");
 
+let app = null;
+
 (async () => {
-    const app = await buildApp();
+    if (!app) {
+        app = await buildApp();
+    }
     const PORT = 3000;
     app.listen(PORT, () => console.log(`Rodando na porta: ${PORT}`));
 })()
