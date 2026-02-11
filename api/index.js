@@ -9,7 +9,8 @@ export default async (req, res) => {
       console.log("Servico em execucao");
       app = await adapter.connect;
     }
-    adapter.on(
+    const httpClient = await buildApp();
+    httpClient.on(
         'get',
         '/test',  // ← SEM /api!
         (req, res, next) => next(),
