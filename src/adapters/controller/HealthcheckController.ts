@@ -20,7 +20,7 @@ export class HealthCheckController {
     ) {
         httpClient.on(
             "get", 
-            "/health", 
+            "/api/health", 
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function () { 
