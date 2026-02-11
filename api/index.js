@@ -1,10 +1,15 @@
 import { buildApp } from "../dist/main";
 
-export default async (req, res) => {
-  const app = await buildApp();
+let app = null;
+
+export default async (req, res) => {  
   try {
-    console.log("Servico em execucao");
-    return await app.connect(req, res);
+    if (!app) {
+      const app = await buildApp();
+      console.log("Servico em execucao");
+      app = await app.connect;
+    }
+    return app(req, res);
   } catch (e) {
     console.log("Error ao subir servico: ", e);
   }
