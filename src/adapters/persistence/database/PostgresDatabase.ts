@@ -37,6 +37,7 @@ export class PostgresDatabase implements Connection {
             type: 'postgres',
             url: this.isProduction ? process.env.URL_PRODUCTION : process.env.URL_DEV,
             synchronize: false,
+            poolSize: 3,
             ssl: this.isProduction 
                 ? { rejectUnauthorized: false } 
                 : false,

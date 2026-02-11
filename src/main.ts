@@ -108,5 +108,5 @@ export async function buildApp() {
     new AcaoController(httpClient, auth, authorize, acaoService);
     const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
     // notificaProdutoVencidoJob.start();
-    return httpClient;
+    return httpClient.getExpress();
 }
