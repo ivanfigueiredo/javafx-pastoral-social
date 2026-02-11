@@ -11,10 +11,8 @@ export class ExpressAdapter implements HttpClient {
 
     constructor(private readonly httpLogger: HttpLogger) {
         this.connect = express();
-        const router = express.Router();
         this.connect.use(express.json());
         this.connect.use(httpLogger);
-        this.connect.use('/api', router);
     }
 
     on(

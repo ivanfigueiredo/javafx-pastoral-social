@@ -5,9 +5,9 @@ let app = null;
 export default async (req, res) => {  
   try {
     if (!app) {
-      const app = await buildApp();
+      const adapter = await buildApp();
       console.log("Servico em execucao");
-      app = await app.connect;
+      app = await adapter.connect;
     }
     return app(req, res);
   } catch (e) {
