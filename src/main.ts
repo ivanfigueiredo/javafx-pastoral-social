@@ -53,10 +53,7 @@ import { AcaoPostgresDatabase } from "./adapters/persistence/AcaoPostgresDatabas
 import { AcaoService } from "./application/service/AcaoService";
 config();
 
-let cachedHttpClient: ExpressAdapter | null = null;
-
 export async function buildApp() {
-    if (cachedHttpClient) return cachedHttpClient;
     const logger = loggerAdapter;
     const postgresDatabase = new PostgresDatabase();
     await postgresDatabase.init();
@@ -111,6 +108,5 @@ export async function buildApp() {
     new AcaoController(httpClient, auth, authorize, acaoService);
     const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
     // notificaProdutoVencidoJob.start();
-    cachedHttpClient = httpClient;
     return httpClient;
 }
