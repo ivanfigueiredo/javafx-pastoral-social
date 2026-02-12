@@ -6,7 +6,7 @@
     "node": "20.x"
   },
   "scripts": {
-    "start": "ENVIRONMENT=local node ./src/server.js",
+    "start": "ENVIRONMENT=local node ./dist/server.js",
     "start:prod": "ENVIRONMENT=production node ./dist/main.js",
     "dev": "ENVIRONMENT=local nodemon --exec ts-node ./src/main.ts",
     "build": "rimraf dist && node esbuild.config.mjs"
