@@ -3,7 +3,7 @@ import nodeExternalsPlugin from "esbuild-plugin-node-externals";
 
 
 await build({
-  entryPoints: ["src/main.ts"],
+  entryPoints: ["src/server.ts"],
   bundle: true,
   platform: "node",
   target: "node18",
