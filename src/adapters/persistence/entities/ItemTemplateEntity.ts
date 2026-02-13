@@ -4,7 +4,7 @@ import { ItemProdutoEntity } from "./ItemProdutoEntity";
 
 @Entity('tps_item_template', {schema: 'ajuda'})
 export class ItemTemplateEntity {
-  @PrimaryGeneratedColumn({ name: 'id_item_template' })
+  @PrimaryGeneratedColumn({ name: 'id_item_template', type: "int4" })
   id: number | null;
 
   @ManyToOne(() => TemplateEntity, template => template.itensTemplate)

@@ -9,7 +9,7 @@ import { AcaoEntity } from "./AcaoEntity";
 
 @Entity('tps_doacao_recebida', {schema: 'doador'})
 export class DoacaoRecebidaEntity {
-    @PrimaryGeneratedColumn({name: 'id_doacao'})
+    @PrimaryGeneratedColumn({ name: 'id_doacao', type: "int4" })
     id: number | null;
 
     @ManyToOne(() => ItemProdutoEntity, (itemProduto) => itemProduto.doacoes)

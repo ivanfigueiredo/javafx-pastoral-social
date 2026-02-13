@@ -4,7 +4,7 @@ import { EstoqueEntity } from "./EstoqueEntity";
 
 @Entity('tps_doacao_estoque', {schema: 'doador'})
 export class DoacaoEstoqueEntity {
-    @PrimaryGeneratedColumn({ name: 'id_doacao' })
+    @PrimaryGeneratedColumn({ name: 'id_doacao', type: "int4" })
     idDoacao: number;
 
     @PrimaryColumn({ name: 'id_estoque', type: "int4" })

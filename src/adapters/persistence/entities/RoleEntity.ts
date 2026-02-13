@@ -4,7 +4,7 @@ import { UserEntity } from "./UserEntity";
 
 @Entity('tps_roles', {schema: 'permissao'})
 export class RoleEntity {
-  @PrimaryGeneratedColumn({ name: 'role_id' })
+  @PrimaryGeneratedColumn({ name: 'role_id', type: "int4" })
   id: number;
 
   @Column({ name: 'role_desc', type: 'varchar' })

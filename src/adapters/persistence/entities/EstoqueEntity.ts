@@ -6,7 +6,7 @@ import { CestaEstoqueItemEntity } from "./CestaEstoqueItemEntity";
 
 @Entity('tps_estoque', {schema: 'estoque'})
 export class EstoqueEntity {
-    @PrimaryGeneratedColumn({ name: 'id_estoque' })
+    @PrimaryGeneratedColumn({ name: 'id_estoque', type: "int4" })
     id: number | null;
 
     @ManyToOne(() => ItemProdutoEntity, itemProduto => itemProduto.estoques, {

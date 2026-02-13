@@ -5,7 +5,7 @@ import { AuditoriaEntity } from "./AuditoriaEntity";
 
 @Entity('tps_users', {schema: 'usuario'})
 export class UserEntity {
-  @PrimaryGeneratedColumn({ name: 'user_id' })
+  @PrimaryGeneratedColumn({ name: 'user_id', type: "int4" })
   id: number;
 
   @Column({ name: 'nick_name', type: 'varchar', nullable: false })

@@ -5,7 +5,7 @@ import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
 @Entity('tps_comunidade', {schema: 'familia'})
 export class ComunidadeEntity {
-    @PrimaryGeneratedColumn({ name: 'id_comunidade' })
+    @PrimaryGeneratedColumn({ name: 'id_comunidade', type: "int4" })
     id: number;
 
     @Column({ name: 'comunidade_desc', type: 'varchar' })

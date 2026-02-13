@@ -3,7 +3,7 @@ import { EstoqueEntity } from "./EstoqueEntity";
 
 @Entity('tps_localizacao_estoque', {schema: 'estoque'})
 export class LocalizacaoEntity {
-  @PrimaryGeneratedColumn({ name: 'id_localizacao' })
+  @PrimaryGeneratedColumn({ name: 'id_localizacao', type: "int4" })
   id: number;
 
   @Column({ name: 'descricao_completa', type: 'text' })

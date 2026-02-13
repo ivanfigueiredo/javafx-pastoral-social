@@ -1,14 +1,16 @@
+import path from 'path';
 import { build } from "esbuild";
 import nodeExternalsPlugin from "esbuild-plugin-node-externals";
+const __dirname = import.meta.dirname;
 
+const entryPoints = [path.join(__dirname, "src/server.ts")]
 
 await build({
-  entryPoints: ["src/server.ts"],
+  entryPoints,
   bundle: true,
   platform: "node",
-  target: "node18",
-  outdir: "dist",
-  sourcemap: true,
+  outdir: path.join(__dirname, "dist"),
+  sourcemap: false,
   minify: true,
   plugins: [nodeExternalsPlugin()],
   logLevel: "info",
