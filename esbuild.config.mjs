@@ -9,7 +9,7 @@ await build({
   entryPoints,
   bundle: true,
   platform: "node",
-  outdir: path.join(__dirname, "dist"),
+  outfile: path.join(__dirname, "public", "server.js"),
   sourcemap: false,
   minify: true,
   plugins: [nodeExternalsPlugin()],
