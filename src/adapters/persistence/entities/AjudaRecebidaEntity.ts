@@ -6,7 +6,7 @@ import { StatusAjudaEnum } from "./StatusAjudaEnum";
 
 @Entity('tps_ajuda_recebida', {schema: 'ajuda'})
 export class AjudaRecebidaEntity {
-  @PrimaryGeneratedColumn({ name: 'id_ajuda_recebida' })
+  @PrimaryGeneratedColumn({ name: 'id_ajuda_recebida', type: "int4" })
   id: number | null;
 
   @ManyToOne(() => FamiliaEntity, familia => familia.ajudasRecebidas, {

@@ -5,7 +5,7 @@ import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
 @Entity('tps_item_produto', {schema: 'estoque'})
 export class ItemProdutoEntity {
-  @PrimaryGeneratedColumn({name: 'id_produto'})
+  @PrimaryGeneratedColumn({ name: 'id_produto', type: "int4" })
   id: number;
 
   @Column({ name: 'item_produto_desc', type: 'varchar', unique: true, nullable: false })

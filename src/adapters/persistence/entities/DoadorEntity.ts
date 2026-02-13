@@ -3,7 +3,7 @@ import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
 @Entity('tps_doador', {schema: 'doador'})
 export class DoadorEntity {
-    @PrimaryGeneratedColumn({ name: 'id_estoque' })
+    @PrimaryGeneratedColumn({ name: 'id_estoque', type: "int4" })
     id: number | null;
 
     @Column({ name: 'doador_nome', type: 'varchar' })

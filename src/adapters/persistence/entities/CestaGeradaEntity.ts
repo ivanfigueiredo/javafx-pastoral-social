@@ -7,7 +7,7 @@ import { CestaEstoqueItemEntity } from "./CestaEstoqueItemEntity";
 
 @Entity('tps_cesta_gerada', {schema: 'ajuda'})
 export class CestaGeradaEntity {
-  @PrimaryGeneratedColumn({ name: 'id_cesta' })
+  @PrimaryGeneratedColumn({ name: 'id_cesta', type: "int4" })
   id: number | null;
 
   @ManyToOne(() => TemplateEntity, (template) => template.cestas)

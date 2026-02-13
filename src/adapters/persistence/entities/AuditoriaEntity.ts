@@ -4,7 +4,7 @@ import { StatusOperacaoEnum } from "./StatusOperacaoEnum";
 
 @Entity('tps_auditoria', {schema: 'auditoria'})
 export class AuditoriaEntity {
-    @PrimaryGeneratedColumn({ name: 'id_auditoria' })
+    @PrimaryGeneratedColumn({ name: 'id_auditoria', type: "int4" })
     id: number | null;
 
     @Column({ name: 'tabela_nome', type: "varchar", length: 50, nullable: true })

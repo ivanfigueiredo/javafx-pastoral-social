@@ -6,7 +6,7 @@ import { AcaoEntity } from "./AcaoEntity";
 
 @Entity('tps_template', {schema: 'ajuda'})
 export class TemplateEntity {
-  @PrimaryGeneratedColumn({ name: 'id_template' })
+  @PrimaryGeneratedColumn({ name: 'id_template', type: "int4" })
   id: number | null;
 
   @Column({ name: 'template_desc', type: 'varchar' })

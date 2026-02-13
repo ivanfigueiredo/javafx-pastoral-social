@@ -5,7 +5,7 @@ import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
 @Entity('tps_unidade_medida', {schema: 'estoque'})
 export class UnidadeMedidaEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id', type: "int4" })
   id: number;
 
   @Column({ name: 'und_medidas', type: 'varchar', unique: true })

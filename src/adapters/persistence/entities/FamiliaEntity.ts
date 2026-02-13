@@ -5,7 +5,7 @@ import { ComunidadeEntity } from "./ComunidadeEntity";
 
 @Entity('tps_familia', {schema: 'familia'})
 export class FamiliaEntity {
-  @PrimaryGeneratedColumn({ name: 'id_familia' })
+  @PrimaryGeneratedColumn({ name: 'id_familia', type: "int4" })
   id!: number;
 
   @Column({ name: 'nome_representante', type: 'varchar' })

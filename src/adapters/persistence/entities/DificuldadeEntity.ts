@@ -4,7 +4,7 @@ import { DificuldadeTipoAjudaEntity } from "./DificuldadeTipoAjudaEntity";
 
 @Entity('tps_dificuldade', {schema: 'familia'})
 export class DificuldadeEntity {
-  @PrimaryGeneratedColumn({ name: 'id_dificuldade' })
+  @PrimaryGeneratedColumn({ name: 'id_dificuldade', type: "int4" })
   id: number;
 
   @Column({ name: 'descricao', type: 'varchar' })

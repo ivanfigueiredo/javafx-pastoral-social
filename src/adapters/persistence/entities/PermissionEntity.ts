@@ -3,7 +3,7 @@ import { RolePermissionsEntity } from "./RolePermissionsEntity";
 
 @Entity('tps_permissions', {schema: 'permissao'})
 export class PermissionEntity {
-    @PrimaryGeneratedColumn({ name: 'id_permission' })
+    @PrimaryGeneratedColumn({ name: 'id_permission', type: "int4" })
     id: number;
 
     @Column({name: 'action', type: 'varchar'})

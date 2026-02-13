@@ -3,7 +3,7 @@ import { UserEntity } from "./UserEntity";
 
 @Entity('tps_security', {schema: 'usuario'})
 export class SecurityEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'id', type: "int4" })
   id: number | null;
 
   @ManyToOne(() => UserEntity, (u) => u.security, {
