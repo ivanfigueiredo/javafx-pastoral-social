@@ -1,11 +1,11 @@
-import "reflect-metadata";
 import { buildApp } from "./main";
 
-let app: any = null;
+let app = null;
 
-export default async function handler(req: any, res: any) {
+(async () => {
     if (!app) {
         app = await buildApp();
     }
-    return app(req, res);
-}
+    const PORT = 3000;
+    app.listen(PORT, () => console.log(`Rodando na porta: ${PORT}`));
+})()

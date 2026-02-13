@@ -31,7 +31,7 @@ export class HealthCheckController {
                         status: "ok",
                         service: name,
                         version,
-                        environment: process.env.NODE_ENV || "development",
+                        environment: process.env.ENVIRONMENT || "production",
                         uptime: process.uptime(), 
                     }
                 };
