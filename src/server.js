@@ -1,5 +1,5 @@
 const path = require('path');
-const {buildApp} = require(path.join(__dirname, '../public/main'));
+const {buildApp} = require(path.join(__dirname, '../dist/main'));
 
 let app = null;
 
