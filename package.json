@@ -6,11 +6,10 @@
     "node": "24.x"
   },
   "scripts": {
-    "start": "ENVIRONMENT=local node ./public/server.js",
-    "start:prod": "ENVIRONMENT=production node ./public/main.js",
+    "start": "ENVIRONMENT=local node ./src/server.js",
     "dev": "ENVIRONMENT=local nodemon --exec ts-node ./src/main.ts",
-    "build": "rimraf public && rimraf dist-tsc && tsc --emitDecoratorMetadata --experimentalDecorators --outDir dist-tsc && node esbuild.config.mjs && rimraf dist-tsc",
-    "vercel-build": "rimraf public && rimraf dist-tsc && tsc --emitDecoratorMetadata --experimentalDecorators --outDir dist-tsc && node esbuild.config.mjs && rimraf dist-tsc"
+    "build": "rimraf public && rimraf dist-tsc && tsc --emitDecoratorMetadata --experimentalDecorators --outDir dist-tsc && ENVIRONMENT=local node esbuild.config.mjs && rimraf dist-tsc",
+    "vercel-build": "rimraf public && rimraf dist-tsc && tsc --emitDecoratorMetadata --experimentalDecorators --outDir dist-tsc && ENVIRONMENT=production node esbuild.config.mjs && rimraf dist-tsc"
   },
   "vercel": {
     "installCommand": "npm install && npm run build"
