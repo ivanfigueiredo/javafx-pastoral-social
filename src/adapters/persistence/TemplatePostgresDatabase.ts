@@ -6,6 +6,8 @@ import { CriarTemplateDTO } from "../../application/dto/CriarTemplateDTO";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
 import { Logger } from "pino";
 import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
+import { OpcaoListaDTO } from "../../application/dto/OpcaoListaDTO";
+import { TemplateMapper } from "../mappers/TemplateMapper";
 
 export class TemplatePostgresDatabase implements TemplateRepository {
     private readonly templateRepository: Repository<TemplateEntity>;
@@ -46,5 +48,10 @@ export class TemplatePostgresDatabase implements TemplateRepository {
 
     public async findTemplates(): Promise<TemplateEntity[]> {
         return this.templateRepository.find({relations: {cestas: {status: true}}});
+    }
+
+    public async findTemplatesOpcaoLista(): Promise<OpcaoListaDTO[]> {
+        const templates = await this.templateRepository.find({select: {id: true, descricao: true}});
+        return TemplateMapper.toTemplateOpcaoListaDTO(templates);
     }
 }

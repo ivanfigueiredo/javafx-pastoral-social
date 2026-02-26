@@ -7,12 +7,19 @@ import { PaginatedDTO } from "../dto/PaginatedDTO";
 import { ItemsData } from "../dto/CestasDTO";
 import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
 import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
+import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
+import { Logger } from "pino";
 
 export class TemplateService implements TemplateUseCase {
+    private readonly logger: Logger;
+
     constructor(
+        logger: Logger,
         private readonly templateRepository: TemplateRepository,
         private readonly estoqueUseCase: EstoqueUseCase
-    ) {}
+    ) {
+        this.logger = logger.child({service: "TemplateService"})
+    }
 
     public async getDetalheTemplate(templateId: number): Promise<any> {
         throw new Error("Method not implemented.");
@@ -66,6 +73,16 @@ export class TemplateService implements TemplateUseCase {
             return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.L}` : `${sum}${UnidadeMedidaEnum.ML}`;
         } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.L) {
             return `${itemTemplate.quantidade}${UnidadeMedidaEnum.L}`;
+        }
+    }
+
+    public async listarTemplatesOpcaoLista(): Promise<any> {
+        try {
+            const templates = await this.templateRepository.findTemplatesOpcaoLista();
+            return templates;
+        } catch (e: any) {
+            this.logger.error({error: e.message}, 'Erro ao listar opções de template');
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
 }
