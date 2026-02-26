@@ -27,6 +27,7 @@ import { DoacaoEstoqueEntity } from '../entities/DoacaoEstoqueEntity';
 import { CestaEstoqueItemEntity } from "../entities/CestaEstoqueItemEntity";
 import { DificuldadeTipoAjudaEntity } from "../entities/DificuldadeTipoAjudaEntity";
 import { AcaoEntity } from "../entities/AcaoEntity";
+import { ControlleIdempotenciaEntity } from "../entities/ControlleIdempotenciaEntity";
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -37,13 +38,14 @@ export class PostgresDatabase implements Connection {
             type: 'postgres',
             url: this.isProduction ? process.env.URL_PRODUCTION : process.env.URL_DEV,
             synchronize: false,
-            poolSize: 3,
+            poolSize: 5,
             ssl: this.isProduction 
                 ? { rejectUnauthorized: false } 
                 : false,
             entities: [
                 AjudaRecebidaEntity,
                 RolePermissionsEntity,
+                ControlleIdempotenciaEntity,
                 RoleEntity,
                 FamiliaEntity,
                 TipoAjudaEntity,

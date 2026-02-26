@@ -17,4 +17,13 @@ export class AcaoPostgresDatabase implements AcaoRepository {
     public async salvarAcao(acao: AcaoEntity): Promise<void> {
         await this.unitOfWork.transaction(AcaoEntity, acao);
     }
+
+    public async listar(): Promise<AcaoEntity[]> {
+        return this.acaoRepository.find({
+            relations: {
+                doacoesRecebidas: { doador: true, itemProduto: true },
+                templateAcao: { itensTemplate: { itemProduto: true } },
+            }
+        });
+    }
 }

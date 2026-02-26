@@ -1,10 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
 import { DoadorEntity } from "./DoadorEntity";
-import { UnidadeMedidaEntity } from "./UnidadeDeMedidaEntity";
-import { ComunidadeEntity } from "./ComunidadeEntity";
 import { TipoDoacaoEnum } from "./TipoDoacaoEnum";
-import { DoacaoEstoqueEntity } from "./DoacaoEstoqueEntity";
 import { AcaoEntity } from "./AcaoEntity";
 
 @Entity('tps_doacao_recebida', {schema: 'doador'})
@@ -21,11 +18,7 @@ export class DoacaoRecebidaEntity {
     doador: DoadorEntity | null;
 
     @Column({ name: 'quantidade', type: 'int4', nullable: false })
-    quantidade: number;
-
-    @ManyToOne(() => UnidadeMedidaEntity, (undMedida) => undMedida.doacoes)
-    @JoinColumn({ name: 'id_und_medida', })
-    undMedida: UnidadeMedidaEntity | null;
+    quantidade: number | null;
 
     @Column({ name: 'data_doacao', type: 'date' })
     dataDoacao: Date | null;
@@ -36,42 +29,27 @@ export class DoacaoRecebidaEntity {
     @Column({ name: 'observacao', type: 'text', nullable: true })
     observacao: string | null;
 
-    @ManyToOne(() => ComunidadeEntity, (comunidade) => comunidade.doacoes, {
-        eager: true
-    })
-    @JoinColumn({ name: 'id_comunidade', })
-    comunidade: ComunidadeEntity | null;
-
     @ManyToOne(() => AcaoEntity, (acao) => acao.doacoesRecebidas)
     @JoinColumn({ name: 'id_acao_social', })
     acao: AcaoEntity | null;
-
-    @OneToMany(() => DoacaoEstoqueEntity, (doacaoEstoque) => doacaoEstoque)
-    doacoesEstoque: DoacaoEstoqueEntity[] = [];
 
     constructor(
         id: number | null,
         itemProduto: ItemProdutoEntity | null,
         doador: DoadorEntity | null,
-        quantidade: number,
         tipoDoacao: TipoDoacaoEnum,
-        undMedida: UnidadeMedidaEntity | null,
         dataDoacao: Date | null,
         observacao: string | null,
-        comunidade: ComunidadeEntity | null,
-        acao: AcaoEntity | null,
-        doacoesEstoque: DoacaoEstoqueEntity[]
+        quantidade: number | null,
+        acao: AcaoEntity | null
     ) {
         this.id = id;
         this.itemProduto = itemProduto;
         this.doador = doador;
-        this.quantidade = quantidade;
-        this.undMedida = undMedida;
         this.dataDoacao = dataDoacao;
         this.observacao = observacao;
-        this.comunidade = comunidade;
         this.tipoDoacao = tipoDoacao;
-        this.doacoesEstoque = doacoesEstoque;
+        this.quantidade = quantidade;
         this.acao = acao;
     }
 }

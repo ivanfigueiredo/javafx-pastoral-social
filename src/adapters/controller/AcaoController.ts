@@ -29,5 +29,22 @@ export class AcaoController {
                 };
             }
         );
+
+        httpClient.on(
+            "get", 
+            "/acao/listar", 
+            // auth.authentication.bind(auth),
+            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CancelarAjuda),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            async function (params: any, data: any) {
+                const output = await acaoUseCase.listarAcoes();
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
     }
 }

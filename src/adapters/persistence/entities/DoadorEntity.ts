@@ -3,22 +3,22 @@ import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
 @Entity('tps_doador', {schema: 'doador'})
 export class DoadorEntity {
-    @PrimaryGeneratedColumn({ name: 'id_estoque', type: "int4" })
+    @PrimaryGeneratedColumn({ name: 'id_doador', type: "int4" })
     id: number | null;
 
     @Column({ name: 'doador_nome', type: 'varchar' })
-    doadorNome: string;
+    doadorNome: string | null;
 
     @Column({ name: 'doador_telefone', type: 'varchar' })
-    doadorTelefone: string;
+    doadorTelefone: string | null;
 
     @OneToMany(() => DoacaoRecebidaEntity, (dbFornecidas) => dbFornecidas.doador)
     doacoesFornecidas: DoacaoRecebidaEntity[] = [];
 
     constructor(
         id: number | null,
-        doadorNome: string,
-        doadorTelefone: string,
+        doadorNome: string | null,
+        doadorTelefone: string | null,
         doacoesFornecidas: DoacaoRecebidaEntity[]
     ) {
         this.id = id;

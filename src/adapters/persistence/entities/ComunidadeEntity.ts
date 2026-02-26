@@ -1,7 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { FamiliaDificuldadeEntity } from "./FamiliaDificuldadeEntity";
 import { FamiliaEntity } from "./FamiliaEntity";
-import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
 @Entity('tps_comunidade', {schema: 'familia'})
 export class ComunidadeEntity {
@@ -17,20 +16,15 @@ export class ComunidadeEntity {
     @OneToMany(() => FamiliaEntity, (fe) => fe.comunidade)
     familiasComunidade: FamiliaDificuldadeEntity[] = [];
 
-    @OneToMany(() => DoacaoRecebidaEntity, (doacoes) => doacoes.comunidade)
-    doacoes: DoacaoRecebidaEntity[] = [];
-
     constructor(
         id: number,
         descricao: string | null = null,
         familias: FamiliaDificuldadeEntity[],
-        familiasComunidade: FamiliaDificuldadeEntity[],
-        doacoes: DoacaoRecebidaEntity[]
+        familiasComunidade: FamiliaDificuldadeEntity[]
     ) {
         this.id = id;
         this.descricao = descricao;
         this.familias = familias;
         this.familiasComunidade = familiasComunidade;
-        this.doacoes = doacoes;
     }
 }

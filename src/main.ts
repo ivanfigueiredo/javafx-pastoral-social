@@ -51,6 +51,12 @@ import { HealthCheckController } from "./adapters/controller/HealthcheckControll
 import { AcaoController } from "./adapters/controller/AcaoController";
 import { AcaoPostgresDatabase } from "./adapters/persistence/AcaoPostgresDatabase";
 import { AcaoService } from "./application/service/AcaoService";
+import { DoacaoPostgresDatabase } from "./adapters/persistence/DoacaoPostgresDatabase";
+import { DoadorPostgresDatabase } from "./adapters/persistence/DoadorPostgresDatabase";
+import { DoacaoService } from "./application/service/DoacaoService";
+import { DoacaoController } from "./adapters/controller/DoacaoController";
+import { IdempotenciaPostgresDatabase } from "./adapters/persistence/IdempotenciaPostgresDatabase";
+import { IdempotenciaService } from "./application/service/IdempotenciaService";
 config();
 
 export async function buildApp() {
@@ -73,6 +79,9 @@ export async function buildApp() {
     const acaoRepository = new AcaoPostgresDatabase(postgresDatabase, unitOfWork);
     const cestaEstoqueItemRepository = new CestaEstoqueItemPostgresDatabase(logger, unitOfWork);
     const localizacaoRepository = new LocalizacaoPostgresDatabase(postgresDatabase, unitOfWork);
+    const doacaoRepository = new DoacaoPostgresDatabase(postgresDatabase, unitOfWork);
+    const idempotenciaRepository = new IdempotenciaPostgresDatabase(postgresDatabase);
+    const doadorRepository = new DoadorPostgresDatabase(postgresDatabase, unitOfWork);
     const abilityPermission = new AbilityPermission(roleRepository);
     await abilityPermission.setupPermissions();
     const estoqueService = new EstoqueService(logger, estoqueRepositiory, itemTemplateRepository, templateRepository, cestaGeradaRepository, cestaEstoqueItemRepository, localizacaoRepository, unitOfWork);
@@ -87,6 +96,8 @@ export async function buildApp() {
     const getCestasService = new GetCestasService(logger, cestaGeradaRepository);
     const updateUsuarioService = new UpdateUsuarioService(logger, usuarioRepository);
     const listarAjudasService = new ListarAjudasService(logger, ajudaRepository);
+    const idempotenciaService = new IdempotenciaService(idempotenciaRepository);
+    const doacaoService = new DoacaoService(logger, unitOfWork, doadorRepository, doacaoRepository, idempotenciaService);
     const listarTemplatesComCestasDisponiveisService = new ListarTemplatesComCestasDisponiveisService(logger, templateRepository);
     const cancelarCestaService = new CancelarCestaService(logger, cestaGeradaRepository, ajudaRepository, estoqueRepositiory, unitOfWork);
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
@@ -105,6 +116,7 @@ export async function buildApp() {
     new UsuarioController(httpClient, auth, authorize, updateUsuarioService);
     new WebhookWhatsappController(httpClient);
     new HealthCheckController(httpClient);
+    new DoacaoController(httpClient, auth, authorize, doacaoService);
     new AcaoController(httpClient, auth, authorize, acaoService);
     const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
     // notificaProdutoVencidoJob.start();

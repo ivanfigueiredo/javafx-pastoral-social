@@ -7,7 +7,8 @@
   },
   "scripts": {
     "start": "ENVIRONMENT=local node ./src/server.js",
-    "build": "rimraf public && rimraf dist-tsc && tsc --emitDecoratorMetadata --experimentalDecorators --outDir dist-tsc && ENVIRONMENT=local node esbuild.config.mjs && rimraf dist-tsc",
+    "start:dev": "ENVIRONMENT=local nodemon ./src/server.js",
+    "build": "rimraf dist-tsc && tsc --emitDecoratorMetadata --experimentalDecorators --outDir dist-tsc && ENVIRONMENT=local node esbuild.config.mjs && rimraf dist-tsc",
     "vercel-build": "rimraf public && rimraf dist-tsc && tsc --emitDecoratorMetadata --experimentalDecorators --outDir dist-tsc && ENVIRONMENT=production node esbuild.config.mjs && rimraf dist-tsc"
   },
   "vercel": {
