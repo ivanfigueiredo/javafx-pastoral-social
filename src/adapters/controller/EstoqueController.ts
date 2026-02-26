@@ -31,7 +31,7 @@ export class EstoqueController {
                     return {
                         statusCode: 201,
                         timeStampe: new Date().toISOString(),
-                        data: output
+                        data: output ?? {}
                     };
                 }
             );

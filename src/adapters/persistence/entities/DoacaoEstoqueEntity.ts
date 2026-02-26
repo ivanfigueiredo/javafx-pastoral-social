@@ -1,5 +1,4 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
-import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 import { EstoqueEntity } from "./EstoqueEntity";
 
 @Entity('tps_doacao_estoque', {schema: 'doador'})
@@ -9,10 +8,6 @@ export class DoacaoEstoqueEntity {
 
     @PrimaryColumn({ name: 'id_estoque', type: "int4" })
     idEstoque: number;
-
-    @ManyToOne(() => DoacaoRecebidaEntity, (doacaoReceb) => doacaoReceb.doacoesEstoque)
-    @JoinColumn({ name: 'id_doacao' })
-    doacao: DoacaoRecebidaEntity;
 
     @ManyToOne(() => EstoqueEntity, (estok) => estok.doacoesEstoque)
     @JoinColumn({ name: 'id_estoque' })
@@ -27,14 +22,12 @@ export class DoacaoEstoqueEntity {
     constructor(
         idDoacao: number,
         idEstoque: number,
-        doacao: DoacaoRecebidaEntity,
         estoque: EstoqueEntity,
         quantidadeMovimentada: number,
         dataMovimentacao: Date
     ) {
         this.idDoacao = idDoacao;
         this.idEstoque = idEstoque;
-        this.doacao = doacao;
         this.estoque = estoque;
         this.quantidadeMovimentada = quantidadeMovimentada;
         this.dataMovimentacao = dataMovimentacao;

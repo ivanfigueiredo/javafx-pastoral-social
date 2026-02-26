@@ -23,7 +23,7 @@ export class FamiliaMapper {
             dto.desejaParticiparCursos,
             dto.observacao,
             new Date(),
-            new ComunidadeEntity(dto.idComunidade, null, [], [], []),
+            new ComunidadeEntity(dto.idComunidade, null, [], []),
             [],
             []
         );
