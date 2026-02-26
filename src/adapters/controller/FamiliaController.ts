@@ -82,6 +82,21 @@ export class FamiliaController {
 
         httpClient.on(
             "get", 
+            "/familia/opcao-lista", 
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarFamilia),
+            async function (_params: any, _data: any) {
+                const output = await getFamiliaUseCase.listarFamiliaOpcaoLista();;
+                return {
+                    statusCode: 200,
+                    timeStampe: new Date().toISOString(),
+                    data: output
+                };
+            }
+        );
+
+        httpClient.on(
+            "get", 
             "/familia/consulta-familia-prioridade", 
             // auth.authentication.bind(auth),
             // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarFamilia),

@@ -3,6 +3,7 @@ import { ComunidadeDTO } from "../dto/ComunidadeDTO";
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
 import { FamiliaDTO } from "../dto/FamiliaDTO";
 import { ListarFamiliaDTO } from "../dto/ListarFamiliaDTO";
+import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 import { GetFamiliaUseCase } from "../port/in/GetFamiliaUseCase";
 import { FamiliaRepository } from "../port/out/FamiliaRepository";
 import { CalcularPrioridadeAjuda } from "./CalcularPrioridadeAjuda";
@@ -22,6 +23,11 @@ export class GetFamiliaService implements GetFamiliaUseCase {
             familiaDTO.push(dtoFamilia);
         }
         return new ListarFamiliaDTO(totalFamilias, familiaDTO);
+    }
+
+    public async listarFamiliaOpcaoLista(): Promise<OpcaoListaDTO[]> {
+        const familiasOpcaoLista = await this.familiaRepository.findFamiliaOptionLista();
+        return familiasOpcaoLista;
     }
 
     public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<any> {

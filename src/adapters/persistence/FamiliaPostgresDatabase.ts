@@ -16,6 +16,7 @@ import { Logger } from "pino";
 import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 import { TipoAjudaEnum } from "../../application/dto/enuns/TipoAjudaEnum";
 import { TipoAjudaEntity } from "./entities/TipoAjudaEntity";
+import { OpcaoListaDTO } from "../../application/dto/OpcaoListaDTO";
 
 export class FamiliaPostgresDatabase implements FamiliaRepository {
     private readonly logger: Logger;
@@ -74,6 +75,16 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
                 }
             }
         });
+    }
+
+    public async findFamiliaOptionLista(): Promise<OpcaoListaDTO[]> {
+        const familias = await this.familiaRepository.find({
+            select: {
+                id: true,
+                nomeRepresentante: true
+            }
+        });
+        return FamiliaMapper.toOpcaoListaDTO(familias);
     }
 
     public async findDificuldades(): Promise<DificuldadeDTO[]> {
