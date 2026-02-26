@@ -5,6 +5,7 @@ import { InternalServerErrorException } from "../exceptions/InternalServerErrorE
 import { AjudaFilterQueryDTO } from "../dto/AjudaFilterQueryDTO";
 import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
+import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 
 export class ListarAjudasService implements ListarAjudasUseCase {
     private readonly logger: Logger;
@@ -16,7 +17,7 @@ export class ListarAjudasService implements ListarAjudasUseCase {
         this.logger = logger.child({ service: "ListarAjudasUseCase" })
     }
 
-    public async execute(dto: AjudaFilterQueryDTO): Promise<any> {
+    public async listarAjudas(dto: AjudaFilterQueryDTO): Promise<any> {
         try {
             const [ajudas, totalAjuda] = await this.ajudaRepository.findAjudas(dto);
             const result: Result[] = ajudas.map(ajuda => ({
@@ -34,6 +35,16 @@ export class ListarAjudasService implements ListarAjudasUseCase {
             }
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao cancelar cesta');
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
+    }
+
+    public async listarAjudasOpcaoLista(): Promise<OpcaoListaDTO[]> {
+        try {
+            const ajudas = await this.ajudaRepository.findAjudasOpcaoLista();
+            return ajudas;
+        } catch (e: any) {
+            this.logger.error({error: e.message}, 'Erro ao listar opções de ajuda');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }

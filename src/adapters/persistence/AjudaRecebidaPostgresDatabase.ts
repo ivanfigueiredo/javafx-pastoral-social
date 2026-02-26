@@ -6,9 +6,13 @@ import { Logger } from "pino";
 import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
 import { AjudaFilterQueryDTO } from "../../application/dto/AjudaFilterQueryDTO";
+import { OpcaoListaDTO } from "../../application/dto/OpcaoListaDTO";
+import { TipoAjudaEntity } from "./entities/TipoAjudaEntity";
+import { AjudaMapper } from "../mappers/AjudaMapper";
 
 export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     private readonly ajudaRepository: Repository<AjudaRecebidaEntity>;
+    private readonly tipoAjudaRepository: Repository<TipoAjudaEntity>;
     private readonly logger: Logger;
 
     constructor(
@@ -18,6 +22,7 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     ) {
         this.logger = logger.child({ service: 'AjudaRepository' });
         this.ajudaRepository = connection.getDataSourcer().getRepository(AjudaRecebidaEntity);
+        this.tipoAjudaRepository = connection.getDataSourcer().getRepository(TipoAjudaEntity);
     }
 
     public async criarAjuda(ajudas: AjudaRecebidaEntity[]): Promise<void> {
@@ -56,5 +61,10 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
             this.logger.error({err: e.message}, "Erro ao consultar cestas");
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
+    }
+
+    public async findAjudasOpcaoLista(): Promise<OpcaoListaDTO[]> {
+        const tiposAjuda = await this.tipoAjudaRepository.find();
+        return AjudaMapper.toTipoAjudaOpcaoListaDTO(tiposAjuda);
     }
 }
