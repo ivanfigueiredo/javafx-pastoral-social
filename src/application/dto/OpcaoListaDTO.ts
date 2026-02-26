@@ -1,3 +1,3 @@
 export class OpcaoListaDTO {
-    constructor(readonly value: number, readonly label: string) {}
+    constructor(readonly value: string, readonly label: string) {}
 }

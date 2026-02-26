@@ -39,6 +39,6 @@ export class FamiliaMapper {
     }
 
     public static toOpcaoListaDTO(iterator: FamiliaEntity[]): OpcaoListaDTO[] {
-        return iterator.map(fam => new OpcaoListaDTO(fam.id, fam.nomeRepresentante));
+        return iterator.map(fam => new OpcaoListaDTO(fam.id.toString(), fam.nomeRepresentante));
     }
 }
