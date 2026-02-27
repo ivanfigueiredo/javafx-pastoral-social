@@ -86,7 +86,7 @@ export async function buildApp() {
     await abilityPermission.setupPermissions();
     const estoqueService = new EstoqueService(logger, estoqueRepositiory, itemTemplateRepository, templateRepository, cestaGeradaRepository, cestaEstoqueItemRepository, localizacaoRepository, unitOfWork);
     const gerarCestasService = new GerarCestasService(logger, templateRepository, cestaGeradaRepository, estoqueRepositiory, cestaEstoqueItemRepository, estoqueService, unitOfWork);
-    const templateService = new TemplateService(templateRepository, estoqueService);
+    const templateService = new TemplateService(logger, templateRepository, estoqueService);
     const consultarFamiliaService = new ConsultarFamiliaService(familiaRepository);
     const cadastrarFamiliaService = new CadastrarFamiliaService(logger, familiaRepository, unitOfWork);
     const cancelarAjudaService = new CancelarAjudaService(logger, ajudaRepository, unitOfWork);

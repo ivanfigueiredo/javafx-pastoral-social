@@ -21,11 +21,12 @@ export class ListarAjudasService implements ListarAjudasUseCase {
         try {
             const [ajudas, totalAjuda] = await this.ajudaRepository.findAjudas(dto);
             const result: Result[] = ajudas.map(ajuda => ({
-                familiaDescricao: ajuda.familia.nomeRepresentante,
+                id: ajuda.id,
+                representante: ajuda.familia.nomeRepresentante,
+                endereco: ajuda.familia.endereco,
                 statusAjuda: ajuda.statusAjuda.valueOf(),
                 tipoAjuda: ajuda.tipoAjuda.descricao!,
                 dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega.toISOString() : null,
-                descricaoItemAjuda: (ajuda.tipoAjuda.id === TipoAjudaEnum.CESTA_BASICA) ? ajuda.cestaGerada?.cestaItens.length + " items" : null
             }));
             return {
                 total: totalAjuda,
@@ -51,9 +52,10 @@ export class ListarAjudasService implements ListarAjudasUseCase {
 }
 
 type Result = {
-    familiaDescricao: string,
+    id: number | null,
+    representante: string,
+    endereco: string | null,
     statusAjuda: string,
     tipoAjuda: string,
-    dataEntrega: string | null,
-    descricaoItemAjuda: string | null
+    dataEntrega: string | null
 }
