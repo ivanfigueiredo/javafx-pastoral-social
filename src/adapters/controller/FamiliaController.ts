@@ -83,16 +83,14 @@ export class FamiliaController {
         httpClient.on(
             "get", 
             "/familia/consulta-familia-prioridade", 
-            // auth.authentication.bind(auth),
-            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarFamilia),
-            (req: Request, res: Response, next: NextFunction) => next(),
-            (req: Request, res: Response, next: NextFunction) => next(),
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarFamilia),
             async function (_params: any, _data: any, userLogged?: UserLogged, query?: QueryTipoAjudaDTO) {
-                await getFamiliaUseCase.consultarFamiliaPrioridade(query!.tipoAjuda);
+                const output = await getFamiliaUseCase.consultarFamiliaPrioridade(query!.tipoAjuda);
                 return {
                     statusCode: 200,
                     timeStampe: new Date().toISOString(),
-                    data: {}
+                    data: output ?? {}
                 };
             }
         );

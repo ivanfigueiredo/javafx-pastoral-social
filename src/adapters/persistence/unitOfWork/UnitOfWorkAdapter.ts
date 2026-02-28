@@ -20,7 +20,7 @@ export class UnitOfWorkAdapter implements UnitOfWork, UnitOfWorkPort {
   public async startTransaction(): Promise<void> {
     try {
       this.queryRunner = this.connection.getDataSourcer().createQueryRunner();
-      this.queryRunner.connect();
+      await this.queryRunner.connect();
       await this.queryRunner.startTransaction();
     } catch (error: any) {
       this.logger.error({err: error.message}, "Erro ao iniciar uma transacao");

@@ -5,4 +5,5 @@ export interface IdempotenciaRepository {
     salvar: (data: ControlleIdempotenciaEntity) => Promise<void>
     hasProcessado: (hash: string) => Promise<boolean>;
     updateStatus: (hash: string, status: StatusIdempotenciaEnum) => Promise<void>;
+    deleteAll: () => Promise<void>;
 }

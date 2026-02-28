@@ -102,6 +102,7 @@ export class EstoqueService implements EstoqueUseCase {
             }
             await this.estoqueRepository.saveMany(estoques);
             await this.unitOfWork.commit();
+            await this.unitOfWork.release();
         } catch (e: any) {
             this.logger.error({ err: e.message }, 'Erro ao persistir ')
             await this.unitOfWork.rollBack();
@@ -200,7 +201,6 @@ export class EstoqueService implements EstoqueUseCase {
                 }
             }
             await this.unitOfWork.commit();
-            await this.unitOfWork.release();
             return new ModeloTemplateCriadoResponse(templateEntity.id!);
         } catch(e: any) {
             this.logger.error({error: e.message}, 'Error ')
@@ -212,6 +212,8 @@ export class EstoqueService implements EstoqueUseCase {
                 throw e;
             }
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        } finally {
+            await this.unitOfWork.release();
         }
     }
     

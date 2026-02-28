@@ -48,7 +48,7 @@ export class DoacaoService implements DoacaoUseCase {
                     doacoes.push(doacao);
                 }
                 await this.doacaoRepository.saveMany(doacoes);
-                await this.idempotenciaPort.atualizarStatus(hash, StatusIdempotenciaEnum.PROCESSADO);
+                await this.idempotenciaPort.concluirProcessamento(hash);
             } else {
                 this.logger.info("Ignorando requisicao ja processada.");
             }
@@ -56,6 +56,8 @@ export class DoacaoService implements DoacaoUseCase {
         } catch (e: any) {
             this.logger.error({ err: e.message }, 'Erro ao persistir ')
             await this.unitOfWork.rollBack();
+        } finally {
+            await this.unitOfWork.release();
         }
     }
 }

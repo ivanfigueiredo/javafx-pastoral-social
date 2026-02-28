@@ -70,6 +70,8 @@ export class GerarCestasService implements GerarCestasUseCase {
                 throw e;
             }
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        } finally {
+            await this.unitOfWork.release();
         }
     }
 }

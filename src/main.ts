@@ -92,7 +92,7 @@ export async function buildApp() {
     const cancelarAjudaService = new CancelarAjudaService(logger, ajudaRepository, unitOfWork);
     const notificacaoWhatsAppGateway = new NotificacaoWhatsAppGatewayImpl();
     const notificacaoProdutoVencidoService = new NotificacaoProdutoVencidoService(notificacaoWhatsAppGateway);
-    const getFamiliaService = new GetFamiliaService(familiaRepository);
+    const getFamiliaService = new GetFamiliaService(logger, familiaRepository);
     const getCestasService = new GetCestasService(logger, cestaGeradaRepository);
     const updateUsuarioService = new UpdateUsuarioService(logger, usuarioRepository);
     const listarAjudasService = new ListarAjudasService(logger, ajudaRepository);

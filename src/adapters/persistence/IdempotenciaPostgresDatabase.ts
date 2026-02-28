@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { MoreThan, Repository } from "typeorm";
 import { StatusIdempotenciaEnum } from "../../application/dto/enuns/StatusIdempotenciaEnum";
 import { IdempotenciaRepository } from "../../application/port/out/IdempotenciaRepository";
 import { ControlleIdempotenciaEntity } from "./entities/ControlleIdempotenciaEntity";
@@ -21,11 +21,28 @@ export class IdempotenciaPostgresDatabase implements IdempotenciaRepository {
     }
 
     public async hasProcessado(hash: string): Promise<boolean> {
-        const result = await this.repository.findOne({ where: { hashData: hash, isProcessado: true, status: StatusIdempotenciaEnum.PROCESSADO } });
+        const result = await this.repository.findOne({ 
+            where: { 
+                hashData: hash, 
+                isProcessado: true, 
+                status: StatusIdempotenciaEnum.PROCESSADO,
+                expiresAt: MoreThan(new Date())
+            } 
+        });
         return result != null;
     }
 
     public async updateStatus(hash: string, status: StatusIdempotenciaEnum): Promise<void> {
         await this.repository.update({ hashData: hash }, { status, isProcessado: true });
+    }
+
+    public async deleteAll(): Promise<void> {
+        await this.repository
+            .createQueryBuilder()
+            .delete()
+            .where('expires_at < NOW() and status = :status and is_processado is true',
+                { status: StatusIdempotenciaEnum.PROCESSADO }
+            )
+            .execute();
     }
 }

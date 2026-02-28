@@ -40,6 +40,8 @@ export class CancelarAjudaService implements CancelarAjudaUseCase {
             this.logger.error({error: e.message}, 'Erro ao cancelar ajuda');
             if (e instanceof NotFoundException) throw e;
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        } finally {
+            await this.unitOfWork.release();
         }
     }
 }

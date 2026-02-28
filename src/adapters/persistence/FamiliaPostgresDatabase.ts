@@ -88,7 +88,22 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
     public async getFamiliasPorTipoAjuda(tipoAjuda: TipoAjudaEnum): Promise<FamiliaEntity[]> {
         const result = await this.tipoAjudaRepository.findOne({
             where: {id: tipoAjuda}, 
-            relations: {tipoAjudaDificuldade: {dificuldade: {familias: {familia: {ajudasRecebidas: true, dificuldades: {dificuldade: {dificuldadeTipoAjuda: true}}}}}}}
+            relations: {
+                tipoAjudaDificuldade: {
+                    dificuldade: {
+                        familias: {
+                            familia: {
+                                ajudasRecebidas: true, 
+                                dificuldades: {
+                                    dificuldade: { 
+                                        dificuldadeTipoAjuda: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         });
         if (!result) return [];
         return result.tipoAjudaDificuldade!.dificuldade!.familias.map(familiaDificuldade => familiaDificuldade.familia)
