@@ -43,10 +43,11 @@ export class AcaoService implements AcaoUseCase {
             }
             await this.acaoRepository.salvarAcao(acao);
             await this.unitOfwork.commit();
-            await this.unitOfwork.release();
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao cadastrar acao');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        } finally {
+            await this.unitOfwork.release();
         }
     }
 

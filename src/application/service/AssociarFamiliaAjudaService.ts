@@ -61,6 +61,8 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
             await this.unitOfWork.rollBack();
             if (e instanceof NotFoundException || e instanceof UnprocessableException) throw e;
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        } finally {
+            await this.unitOfWork.release();
         }
     }
 }

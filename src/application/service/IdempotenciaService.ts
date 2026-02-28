@@ -21,11 +21,12 @@ export class IdempotenciaService implements IdempotenciaPort {
 
 
     public async salvarIdempotenciaRecord(data: IdempotencyDTO): Promise<void> {
-        const idempotencia = new ControlleIdempotenciaEntity(data.hash, false, data.payloadData, StatusIdempotenciaEnum.PENDENTE, data.contexto);
+        const expiresAt = new Date(Date.now() + 60 * 1000);
+        const idempotencia = new ControlleIdempotenciaEntity(null, data.hash, false, data.payloadData, expiresAt, StatusIdempotenciaEnum.PENDENTE, data.contexto);
         await this.idempotenciaRepository.salvar(idempotencia);
     }
 
-    public async atualizarStatus(hash: string, status: StatusIdempotenciaEnum): Promise<void> {
-        await this.idempotenciaRepository.updateStatus(hash, status);
+    public async concluirProcessamento(hash: string): Promise<void> {
+        await this.idempotenciaRepository.updateStatus(hash, StatusIdempotenciaEnum.PROCESSADO);
     }
 }

@@ -27,11 +27,13 @@ export class CadastrarFamiliaService implements CadastrarFamiliaUseCase {
                 familiaDificuldades.push(assFamiliaComDif);
             }
             await this.familiaRepository.saveFamiliaDificuldade(familiaDificuldades);
-            await this.unitOfWork.commit()
+            await this.unitOfWork.commit();
         } catch (e: any) {
             await this.unitOfWork.rollBack();
             this.logger.error({ err: e.message }, 'Erro ao persistir ')
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        } finally {
+            await this.unitOfWork.release();
         }
     }
 }
