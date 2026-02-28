@@ -5,6 +5,7 @@ import { ComunidadeDTO } from "../../dto/ComunidadeDTO";
 import { DificuldadeDTO } from "../../dto/DificuldadeDTO";
 import { TipoAjudaEnum } from "../../dto/enuns/TipoAjudaEnum";
 import { FamiliaCadastradaDTO } from "../../dto/FamiliaCadastradaDTO";
+import { OpcaoListaDTO } from "../../dto/OpcaoListaDTO";
 
 export interface FamiliaRepository {
     save: (dto: CadastrarFamiliaDTO) => Promise<FamiliaCadastradaDTO>;
@@ -12,6 +13,7 @@ export interface FamiliaRepository {
     saveFamiliaDificuldade: (dto: AssociarFamiliaComDificuldadeDTO[]) => Promise<void>;
     findComunidades: () => Promise<ComunidadeDTO[]>;
     findFamilias: () => Promise<[FamiliaEntity[], number]>;
+    findFamiliaOptionLista: () => Promise<OpcaoListaDTO[]>;
     findDificuldades: () => Promise<DificuldadeDTO[]>;
     getFamiliasPorTipoAjuda: (tipoAjuda: TipoAjudaEnum) => Promise<FamiliaEntity[]>
 }

@@ -45,5 +45,20 @@ export class TemplateController {
                 };
             }
         );
+
+        httpClient.on(
+            "get", 
+            "/template/opcao-lista", 
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarCesta),
+            async function (_params: any, _data: any, _userLogged?: UserLogged) {
+                const output = await templateUseCase.listarTemplatesOpcaoLista();
+                return {
+                    statusCode: 200,
+                    timeStampe: new Date().toISOString(),
+                    data: output
+                };
+            }
+        );
     }
 }

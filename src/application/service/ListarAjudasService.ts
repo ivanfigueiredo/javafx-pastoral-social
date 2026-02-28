@@ -5,6 +5,7 @@ import { InternalServerErrorException } from "../exceptions/InternalServerErrorE
 import { AjudaFilterQueryDTO } from "../dto/AjudaFilterQueryDTO";
 import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
+import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 
 export class ListarAjudasService implements ListarAjudasUseCase {
     private readonly logger: Logger;
@@ -16,15 +17,16 @@ export class ListarAjudasService implements ListarAjudasUseCase {
         this.logger = logger.child({ service: "ListarAjudasUseCase" })
     }
 
-    public async execute(dto: AjudaFilterQueryDTO): Promise<any> {
+    public async listarAjudas(dto: AjudaFilterQueryDTO): Promise<any> {
         try {
             const [ajudas, totalAjuda] = await this.ajudaRepository.findAjudas(dto);
             const result: Result[] = ajudas.map(ajuda => ({
-                familiaDescricao: ajuda.familia.nomeRepresentante,
+                id: ajuda.id,
+                representante: ajuda.familia.nomeRepresentante,
+                endereco: ajuda.familia.endereco,
                 statusAjuda: ajuda.statusAjuda.valueOf(),
                 tipoAjuda: ajuda.tipoAjuda.descricao!,
                 dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega.toISOString() : null,
-                descricaoItemAjuda: (ajuda.tipoAjuda.id === TipoAjudaEnum.CESTA_BASICA) ? ajuda.cestaGerada?.cestaItens.length + " items" : null
             }));
             return {
                 total: totalAjuda,
@@ -37,12 +39,23 @@ export class ListarAjudasService implements ListarAjudasUseCase {
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
+
+    public async listarAjudasOpcaoLista(): Promise<OpcaoListaDTO[]> {
+        try {
+            const ajudas = await this.ajudaRepository.findAjudasOpcaoLista();
+            return ajudas;
+        } catch (e: any) {
+            this.logger.error({error: e.message}, 'Erro ao listar opções de ajuda');
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
+    }
 }
 
 type Result = {
-    familiaDescricao: string,
+    id: number | null,
+    representante: string,
+    endereco: string | null,
     statusAjuda: string,
     tipoAjuda: string,
-    dataEntrega: string | null,
-    descricaoItemAjuda: string | null
+    dataEntrega: string | null
 }

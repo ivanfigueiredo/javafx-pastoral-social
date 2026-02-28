@@ -60,7 +60,22 @@ export class AjudaController {
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (_params: any, _data: any, _userLogged?: UserLogged, query?: AjudaFilterQueryDTO) {
                 const dtoQuery = new AjudaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, query?.statusAjuda ?? StatusAjudaEnum.AGUARDANDO_APROVACAO, query?.tipoAjuda);
-                const output = await listarAjudasUseCase.execute(dtoQuery);
+                const output = await listarAjudasUseCase.listarAjudas(dtoQuery);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
+        httpClient.on(
+            "get", 
+            "/ajuda/opcao-lista", 
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarAjuda),
+            async function (_params: any, _data: any, _userLogged?: UserLogged) {
+                const output = await listarAjudasUseCase.listarAjudasOpcaoLista();
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),

@@ -7,6 +7,7 @@ import { FamiliaDTO } from "../dto/FamiliaDTO";
 import { ListarFamiliasPrioritariasDTO } from "../dto/familias/ListasFamiliasPrioritariasDTO";
 import { ListarFamiliaDTO } from "../dto/ListarFamiliaDTO";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
+import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 import { GetFamiliaUseCase } from "../port/in/GetFamiliaUseCase";
 import { FamiliaRepository } from "../port/out/FamiliaRepository";
 import { CalcularPrioridadeAjuda } from "./CalcularPrioridadeAjuda";
@@ -57,7 +58,7 @@ export class GetFamiliaService implements GetFamiliaUseCase {
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
         }
     }
-
+    
     private escolhaAleatoria(familiasClassificadas: FamiliaEntity[], limiteFamilia: number): FamiliaEntity[] {
         const array = [...familiasClassificadas];
         for (let i = array.length - 1; i > 0; i--) {
@@ -66,4 +67,9 @@ export class GetFamiliaService implements GetFamiliaUseCase {
         }
         return array.slice(0, limiteFamilia);
     } 
+    
+    public async listarFamiliaOpcaoLista(): Promise<OpcaoListaDTO[]> {
+        const familiasOpcaoLista = await this.familiaRepository.findFamiliaOptionLista();
+        return familiasOpcaoLista;
+    }
 }
