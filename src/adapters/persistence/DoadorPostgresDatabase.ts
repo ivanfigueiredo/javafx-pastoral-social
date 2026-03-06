@@ -21,4 +21,8 @@ export class DoadorPostgresDatabase implements DoadorRepository {
     public async save(doador: DoadorEntity): Promise<DoadorEntity> {
         return this.unitOfWork.transaction(DoadorEntity, doador);
     }
+
+    public async findDoadoresAll(): Promise<DoadorEntity[]> {
+        return this.doadorRepository.find();
+    }
 }

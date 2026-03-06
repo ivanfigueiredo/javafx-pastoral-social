@@ -28,6 +28,7 @@ import { CestaEstoqueItemEntity } from "../entities/CestaEstoqueItemEntity";
 import { DificuldadeTipoAjudaEntity } from "../entities/DificuldadeTipoAjudaEntity";
 import { AcaoEntity } from "../entities/AcaoEntity";
 import { ControlleIdempotenciaEntity } from "../entities/ControlleIdempotenciaEntity";
+import { MensagemNotificacaoEntity } from "../entities/MensagemNotificacaoEntity";
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -69,7 +70,8 @@ export class PostgresDatabase implements Connection {
                 DoacaoEstoqueEntity,
                 CestaEstoqueItemEntity,
                 DificuldadeTipoAjudaEntity,
-                AcaoEntity
+                AcaoEntity,
+                MensagemNotificacaoEntity
             ]
         });
     }

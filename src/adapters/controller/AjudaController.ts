@@ -11,6 +11,10 @@ import { CancelarAjudaUseCase } from "../../application/port/in/CancelarAjudaUse
 import { AjudaFilterQueryDTO } from "../../application/dto/AjudaFilterQueryDTO";
 import { StatusAjudaEnum } from "../persistence/entities/StatusAjudaEnum";
 import { ListarAjudasUseCase } from "../../application/port/in/ListarAjudasUseCase";
+import { AprovarAjudaUseCase } from "../../application/port/in/AprovarAjudaUseCase";
+import { AprovarAjudaDTO } from "../../application/dto/ajuda/AprovarAjudaDTO";
+import { EntregarAjudaUseCase } from "../../application/port/in/EntregarAjudaUseCase";
+import { EntregarAjudaDTO } from "../../application/dto/ajuda/EntregarAjudaDTO";
 
 export class AjudaController {
     constructor(
@@ -19,7 +23,9 @@ export class AjudaController {
         readonly authorize: Authorize,
         readonly associarFamiliaAjudaUseCase: AssociarFamiliaAjudaUseCase,
         readonly cancelarAjudaUseCase: CancelarAjudaUseCase,
-        readonly listarAjudasUseCase: ListarAjudasUseCase
+        readonly listarAjudasUseCase: ListarAjudasUseCase,
+        readonly aprovarAjudaUseCase: AprovarAjudaUseCase,
+        readonly entregarAjudaUseCase: EntregarAjudaUseCase
     ) {
         httpClient.on(
             "post", 
@@ -52,12 +58,42 @@ export class AjudaController {
         );
 
         httpClient.on(
+            "post", 
+            "/ajuda/aprovar", 
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.AprovarEntrega),
+            async function (params: any, data: AprovarAjudaDTO, userLogged?: UserLogged) {
+                const dto = new AprovarAjudaDTO(data.idAjuda);
+                const output = await aprovarAjudaUseCase.execute(dto);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
+        httpClient.on(
+            "post", 
+            "/ajuda/entregar", 
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.EntregarAjuda),
+            async function (params: any, data: EntregarAjudaDTO, userLogged?: UserLogged) {
+                const dto = new EntregarAjudaDTO(data.idAjuda);
+                const output = await entregarAjudaUseCase.execute(dto);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
+        httpClient.on(
             "get", 
             "/ajuda/listar", 
-            // auth.authentication.bind(auth),
-            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarAjuda),
-            (req: Request, res: Response, next: NextFunction) => next(),
-            (req: Request, res: Response, next: NextFunction) => next(),
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarAjuda),
             async function (_params: any, _data: any, _userLogged?: UserLogged, query?: AjudaFilterQueryDTO) {
                 const dtoQuery = new AjudaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, query?.statusAjuda ?? StatusAjudaEnum.AGUARDANDO_APROVACAO, query?.tipoAjuda);
                 const output = await listarAjudasUseCase.listarAjudas(dtoQuery);
