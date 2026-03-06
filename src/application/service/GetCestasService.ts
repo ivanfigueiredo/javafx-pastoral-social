@@ -19,7 +19,7 @@ export class GetCestasService implements GetCestasUseCase {
         this.logger = logger.child({ service: 'GetCestasUseCase' })
     }
 
-    public async execute(dto: CestaFilterQueryDTO): Promise<any> {
+    public async execute(dto: CestaFilterQueryDTO): Promise<PaginatedDTO> {
         let cesta: CestasDTO = {
             idCesta: 0,
             identificadorCesta: '',

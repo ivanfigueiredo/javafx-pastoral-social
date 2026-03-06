@@ -35,7 +35,7 @@ import { AssociarFamiliaAjudaService } from "./application/service/AssociarFamil
 import { AjudaRecebidaPostgresDatabase } from "./adapters/persistence/AjudaRecebidaPostgresDatabase";
 import { GetFamiliaService } from "./application/service/GetFamiliaService";
 import { NotificacaoWhatsAppGatewayImpl } from "./adapters/http/gateway/NotificacaoWhatsAppGatewayImpl";
-import { NotificacaoProdutoVencidoService } from "./application/service/NotificacaoProdutoVencidoService";
+import { NotificacaoAgradecimentoDoacaoService } from "./application/service/NotificacaoAgradecimentoDoacaoService";
 import { GetCestasService } from "./application/service/GetCestasService";
 import { CancelarCestaService } from "./application/service/CancelarCestaService";
 import { CestaEstoqueItemPostgresDatabase } from "./adapters/persistence/CestaEstoqueItemPostgresDatabase";
@@ -57,6 +57,9 @@ import { DoacaoService } from "./application/service/DoacaoService";
 import { DoacaoController } from "./adapters/controller/DoacaoController";
 import { IdempotenciaPostgresDatabase } from "./adapters/persistence/IdempotenciaPostgresDatabase";
 import { IdempotenciaService } from "./application/service/IdempotenciaService";
+import { MensagemNotificacaoPostgresDatabase } from "./adapters/persistence/MensagemNotificacaoPostgresDatabase";
+import { AprovarAjudaService } from "./application/service/AprovarAjudaService";
+import { EntregarAjudaService } from "./application/service/EntregarAjudaService";
 config();
 
 export async function buildApp() {
@@ -81,6 +84,7 @@ export async function buildApp() {
     const localizacaoRepository = new LocalizacaoPostgresDatabase(postgresDatabase, unitOfWork);
     const doacaoRepository = new DoacaoPostgresDatabase(postgresDatabase, unitOfWork);
     const idempotenciaRepository = new IdempotenciaPostgresDatabase(postgresDatabase);
+    const mensagemRepository = new MensagemNotificacaoPostgresDatabase(postgresDatabase);
     const doadorRepository = new DoadorPostgresDatabase(postgresDatabase, unitOfWork);
     const abilityPermission = new AbilityPermission(roleRepository);
     await abilityPermission.setupPermissions();
@@ -91,13 +95,15 @@ export async function buildApp() {
     const cadastrarFamiliaService = new CadastrarFamiliaService(logger, familiaRepository, unitOfWork);
     const cancelarAjudaService = new CancelarAjudaService(logger, ajudaRepository, unitOfWork);
     const notificacaoWhatsAppGateway = new NotificacaoWhatsAppGatewayImpl();
-    const notificacaoProdutoVencidoService = new NotificacaoProdutoVencidoService(notificacaoWhatsAppGateway);
+    const notificacaoAgradecimentoDoacaoService = new NotificacaoAgradecimentoDoacaoService(logger, notificacaoWhatsAppGateway, mensagemRepository);
     const getFamiliaService = new GetFamiliaService(logger, familiaRepository);
     const getCestasService = new GetCestasService(logger, cestaGeradaRepository);
     const updateUsuarioService = new UpdateUsuarioService(logger, usuarioRepository);
     const listarAjudasService = new ListarAjudasService(logger, ajudaRepository);
     const idempotenciaService = new IdempotenciaService(idempotenciaRepository);
-    const doacaoService = new DoacaoService(logger, unitOfWork, doadorRepository, doacaoRepository, idempotenciaService);
+    const aprovarAjudaService = new AprovarAjudaService(logger, ajudaRepository, unitOfWork);
+    const entregarAjudaService = new EntregarAjudaService(logger, ajudaRepository, unitOfWork);
+    const doacaoService = new DoacaoService(logger, unitOfWork, doadorRepository, doacaoRepository, idempotenciaService, notificacaoAgradecimentoDoacaoService);
     const listarTemplatesComCestasDisponiveisService = new ListarTemplatesComCestasDisponiveisService(logger, templateRepository);
     const cancelarCestaService = new CancelarCestaService(logger, cestaGeradaRepository, ajudaRepository, estoqueRepositiory, unitOfWork);
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
@@ -112,13 +118,13 @@ export async function buildApp() {
     new EstoqueController(httpClient, auth, authorize, estoqueService, gerarModeloTemplateProxy);
     new FamiliaController(httpClient, auth, authorize, familiaAuditProxy, consultarFamiliaService, getFamiliaService);
     new CestasController(httpClient, auth, authorize, gerarCestasService, getCestasService, cancelarCestaService);
-    new AjudaController(httpClient, auth, authorize, associarAjudaFamiliaService, cancelarAjudaService, listarAjudasService);
+    new AjudaController(httpClient, auth, authorize, associarAjudaFamiliaService, cancelarAjudaService, listarAjudasService, aprovarAjudaService, entregarAjudaService);
     new UsuarioController(httpClient, auth, authorize, updateUsuarioService);
     new WebhookWhatsappController(httpClient);
     new HealthCheckController(httpClient);
     new DoacaoController(httpClient, auth, authorize, doacaoService);
     new AcaoController(httpClient, auth, authorize, acaoService);
-    const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => await notificacaoProdutoVencidoService.execute() );
+    // const notificaProdutoVencidoJob = new CronJob('* * * * *', async () => console.log() );
     // notificaProdutoVencidoJob.start();
     return httpClient.getExpress();
 }

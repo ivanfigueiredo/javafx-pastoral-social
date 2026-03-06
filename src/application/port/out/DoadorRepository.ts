@@ -3,4 +3,5 @@ import { DoadorEntity } from "../../../adapters/persistence/entities/DoadorEntit
 export interface DoadorRepository {
     findDoadorByTelefone: (telefone: string) => Promise<DoadorEntity | null>;
     save: (doador: DoadorEntity) => Promise<DoadorEntity>;
+    findDoadoresAll: () => Promise<DoadorEntity[]>;
 }

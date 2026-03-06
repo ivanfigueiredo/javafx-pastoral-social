@@ -5,7 +5,6 @@ export class DataNotificationDTO {
         readonly messaging_product: string,
         readonly to: string,
         readonly type: string,
-        readonly template?: TemplateDataNotificaoDTO,
-        readonly text?: {body: string},
+        readonly template?: TemplateDataNotificaoDTO
     ) {}
 }

@@ -9,9 +9,10 @@ import { DoacaoRepository } from "../port/out/DoacaoRepository";
 import { DoadorRepository } from "../port/out/DoadorRepository";
 import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
 import { IdempotenciaPort } from "../port/in/IdempotenciaPort";
-import { StatusIdempotenciaEnum } from "../dto/enuns/StatusIdempotenciaEnum";
 import { IdempotencyDTO } from "../dto/idempotency/IdempotencyDTO";
 import { ContextoIdempotencyEnum } from "../dto/enuns/ContextoIdempotencyEnum";
+import { NotificarDoacaoRecebidaDoadorDTO } from "../dto/doador/NotificarDoacaoRecebidaDoadorDTO";
+import { NotificacaoAgradecimentoDoacaoService } from "./NotificacaoAgradecimentoDoacaoService";
 
 export class DoacaoService implements DoacaoUseCase {
     private readonly logger: Logger;
@@ -21,7 +22,8 @@ export class DoacaoService implements DoacaoUseCase {
         private readonly unitOfWork: UnitOfWorkPort,
         private readonly doadorRepository: DoadorRepository,
         private readonly doacaoRepository: DoacaoRepository,
-        private readonly idempotenciaPort: IdempotenciaPort
+        private readonly idempotenciaPort: IdempotenciaPort,
+        private readonly notificacaoAgradecimentoDoacaoService: NotificacaoAgradecimentoDoacaoService
     ) {
         this.logger = logger.child({ service: "DoacaoUseCase" });
     }
@@ -39,16 +41,20 @@ export class DoacaoService implements DoacaoUseCase {
                 if (!existDoador) {
                     doador = new DoadorEntity(null, dto.doador.nomeDoador, dto.doador.cleanTelefone(), []);
                     doador = await this.doadorRepository.save(doador);
+                } else {
+                    doador = existDoador;
                 }
                 const doacoes: DoacaoRecebidaEntity[] = [];
                 for (const itemProduto of dto.itensProduto) {
                     const itemProdutoEntity = new ItemProdutoEntity(itemProduto.idItemProduto, null, null, null, [], []);
                     const acao = new AcaoEntity(parseInt(dto.idAcao), null, null, null, null, null, null, null, null, []);
-                    const doacao = new DoacaoRecebidaEntity(null, itemProdutoEntity, existDoador ?? doador, dto.tipoDoacao, dto.dataEntrega, null, itemProduto.quantidade, acao);
+                    const doacao = new DoacaoRecebidaEntity(null, itemProdutoEntity, doador, dto.tipoDoacao, dto.dataEntrega, null, itemProduto.quantidade, acao);
                     doacoes.push(doacao);
                 }
                 await this.doacaoRepository.saveMany(doacoes);
                 await this.idempotenciaPort.concluirProcessamento(hash);
+                const data = new NotificarDoacaoRecebidaDoadorDTO(doador.doadorNome!, doador.doadorTelefone!.startsWith("55") ? doador.doadorTelefone! : "55".concat(doador.doadorTelefone!));
+                await this.notificacaoAgradecimentoDoacaoService.execute(data);
             } else {
                 this.logger.info("Ignorando requisicao ja processada.");
             }
