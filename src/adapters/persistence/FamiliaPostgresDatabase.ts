@@ -17,6 +17,7 @@ import { InternalServerErrorException } from "../../application/exceptions/Inter
 import { TipoAjudaEnum } from "../../application/dto/enuns/TipoAjudaEnum";
 import { TipoAjudaEntity } from "./entities/TipoAjudaEntity";
 import { OpcaoListaDTO } from "../../application/dto/OpcaoListaDTO";
+import { FamiliaFilterQueryDTO } from "../../application/dto/familias/FamiliaFilterQueryDTO";
 
 export class FamiliaPostgresDatabase implements FamiliaRepository {
     private readonly logger: Logger;
@@ -64,17 +65,30 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
         return FamiliaMapper.toListComunidadeDTO(listComunidades);
     }
 
-    public async findFamilias(): Promise<[FamiliaEntity[], number]> {
-        return await this.familiaRepository.findAndCount({
-            relations: {
-                ajudasRecebidas: true,
-                dificuldades: {
-                    dificuldade: {
-                        dificuldadeTipoAjuda: true
-                    }
-                }
+    public async findFamilias(filter: FamiliaFilterQueryDTO): Promise<[FamiliaEntity[], number]> {
+        try {
+            const { page, pageSize } = filter;
+            const query = this.familiaRepository
+                .createQueryBuilder("familia")
+                .distinct(true)
+                .leftJoinAndSelect("familia.ajudasRecebidas", "ajudasRecebidas")
+                .leftJoinAndSelect("familia.dificuldades", "familiaDificuldade")
+                .leftJoinAndSelect("familiaDificuldade.dificuldade", "dificuldade")
+                .leftJoinAndSelect("dificuldade.dificuldadeTipoAjuda", "dificuldadeTipoAjuda")
+                .orderBy("familia.id", "DESC")
+                .skip((page - 1) * pageSize)
+                .take(pageSize);
+            if (filter.tipoDificuldade) {
+                query.andWhere(
+                    "dificuldade.id = :idTipoDificuldade",
+                    { idTipoDificuldade: filter.tipoDificuldade }
+                );
             }
-        });
+            return await query.getManyAndCount();
+        } catch (e: any) {
+            this.logger.error({err: e.message}, "Erro ao consultar cestas");
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
     }
 
     public async findFamiliaOptionLista(): Promise<OpcaoListaDTO[]> {

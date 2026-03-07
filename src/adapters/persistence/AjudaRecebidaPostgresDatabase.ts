@@ -55,7 +55,19 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
                 take: pageSize,
                 order: { id: "DESC" },
                 where: { statusAjuda: statusAjuda, tipoAjuda: {id: filter?.tipoAjuda} },
-                relations: {tipoAjuda: true, cestaGerada: {cestaItens: true}, familia: true}
+                relations: {
+                    tipoAjuda: true, 
+                    cestaGerada: {
+                        cestaItens: true,
+                        template: {
+                            itensTemplate: {
+                                itemProduto: {
+                                    unidadeMedida: true
+                                }
+                            }
+                        }
+                    }, 
+                    familia: true}
             });
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao consultar cestas");

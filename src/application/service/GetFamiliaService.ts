@@ -1,16 +1,17 @@
 import { Logger } from "pino";
 import { FamiliaEntity } from "../../adapters/persistence/entities/FamiliaEntity";
 import { ComunidadeDTO } from "../dto/ComunidadeDTO";
-import { PrioridadeEnum } from "../dto/enuns/PrioridadeEnum";
+import { PrioridadeEnum, PrioridadePeso } from "../dto/enuns/PrioridadeEnum";
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
-import { FamiliaDTO } from "../dto/FamiliaDTO";
+import { FamiliaDTO } from "../dto/familias/FamiliaDTO";
 import { ListarFamiliasPrioritariasDTO } from "../dto/familias/ListasFamiliasPrioritariasDTO";
-import { ListarFamiliaDTO } from "../dto/ListarFamiliaDTO";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
 import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 import { GetFamiliaUseCase } from "../port/in/GetFamiliaUseCase";
 import { FamiliaRepository } from "../port/out/FamiliaRepository";
 import { CalcularPrioridadeAjuda } from "./CalcularPrioridadeAjuda";
+import { FamiliaFilterQueryDTO } from "../dto/familias/FamiliaFilterQueryDTO";
+import { PaginatedDTO } from "../dto/PaginatedDTO";
 
 export class GetFamiliaService implements GetFamiliaUseCase {
     private readonly logger: Logger;
@@ -26,14 +27,20 @@ export class GetFamiliaService implements GetFamiliaUseCase {
         return this.familiaRepository.findComunidades();
     }
 
-    public async listarFamilias(): Promise<ListarFamiliaDTO> {
-        const [familias, totalFamilias] = await this.familiaRepository.findFamilias();
-        const familiaDTO: FamiliaDTO[] = []
-        for (const familia of familias) {
-            const dtoFamilia = new FamiliaDTO(familia.nomeRepresentante, familia.endereco, familia.qtdPessoasResidencia, familia.qtdPessoasEmpregadas);
-            familiaDTO.push(dtoFamilia);
-        }
-        return new ListarFamiliaDTO(totalFamilias, familiaDTO);
+    public async listarFamilias(dto: FamiliaFilterQueryDTO): Promise<PaginatedDTO> {
+        const [familias, totalFamilias] = await this.familiaRepository.findFamilias(dto);
+        const familiasComPrioridade = familias.map(familia => {
+            const calculo = new CalcularPrioridadeAjuda(familia);
+            return {
+                familia,
+                prioridade: calculo.prioridade
+            };
+        });
+        familiasComPrioridade.sort((a, b) => {
+            return PrioridadePeso[a.prioridade] - PrioridadePeso[b.prioridade];
+        });
+        const result = familiasComPrioridade.map(fcp => new FamiliaDTO(fcp.familia.id, fcp.familia.nomeRepresentante, fcp.familia.endereco, fcp.familia.qtdPessoasResidencia, fcp.familia.qtdPessoasEmpregadas));
+        return new PaginatedDTO(parseInt(`${dto.page}`), totalFamilias, Math.ceil(totalFamilias / dto.pageSize), result);
     }
 
     public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<ListarFamiliasPrioritariasDTO[]> {
