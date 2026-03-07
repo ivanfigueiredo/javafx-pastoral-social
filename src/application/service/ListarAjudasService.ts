@@ -7,6 +7,11 @@ import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjuda
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
 import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 import { PaginatedDTO } from "../dto/PaginatedDTO";
+import { AjudaRecebidaEntity } from "../../adapters/persistence/entities/AjudaRecebidaEntity";
+import { TipoDoacaoEnum } from "../../adapters/persistence/entities/TipoDoacaoEnum";
+import { CestaGeradaEntity } from "../../adapters/persistence/entities/CestaGeradaEntity";
+import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
+import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
 
 export class ListarAjudasService implements ListarAjudasUseCase {
     private readonly logger: Logger;
@@ -28,6 +33,7 @@ export class ListarAjudasService implements ListarAjudasUseCase {
                 statusAjuda: ajuda.statusAjuda.valueOf(),
                 tipoAjuda: ajuda.tipoAjuda.descricao!,
                 dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega.toISOString() : null,
+                cesta: this.getCesta(ajuda)
             }));
             const response = {
                 total: totalAjuda,
@@ -41,6 +47,40 @@ export class ListarAjudasService implements ListarAjudasUseCase {
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
+
+    private getCesta(ajuda: AjudaRecebidaEntity): {[key:string]: any} | undefined {
+        if (ajuda.tipoAjuda.id === TipoAjudaEnum.CESTA_BASICA && (ajuda.cestaGerada !== null && ajuda.cestaGerada !== undefined)) {
+            const cesta = ajuda.cestaGerada;
+            return {
+                identificadorCesta: cesta.identificadorCesta!,
+                descricao: cesta.template.descricao,
+                itens: cesta.template.itensTemplate.map(item => ({
+                    idItemProduto: item.itemProduto.id,
+                    nomeProduto: item.itemProduto.itemProdutoDesc,
+                    quantidade: item.quantidade,
+                    detalhe: this.calculatePeso(item)
+                }))
+            }
+        }
+        return undefined;
+    }
+
+    private calculatePeso(itemTemplate: ItemTemplateEntity): string | undefined {
+        if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.KG) {
+            return `${itemTemplate.quantidade}${itemTemplate.itemProduto.unidadeMedida!.undMedidas}`;
+        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.G) {
+            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
+            const converteKG = (sum / 1000);
+            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.KG}` : `${sum}${UnidadeMedidaEnum.G}`;
+        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.ML) {
+            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
+            const converteKG = (sum / 1000);
+            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.L}` : `${sum}${UnidadeMedidaEnum.ML}`;
+        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.L) {
+            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.L}`;
+        }
+    }
+        
 
     public async listarAjudasOpcaoLista(): Promise<OpcaoListaDTO[]> {
         try {
