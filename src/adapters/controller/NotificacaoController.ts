@@ -10,13 +10,7 @@ export class NotificacaoController {
         httpClient.on(
             "get", 
             "/notificacao/produtos-proximo-vencimento", 
-            (req: Request, res: Response, next: NextFunction) => {
-                const authHeader = req.headers.authorization;
-                if (!authHeader || authHeader !== `Bearer ${process.env.SECRET_TOKEN_NOTIFICATION}`) {
-                    return res.status(401).json("Unauthorized");
-                }
-                next();
-            },
+            (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (_params: any, _data: any) {
                 await consultarProdutosProxVencimentoUseCase.execute();
