@@ -28,7 +28,24 @@ export class FamiliaController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarFamilia),
             async function (params: any, data: CadastrarFamiliaDTO, userLogged?: UserLogged) {
-                const output = await auditProxy.execute(data, ActionType.CadastrarFamilia, userLogged!);
+                const dto = new CadastrarFamiliaDTO(
+                    data.nomeRepresentante,
+                    data.idade,
+                    data.idComunidade,
+                    data.dificuldades,
+                    data.cpfRg,
+                    data.telefone,
+                    data.endereco,
+                    data.qtdPessoasResidencia,
+                    data.qtdPessoasEmpregadas,
+                    data.criancasFrequentamEscola,
+                    data.membroComProblemaSaude,
+                    data.jaRecebeuAjuda,
+                    data.desejaParticiparCursos,
+                    data.observacao,
+                    data.outros
+                );
+                const output = await auditProxy.execute(dto, ActionType.CadastrarFamilia, userLogged!);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),

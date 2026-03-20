@@ -11,6 +11,7 @@ import { EstoqueEntity } from "../../adapters/persistence/entities/EstoqueEntity
 import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
 import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
 import { AjudaRepository } from "../port/out/AjudaRepository";
+import { UnprocessableException } from "../exceptions/UnprocessableException";
 
 export class CancelarCestaService implements CancelarCestaUseCase {
     private readonly logger: Logger;
@@ -30,6 +31,9 @@ export class CancelarCestaService implements CancelarCestaUseCase {
             await this.unitOfWork.startTransaction();
             const cesta = await this.cestaGeradaRepository.findCestaById(dto.idCesta);
             if (!cesta) throw new NotFoundException('A cesta informada não foi encontrada.');
+            if (cesta.ajuda != null) {
+                throw new UnprocessableException("Não é possível cancelar a cesta, pois já está vinculada a uma ajuda.");
+            }
             const estoque: EstoqueEntity[] = [];
             for (const itemCesta of cesta.cestaItens) {
                 itemCesta.cestaEstoqueItem.dataSaida = null;
@@ -37,10 +41,6 @@ export class CancelarCestaService implements CancelarCestaUseCase {
                 estoque.push(itemCesta.cestaEstoqueItem);
             }
             cesta.status = new StatusCestaEntity(StatusCestaEnum.CANCELADA, null, []);
-            if (dto.cancelarAjuda && cesta.ajuda != null) {
-                cesta.ajuda.statusAjuda = StatusAjudaEnum.CANCELADA;
-                await this.ajudaRepository.save(cesta.ajuda);
-            }
             await this.cestaGeradaRepository.save(cesta);
             await this.estoqueRepository.saveMany(estoque);
             await this.unitOfWork.commit();

@@ -22,13 +22,13 @@ export class DoacaoController {
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: CadastrarDoacaoDTO) {
-                const doacao = new CadastrarDoacaoDTO(
+                const dto = new CadastrarDoacaoDTO(
                     data.idAcao, 
                     new DoadorDTO(data.doador.nomeDoador, data.doador.telefone), 
                     data.tipoDoacao, 
                     data.itensProduto.map(item => new ItemProdutoDoacaoDTO(item.idItemProduto, item.quantidade)), 
                     data.dataEntrega);
-                const output = await doacaoUseCase.cadastrarDoacao(doacao);
+                const output = await doacaoUseCase.cadastrarDoacao(dto);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),

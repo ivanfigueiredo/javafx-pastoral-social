@@ -1,5 +1,4 @@
 import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, OneToMany, OneToOne } from "typeorm";
-import { LocalizacaoEntity } from "./LocalizacaoEntity";
 import { ItemProdutoEntity } from "./ItemProdutoEntity";
 import { DoacaoEstoqueEntity } from "./DoacaoEstoqueEntity";
 import { CestaEstoqueItemEntity } from "./CestaEstoqueItemEntity";
@@ -15,14 +14,11 @@ export class EstoqueEntity {
     @JoinColumn({ name: 'id_item_produto' })
     itemProduto: ItemProdutoEntity;
 
-    @ManyToOne(() => LocalizacaoEntity, localizacao => localizacao.estoques, {
-      cascade: true
-    })
-    @JoinColumn({ name: 'id_localizacao' })
-    localizacao: LocalizacaoEntity;
-
     @Column({ type: 'date', nullable: false })
     validade: Date;
+
+    @Column({ name: 'cod_produto', type: 'varchar', length: 8, nullable: false })
+    codProduto: string | null;
 
     @Column({name: 'is_disponivel', type: 'boolean', nullable: false})
     isDisponivel: boolean | null;
@@ -46,19 +42,19 @@ export class EstoqueEntity {
     validade: Date,
     isDisponivel: boolean | null = null,
     dataSaida: Date | null = null,
-    localizacao: LocalizacaoEntity,
     itemProduto: ItemProdutoEntity,
     cestaItemEstoque: CestaEstoqueItemEntity | null,
-    doacoesEstoque: DoacaoEstoqueEntity[]
+    doacoesEstoque: DoacaoEstoqueEntity[],
+    codProduto: string | null = null
   ) {
     this.id = id;
     this.dataEntrada = dataEntrada;
     this.dataSaida = dataSaida;
     this.isDisponivel = isDisponivel;
     this.validade = validade;
-    this.localizacao = localizacao;
     this.itemProduto = itemProduto;
     this.doacoesEstoque = doacoesEstoque;
     this.cestaItemEstoque = cestaItemEstoque;
+    this.codProduto = codProduto;
   }
 }

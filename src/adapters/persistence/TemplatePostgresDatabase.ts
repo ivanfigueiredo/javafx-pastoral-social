@@ -8,6 +8,7 @@ import { Logger } from "pino";
 import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 import { OpcaoListaDTO } from "../../application/dto/OpcaoListaDTO";
 import { TemplateMapper } from "../mappers/TemplateMapper";
+import { TemplateTypeEnum } from "./entities/TemplateTypeEnum";
 
 export class TemplatePostgresDatabase implements TemplateRepository {
     private readonly templateRepository: Repository<TemplateEntity>;
@@ -42,6 +43,7 @@ export class TemplatePostgresDatabase implements TemplateRepository {
             skip: (currentPage - 1) * pageSize,
             take: currentPageSize,
             order: { id: "ASC" },
+            where: {templateType: TemplateTypeEnum.CESTA_BASICA},
             relations: {itensTemplate: {itemProduto: true}}
         });
     }

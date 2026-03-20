@@ -11,5 +11,11 @@
       "src": "/(.*)",
       "dest": "public/server.js"
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/notificacao/produtos-proximo-vencimento",
+      "schedule": "50 23 * * *"
+    }
   ]
 }

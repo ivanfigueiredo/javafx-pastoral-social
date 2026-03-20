@@ -50,25 +50,29 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     public async findAjudas(filter: AjudaFilterQueryDTO): Promise<[AjudaRecebidaEntity[], number]> {
         try {
             const { page, pageSize, statusAjuda } = filter;
-            return this.ajudaRepository.findAndCount({
-                skip: (page - 1) * pageSize,
-                take: pageSize,
-                order: { id: "DESC" },
-                where: { statusAjuda: statusAjuda, tipoAjuda: {id: filter?.tipoAjuda} },
-                relations: {
-                    tipoAjuda: true, 
-                    cestaGerada: {
-                        cestaItens: true,
-                        template: {
-                            itensTemplate: {
-                                itemProduto: {
-                                    unidadeMedida: true
-                                }
-                            }
-                        }
-                    }, 
-                    familia: true}
-            });
+            const query = this.ajudaRepository.createQueryBuilder("ajuda")
+                .leftJoinAndSelect("ajuda.tipoAjuda", "tipoAjuda")
+                .leftJoinAndSelect("ajuda.cestaGerada", "cestaGerada")
+                .leftJoinAndSelect("cestaGerada.cestaItens", "cestaItens")
+                .leftJoinAndSelect("cestaGerada.template", "template")
+                .leftJoinAndSelect("template.itensTemplate", "itensTemplate")
+                .leftJoinAndSelect("itensTemplate.itemProduto", "itemProduto")
+                .leftJoinAndSelect("itemProduto.unidadeMedida", "unidadeMedida")
+                .leftJoinAndSelect("ajuda.familia", "familia")
+                .where("ajuda.statusAjuda = :statusAjuda", { statusAjuda })
+                .orderBy("ajuda.id", "DESC")
+                .skip((page - 1) * pageSize)
+                .take(pageSize);
+            if (filter.tipoAjuda) {
+                query.andWhere("tipoAjuda.id = :idTipoAjuda", { idTipoAjuda: filter.tipoAjuda });   
+            }
+            if (filter.dataInicio) {
+                query.andWhere("ajuda.dataEntrega >= :dataInicio", { dataInicio: filter.dataInicio });
+            }
+            if (filter.dataFim) {
+                query.andWhere("ajuda.dataEntrega <= :dataFim", { dataFim: filter.dataFim });
+            }
+            return await query.getManyAndCount();
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao consultar cestas");
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")

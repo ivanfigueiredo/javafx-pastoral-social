@@ -20,7 +20,7 @@ export class UpdateUsuarioService implements UpdateUsuarioUseCase {
         try {
             const usuario = await this.usuarioRepository.findUsuarioById(idUsuario);
             const isSenhaIgualAtual = await this.isSenhaAtualDiferente(dto.novaSenha, usuario.password);
-            if (usuario.nome === dto.nome && usuario.nickName === dto.nickName && isSenhaIgualAtual) {
+            if (usuario.nome === dto.nome && usuario.telefone === dto.telefone && isSenhaIgualAtual) {
                 return;
             }
             if (!isSenhaIgualAtual) {
@@ -29,8 +29,8 @@ export class UpdateUsuarioService implements UpdateUsuarioUseCase {
             if (dto.nome != null && dto.nome != usuario.nome) {
                 usuario.nome = dto.nome;
             }
-            if (dto.nickName != null && dto.nickName != usuario.nickName) {
-                usuario.nickName = dto.nickName;
+            if (dto.telefone != null && dto.telefone != usuario.telefone) {
+                usuario.telefone = this.cleanTelefone(dto.telefone);
             }
             await this.usuarioRepository.save(usuario);
         } catch (e: any) {
@@ -47,5 +47,9 @@ export class UpdateUsuarioService implements UpdateUsuarioUseCase {
     private async hashedSenha(novaSenha: string): Promise<string> {
         const SALT_ROUNDS = 12;
         return await hash(novaSenha, SALT_ROUNDS);
+    }
+
+    public cleanTelefone(telefone: string): string {
+        return telefone.replace(/\D/g, '');
     }
 }

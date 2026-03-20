@@ -15,7 +15,8 @@ export class MainController {
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: LoginDTO) {
-                const output = await auth.login(data);
+                const dto = new LoginDTO(data.nickName, data.senha);
+                const output = await auth.login(dto);
                 return {
                     statusCode: 200,
                     timeStampe: new Date().toISOString(),
@@ -31,7 +32,8 @@ export class MainController {
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: RefreshTokenDTO) {
-                const output = await auth.refreshToken(data);
+                const dto = new RefreshTokenDTO(data.refreshToken);
+                const output = await auth.refreshToken(dto);
                 return {
                     statusCode: 200,
                     timeStampe: new Date().toISOString(),

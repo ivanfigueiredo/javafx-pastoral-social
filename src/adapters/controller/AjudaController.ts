@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { AssociarAjudaFamiliaDTO } from "../../application/dto/AssociarAjudaFamiliaDTO";
+import { AjudaDTO, AssociarAjudaFamiliaDTO } from "../../application/dto/AssociarAjudaFamiliaDTO";
 import { Auth } from "../http/authentication/Auth";
 import { Authorize } from "../http/authorization/Authorize";
 import { HttpClient } from "../http/HttpClient";
@@ -15,6 +15,7 @@ import { AprovarAjudaUseCase } from "../../application/port/in/AprovarAjudaUseCa
 import { AprovarAjudaDTO } from "../../application/dto/ajuda/AprovarAjudaDTO";
 import { EntregarAjudaUseCase } from "../../application/port/in/EntregarAjudaUseCase";
 import { EntregarAjudaDTO } from "../../application/dto/ajuda/EntregarAjudaDTO";
+import { TipoAjudaEnum } from "../../application/dto/enuns/TipoAjudaEnum";
 
 export class AjudaController {
     constructor(
@@ -33,7 +34,15 @@ export class AjudaController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.AssociarFamiliaAjuda),
             async function (params: any, data: AssociarAjudaFamiliaDTO[], userLogged?: UserLogged) {
-                const output = await associarFamiliaAjudaUseCase.execute(data);
+                const dto = data.map(item => new AssociarAjudaFamiliaDTO(
+                    item.idFamilia, 
+                    new AjudaDTO(
+                        item.ajuda.tipoAjuda as TipoAjudaEnum, 
+                        item.ajuda.observacao, 
+                        item.ajuda.idTemplate
+                    )
+                ));
+                const output = await associarFamiliaAjudaUseCase.execute(dto);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),
@@ -48,7 +57,8 @@ export class AjudaController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CancelarAjuda),
             async function (params: any, data: CancelarAjudaDTO, userLogged?: UserLogged) {
-                const output = await cancelarAjudaUseCase.execute(data);
+                const dto = new CancelarAjudaDTO(data.idAjuda);
+                const output = await cancelarAjudaUseCase.execute(dto);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),

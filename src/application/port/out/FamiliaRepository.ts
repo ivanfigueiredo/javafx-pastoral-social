@@ -11,6 +11,7 @@ import { OpcaoListaDTO } from "../../dto/OpcaoListaDTO";
 export interface FamiliaRepository {
     save: (dto: CadastrarFamiliaDTO) => Promise<FamiliaCadastradaDTO>;
     findFamiliaById: (idFamilia: number) => Promise<FamiliaEntity | null>;
+    findFamiliasByIds: (idsFamilia: number[]) => Promise<FamiliaEntity[]>;
     saveFamiliaDificuldade: (dto: AssociarFamiliaComDificuldadeDTO[]) => Promise<void>;
     findComunidades: () => Promise<ComunidadeDTO[]>;
     findFamilias: (filter: FamiliaFilterQueryDTO) => Promise<[FamiliaEntity[], number]>;

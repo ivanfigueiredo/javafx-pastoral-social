@@ -3,6 +3,8 @@ import { UserResponseDTO } from "../../dto/UserResponseDTO";
 
 export interface UsuarioRepository {
     findUserByNickName: (nickName: string) => Promise<UserResponseDTO>;
-    findUsuarioById: (idUsuario: number) => Promise<UserEntity>
-    save: (usuario: UserEntity) => Promise<void>
+    findUsuarioById: (idUsuario: number) => Promise<UserEntity>;
+    findAllCoordenadores: () => Promise<UserEntity[]>;
+    findByTelefone: (telefone: string) => Promise<UserEntity | null>;
+    save: (usuario: UserEntity) => Promise<void>;
 }

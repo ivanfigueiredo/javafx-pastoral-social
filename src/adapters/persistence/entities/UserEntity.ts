@@ -17,6 +17,12 @@ export class UserEntity {
   @Column({ name: 'password', type: 'varchar', nullable: false })
   password: string;
 
+  @Column({ name: 'telefone', type: 'varchar', nullable: true })
+  telefone: string | null;
+
+  @Column({ name: 'is_coordenador', type: 'boolean', nullable: false, default: false })
+  isCoordenador: boolean | null;
+
   @OneToMany(() => SecurityEntity, (t) => t.user)
   security: SecurityEntity[] = [];
 
@@ -35,6 +41,8 @@ export class UserEntity {
     nome: string,
     password: string,
     role: RoleEntity | null,
+    telefone: string | null,
+    isCoordenador: boolean | null,
     security: SecurityEntity[],
     auditorias: AuditoriaEntity[]
   ) {
@@ -45,5 +53,7 @@ export class UserEntity {
     this.role = role;
     this.security = security;
     this.auditorias = auditorias;
+    this.telefone = telefone;
+    this.isCoordenador = isCoordenador;
   }
 }
