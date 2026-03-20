@@ -14,6 +14,7 @@ import { StatusCestaEnum } from "../dto/enuns/StatusCestaEnum";
 import { UnprocessableException } from "../exceptions/UnprocessableException";
 import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
 import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
+import { FamiliaEntity } from "../../adapters/persistence/entities/FamiliaEntity";
 
 export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase {
     private readonly logger: Logger;
@@ -32,12 +33,15 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
         this.logger.info('Iniciando fluxo de associacao da ajuda para familia');
         try {
             await this.unitOfWork.startTransaction();
+            const familias = await this.familiaRepository.findFamiliasByIds(dto.map(item => item.idFamilia));
+            if (familias.length !== dto.length) throw new NotFoundException('Uma ou mais familias não foram encontradas.');
+            if (familias.length === 0) throw new NotFoundException('Nenhuma familia encontrada para os ids informados.');
             const ajudasDoada: AjudaRecebidaEntity[] = [];
             for (const item of dto) {
-                this.logger.info({idFamilia: item.idFamilia}, 'Buscando familia pelo id');
-                const familia = await this.familiaRepository.findFamiliaById(item.idFamilia);
+                if (!this.existeFamilia(familias, item.idFamilia)) throw new NotFoundException(`Familia com id ${item.idFamilia} não encontrada no payload.`);
                 let ajudaRecebida: AjudaRecebidaEntity;
-                const detalhe = JSON.stringify({detalhe: item.ajuda.observacao})
+                const detalhe = JSON.stringify({detalhe: item.ajuda.observacao});
+                const familia = familias.find(familia => familia.id === item.idFamilia)!;
                 if (!familia) throw new NotFoundException('Familia não encontrada.');
                 if (item.ajuda.tipoAjuda == TipoAjudaEnum.CESTA_BASICA) {
                     const cestas = await this.cestaGeradaRepository.findCestasByIdTemplate(item.ajuda.idTemplate);
@@ -64,5 +68,9 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
         } finally {
             await this.unitOfWork.release();
         }
+    }
+
+    private existeFamilia(familias: FamiliaEntity[], idFamilia: number): boolean {
+        return familias.some(familia => familia.id === idFamilia);
     }
 }

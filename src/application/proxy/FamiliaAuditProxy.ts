@@ -15,7 +15,7 @@ export class FamiliaAuditProxy implements AuditProxy<CadastrarFamiliaDTO, any> {
     ) {}
 
     public async execute(dto: CadastrarFamiliaDTO, action: Action, userLogged: UserLogged): Promise<any> {
-        const user = new UserEntity(userLogged.userId, userLogged.nickName, userLogged.nome, '', null, [], []);
+        const user = new UserEntity(userLogged.userId, userLogged.nickName, userLogged.nome, '', null, null, null, [], []);
         const auditoriaEntity = new AuditoriaEntity(null, null, null, action.valueOf(), user, dto, null, StatusOperacaoEnum.SUCESSO, new Date());
         try {
             await this.cadastrarFamiliaUseCase.execute(dto);

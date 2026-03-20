@@ -22,7 +22,8 @@ export class TemplateController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarDificuldade),
             async function (_params: any, _data: any, _userLogged?: UserLogged, query?: GetTemplatesDTO) {
-                const output = await templateUseCase.listarTemplates(query!);
+                const dtoQuery = new GetTemplatesDTO(query?.page ?? 1, query?.pageSize ?? 10);
+                const output = await templateUseCase.listarTemplates(dtoQuery);
                 return {
                     statusCode: 200,
                     timeStampe: new Date().toISOString(),

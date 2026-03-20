@@ -27,7 +27,8 @@ export class CestasController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.GerarCesta),
             async function (params: any, data: GerarCestasDTO, userLogged?: UserLogged) {
-                const output = await gerarCestasUseCase.execute(data);
+                const dto = new GerarCestasDTO(data.idTemplate);
+                const output = await gerarCestasUseCase.execute(dto);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),
@@ -58,7 +59,8 @@ export class CestasController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CancelarCesta),
             async function (params: any, data: CancelarCestaDTO, userLogged?: UserLogged) {
-                const output = await cancelarCestaUseCase.execute(data);
+                const dto = new CancelarCestaDTO(data.idCesta);
+                const output = await cancelarCestaUseCase.execute(dto);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),

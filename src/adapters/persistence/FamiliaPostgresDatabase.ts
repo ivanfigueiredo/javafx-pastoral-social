@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { CadastrarFamiliaDTO } from "../../application/dto/CadastrarFamiliaDTO";
 import { ComunidadeDTO } from "../../application/dto/ComunidadeDTO";
 import { DificuldadeDTO } from "../../application/dto/DificuldadeDTO";
@@ -48,6 +48,12 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
             this.logger.error({err: e.message}, "Erro ao persistir Familia Dificuldade")
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
+    }
+
+    public async findFamiliasByIds(idsFamilia: number[]): Promise<FamiliaEntity[]> {
+        return await this.familiaRepository.find({
+            where: { id: In(idsFamilia) }
+        });
     }
 
     public async save(dto: CadastrarFamiliaDTO): Promise<FamiliaCadastradaDTO> {

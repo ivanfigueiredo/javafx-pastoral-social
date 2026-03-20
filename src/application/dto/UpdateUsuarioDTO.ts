@@ -1,7 +1,7 @@
 export class UpdateUsuarioDTO {
     constructor(
-        readonly nickName: string,
         readonly nome: string,
-        readonly novaSenha: string
+        readonly novaSenha: string,
+        readonly telefone: string
     ) {}
 }

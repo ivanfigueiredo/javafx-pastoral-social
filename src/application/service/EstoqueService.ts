@@ -23,8 +23,6 @@ import { CestaGeradaEntity } from '../../adapters/persistence/entities/CestaGera
 import { CestaGeradaRepository } from '../port/out/CestaGeradaRepository';
 import { CestaEstoqueItemRepository } from '../port/out/CestaEstoqueItemRepository';
 import { CestaEstoqueItemEntity } from '../../adapters/persistence/entities/CestaEstoqueItemEntity';
-import { LocalizacaoRepository } from '../port/out/LocalizacaoRepository';
-import { EstanteDataValidadeProdutoEnum } from '../dto/enuns/EstanteDataValidadeProdutoEnum';
 import { EstoqueMapper } from '../../adapters/mappers/EstoqueMapper';
 import { EstoqueEntity } from '../../adapters/persistence/entities/EstoqueEntity';
 import { EstoqueDisponivelDTO } from '../dto/EstoqueDisponivelDTO';
@@ -43,7 +41,6 @@ export class EstoqueService implements EstoqueUseCase {
         private readonly templateRepository: TemplateRepository,
         private readonly cestaGeradaRepository: CestaGeradaRepository,
         private readonly cestaEstoqueItemRepository: CestaEstoqueItemRepository,
-        private readonly localizacaoRepository: LocalizacaoRepository,
         private readonly unitOfWork: UnitOfWorkPort
     ) {
         this.logger = logger.child({ service: "EstoqueUseCase" });
@@ -86,35 +83,23 @@ export class EstoqueService implements EstoqueUseCase {
     public async cadastrar(dto: CadastroEstoqueDTO): Promise<void> {
         try {
             await this.unitOfWork.startTransaction();
-            const diasDeValidadeProduto = this.calcularValidadeProduto(dto.validade);
-            const estanteValidadeProdutoEnum: EstanteDataValidadeProdutoEnum = (diasDeValidadeProduto <= 60) ?
-                EstanteDataValidadeProdutoEnum.ESTANTE_PRODUTO_COM_MENOS_60_DIAS
-                : ((diasDeValidadeProduto > 60) ? EstanteDataValidadeProdutoEnum.ESTANTE_PRODUTO_COM_MAIS_60_DIAS
-                    : EstanteDataValidadeProdutoEnum.ESTANTE_PRODUTO_COM_MAIS_120_DIAS);
-            const qtdLocalizacaoDisponivel = await this.localizacaoRepository.countLocalizacaoDisponivel(estanteValidadeProdutoEnum);
-            const iterator = (dto.quantidade > qtdLocalizacaoDisponivel) ? qtdLocalizacaoDisponivel : dto.quantidade;
-            const localizacoes = await this.localizacaoRepository.findLocalizacao(estanteValidadeProdutoEnum, iterator);
-            const estoques: EstoqueEntity[] = [];
-            for (const localizacao of localizacoes) {
-                localizacao.isDisponivel = false;
-                const estoque = EstoqueMapper.toEstoqueEntity(dto, localizacao);
-                estoques.push(estoque);
-            }
-            await this.estoqueRepository.saveMany(estoques);
+            if (this.isProdutoForaValidade(dto.validade)) throw new UnprocessableException("O produto informado está fora da validade.");
+            const estoqueEntity = EstoqueMapper.toEstoqueEntity(dto);
+            await this.estoqueRepository.saveMany([estoqueEntity]);
             await this.unitOfWork.commit();
             await this.unitOfWork.release();
         } catch (e: any) {
             this.logger.error({ err: e.message }, 'Erro ao persistir ')
             await this.unitOfWork.rollBack();
+            if (e instanceof UnprocessableException) throw e;
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
         }
     };
 
-    private calcularValidadeProduto(data: Date): number {
+    private isProdutoForaValidade(data: Date): boolean {
         const dataAtual = new Date();
         const dataValidade = new Date(data);
-        const diferencaMs = (dataValidade.getTime() - dataAtual.getTime());
-        const diasPassados = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
-        return diasPassados;
+        return dataAtual.getTime() > dataValidade.getTime();
     }
 
     public async deletar(idEstoque: number): Promise<void> {

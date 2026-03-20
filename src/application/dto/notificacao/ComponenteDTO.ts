@@ -5,5 +5,5 @@ export class ComponenteDTO {
 }
 
 export class ParameterDTO {
-    constructor(readonly type: string, readonly text: string) {}
+    constructor(readonly type: string, public text: string) {}
 }

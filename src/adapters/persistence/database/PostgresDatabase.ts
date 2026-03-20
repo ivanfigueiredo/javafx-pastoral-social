@@ -10,7 +10,6 @@ import { FamiliaDificuldadeEntity } from "../entities/FamiliaDificuldadeEntity";
 import { FamiliaEntity } from "../entities/FamiliaEntity";
 import { ItemTemplateEntity } from "../entities/ItemTemplateEntity";
 import { ItemProdutoEntity } from "../entities/ItemProdutoEntity";
-import { LocalizacaoEntity } from "../entities/LocalizacaoEntity";
 import { PermissionEntity } from "../entities/PermissionEntity";
 import { RoleEntity } from "../entities/RoleEntity";
 import { SecurityEntity } from "../entities/SecurityEntity";
@@ -29,6 +28,7 @@ import { DificuldadeTipoAjudaEntity } from "../entities/DificuldadeTipoAjudaEnti
 import { AcaoEntity } from "../entities/AcaoEntity";
 import { ControlleIdempotenciaEntity } from "../entities/ControlleIdempotenciaEntity";
 import { MensagemNotificacaoEntity } from "../entities/MensagemNotificacaoEntity";
+import { TempDataEntity } from "../entities/TempDataEntity";
 
 export class PostgresDatabase implements Connection {
     private connection: DataSource;
@@ -57,7 +57,6 @@ export class PostgresDatabase implements Connection {
                 FamiliaDificuldadeEntity,
                 ItemTemplateEntity,
                 ItemProdutoEntity,
-                LocalizacaoEntity,
                 PermissionEntity,
                 SecurityEntity,
                 StatusCestaEntity,
@@ -71,7 +70,8 @@ export class PostgresDatabase implements Connection {
                 CestaEstoqueItemEntity,
                 DificuldadeTipoAjudaEntity,
                 AcaoEntity,
-                MensagemNotificacaoEntity
+                MensagemNotificacaoEntity,
+                TempDataEntity
             ]
         });
     }

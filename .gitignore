@@ -5,3 +5,4 @@ pm2
 .env
 .vercel
 dist-tsc
+tasks.md

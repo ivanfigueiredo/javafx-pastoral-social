@@ -16,6 +16,11 @@ import { ItemTemplateEntity } from "../../adapters/persistence/entities/./ItemTe
 import { ConsultaGeracaoTemplateDTO } from "../dto/ConsultaGeracaoTemplateDTO";
 import { TemplateItemDTO } from "../dto/TemplateItemDTO";
 import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
+import { IdempotenciaPort } from "../port/in/IdempotenciaPort";
+import { IdempotencyDTO } from "../dto/idempotency/IdempotencyDTO";
+import { ContextoIdempotencyEnum } from "../dto/enuns/ContextoIdempotencyEnum";
+import { PaginatedDTO } from "../dto/PaginatedDTO";
+import { AcaoFilterQueryDTO } from "../dto/acao/AcaoFilterQueryDTO";
 
 export class AcaoService implements AcaoUseCase {
     private readonly logger: Logger;
@@ -25,6 +30,7 @@ export class AcaoService implements AcaoUseCase {
         private readonly acaoRepository: AcaoRepository,
         private readonly unitOfwork: UnitOfWorkPort,
         logger: Logger,
+        private readonly idempotenciaPort: IdempotenciaPort
     ) {
         this.logger = logger.child({ service: "AcaoUseCase" });
     }
@@ -32,17 +38,31 @@ export class AcaoService implements AcaoUseCase {
     public async cadastrarAcao(dto: CadastrarAcaoDTO): Promise<any> {
         try {
             await this.unitOfwork.startTransaction();
-            const acao = new AcaoEntity(null, dto.titulo, dto.descricao, new Date(dto.dataEvento), new Date(), dto.tipoAcao, null, null, StatusAcaoEnum.ativa, []);
-            if (this.acaoIsValid(dto.tipoAcao)) {
-                if (!dto.qtdAcaoSocial || dto.qtdAcaoSocial < 0) throw new UnprocessableException(`O campo qtdAcaoSocial precisa ser preenchido para tipo de ação: ${dto.tipoAcao}`);
-                const tipoTemplate = (dto.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ? TemplateTypeEnum.CESTA_BASICA : TemplateTypeEnum.ALMOCO;
-                const templateCriado = await this.estoqueUseCase.criarModeloTemplateAcao(dto.itens!, tipoTemplate);
-                const template = new TemplateEntity(templateCriado.idTemplate, null, null, [], [], null);
-                acao.templateAcao = template;
-                acao.qtdAcaoSocial = dto.qtdAcaoSocial;
+            const payloadIdempotencia = {
+                titulo: dto.titulo,
+                dataEvento: dto.dataEvento,
+                tipoAcao: dto.tipoAcao
+            };
+            const hash = this.idempotenciaPort.generateHash(payloadIdempotencia);
+            const hasProcessado = await this.idempotenciaPort.hasProcessado(hash);
+            if (!hasProcessado) {
+                const idempotencyData = new IdempotencyDTO(hash, dto, ContextoIdempotencyEnum.CADASTRAR_ACAO);
+                await this.idempotenciaPort.salvarIdempotenciaRecord(idempotencyData);
+                const acao = new AcaoEntity(null, dto.titulo, dto.descricao, new Date(dto.dataEvento), new Date(), dto.tipoAcao, null, null, StatusAcaoEnum.ativa, []);
+                if (this.acaoIsValid(dto.tipoAcao)) {
+                    if (!dto.qtdAcaoSocial || dto.qtdAcaoSocial < 0) throw new UnprocessableException(`O campo qtdAcaoSocial precisa ser preenchido para tipo de ação: ${dto.tipoAcao}`);
+                    const tipoTemplate = (dto.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ? TemplateTypeEnum.CESTA_BASICA : TemplateTypeEnum.ALMOCO;
+                    const templateCriado = await this.estoqueUseCase.criarModeloTemplateAcao(dto.itens!, tipoTemplate);
+                    const template = new TemplateEntity(templateCriado.idTemplate, null, null, [], [], null);
+                    acao.templateAcao = template;
+                    acao.qtdAcaoSocial = dto.qtdAcaoSocial;
+                }
+                await this.idempotenciaPort.concluirProcessamento(hash);
+                await this.acaoRepository.salvarAcao(acao);
+                await this.unitOfwork.commit();
+            } else {
+                this.logger.info("Requisição já processada anteriormente. Ignorando processamento.");
             }
-            await this.acaoRepository.salvarAcao(acao);
-            await this.unitOfwork.commit();
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao cadastrar acao');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
@@ -55,29 +75,31 @@ export class AcaoService implements AcaoUseCase {
         return tipoAcao === TipoAcaoEnum.CESTA_BASICA || tipoAcao === TipoAcaoEnum.JANTA;
     }
 
-    public async listarAcoes(): Promise<any> {
+    public async listarAcoes(dto: AcaoFilterQueryDTO): Promise<PaginatedDTO> {
         try {
-            const acoes = await this.acaoRepository.listar();
-            return Promise.all(
-                acoes.map(async acao => {
-                    const qtdItensGerados = await this.getItensGerados(acao.templateAcao!);
+            const [acoes, totalAcoes] = await this.acaoRepository.listar(dto);
+            const response = await Promise.all(
+                acoes.map(async (acao) => {
+                    const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
+                        await this.getItensGerados(acao.templateAcao!) : 0;
                     return {
                         titulo: acao.titulo,
                         descricao: acao.descricao,
                         tipoAcao: TipoAcao[acao.tipoAcao!],
-                        totalAcaoSocial: acao.qtdAcaoSocial,
+                        totalAcaoSocial: (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0,
                         dataConclusaoAcao: acao.dataEvento,
                         percentualRecebido: (acao.qtdAcaoSocial != null && qtdItensGerados > 0) ? 
                             `${this.getCalculaPercentualItensGerados(qtdItensGerados, acao.qtdAcaoSocial!)}%` : '0',
                         itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
                         qtdDoadores: (acao.doacoesRecebidas != null) ? this.getTotalDoadores(acao.doacoesRecebidas) : 0,
-                        itensGerados: `${qtdItensGerados}/${acao.qtdAcaoSocial}`,
-                        itens: (acao.tipoAcao == TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao == TipoAcaoEnum.JANTA) ?
-                            (acao.doacoesRecebidas != null) ? this.getItensDoacao(acao.templateAcao!.itensTemplate) : []
+                        itensGerados: `${qtdItensGerados}/${(acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0}`,
+                        itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
+                            (acao.doacoesRecebidas != null && acao.doacoesRecebidas.length > 0) ? this.getItensDoacao(acao.templateAcao!.itensTemplate) : []
                             : []
                     }
                 })
             );
+            return new PaginatedDTO(parseInt(`${dto.page}`), totalAcoes, Math.ceil(totalAcoes / dto.pageSize), response);
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao listar acao');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")

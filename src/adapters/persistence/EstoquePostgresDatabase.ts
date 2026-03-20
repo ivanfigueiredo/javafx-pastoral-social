@@ -1,4 +1,4 @@
-import { Repository, SelectQueryBuilder } from "typeorm";
+import { Between, IsNull, Repository } from "typeorm";
 import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
@@ -59,7 +59,7 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
     public async findEstoqueByIdItemProduto(idItemProduto: number): Promise<EstoqueDTO[]> {
         const estoqueLista = await this.estoqueRepository.find({ 
             where: { isDisponivel: true, itemProduto: {id: idItemProduto} },
-            relations: {itemProduto: {unidadeMedida: true}, localizacao: true, }
+            relations: {itemProduto: {unidadeMedida: true}, }
         });
         return EstoqueMapper.toEstoqueDTO(estoqueLista);
     }
@@ -76,6 +76,23 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
                     .orderBy("e.data_entrada")
                     .limit(qtdGeracaoTemplate),
             );
+    }
+
+    public async findProdutoProximoVencimento(): Promise<EstoqueEntity[]> {
+        const hoje = new Date();
+        const prox30Dias = new Date();
+        prox30Dias.setDate(hoje.getDate() + 30);
+        return this.estoqueRepository.find({
+            where: {
+                validade: Between(hoje, prox30Dias), 
+                isDisponivel: true, 
+                dataSaida: IsNull()
+            }, 
+            relations: {
+                itemProduto: true
+            }
+        });
+            
     }
 
     public async buscarEstoqueDisponivel(): Promise<EstoqueDisponivelDTO[]> { 

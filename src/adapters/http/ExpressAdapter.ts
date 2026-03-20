@@ -5,6 +5,7 @@ import { UnauthorizedException } from '../../application/exceptions/Unauthorized
 import { UnprocessableException } from '../../application/exceptions/UnprocessableException';
 import { InternalServerErrorException } from '../../application/exceptions/InternalServerErrorException';
 import { NotFoundException } from '../../application/exceptions/NotFoundException';
+import { BadRequestException } from '../../application/exceptions/BadRequestException';
 
 type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
@@ -37,6 +38,10 @@ export class ExpressAdapter implements HttpClient {
                 }
                 res.status(output.statusCode).json(output);
             } catch (error: any) {
+                if (error instanceof BadRequestException) {
+                    res.status(error.statusCode).json(error);
+                    return;
+                }
                 if (error instanceof UnauthorizedException) {
                     res.status(error.statusCode).json(error);
                     return;

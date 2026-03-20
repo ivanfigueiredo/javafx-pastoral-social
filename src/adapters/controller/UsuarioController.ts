@@ -20,7 +20,8 @@ export class UsuarioController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.AtualizarUsuario),
             async function (_params: any, data: UpdateUsuarioDTO, userLogged?: UserLogged) {
-                const output = await updateUsuarioUseCase.execute(data, userLogged!.userId);
+                const dto = new UpdateUsuarioDTO(data.nome, data.novaSenha, data.telefone);
+                const output = await updateUsuarioUseCase.execute(dto, userLogged!.userId);
                 return {
                     statusCode: 200,
                     timeStampe: new Date().toISOString(),

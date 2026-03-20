@@ -32,6 +32,10 @@ export class UsuarioPostgresDatabase implements UsuarioRepository {
         return SecurityMapper.toUserResponseDTO(user);
     }
 
+    public async findByTelefone(telefone: string): Promise<UserEntity | null> {
+        return this.userRepository.findOne({where: {telefone, isCoordenador: true}});
+    }
+
     public async findUsuarioById(idUsuario: number): Promise<UserEntity> {
         const usuario = await this.userRepository.findOne({where: {id: idUsuario}});
         if (!usuario) throw new NotFoundException('Usuario não encontrado.');
@@ -45,5 +49,11 @@ export class UsuarioPostgresDatabase implements UsuarioRepository {
             this.logger.error({err: e.message}, "Erro ao salvar usuario")
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
         }
+    }
+
+    public async findAllCoordenadores(): Promise<UserEntity[]> {
+        return await this.userRepository.find({
+            where: {isCoordenador: true}
+        });
     }
 }
