@@ -21,10 +21,11 @@ export class VisualizarProdutosProxVencimentoService implements VisualizarProdut
     public async execute(contacts: WebHookContactDTO[], messages: WebHookMetaMessageDTO[]): Promise<void> {
         try {
             for (const message of messages) {
-                if (message.type === 'interactive' && message.interactive && message.interactive.button_reply && message.interactive.button_reply.title === 'Listar itens' ) {
+                if (message.type === 'button' && message.button && message.button.text === 'Listar itens' ) {
                     const contact = contacts.find(c => c.wa_id === message.from);
                     if (contact) {
-                        const user = await this.usuarioRepository.findByTelefone(contact.wa_id);
+                        const telefone = contact.wa_id.replace("5581", "55819");
+                        const user = await this.usuarioRepository.findByTelefone(telefone);
                         if (user) {
                             await this.tempDataRepository.save(new TempDataEntity(null, {user, action: 'VisualizarProdutosProxVencimento'}, new Date()));
                             await this.notificarAgenteProdutoVencimentoService.execute(user);
