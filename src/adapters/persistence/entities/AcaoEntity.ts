@@ -16,13 +16,16 @@ export class AcaoEntity {
     descricao: string | null;
 
     @Column({ name: 'data_evento', type: 'date', nullable: false })
-    dataEvento: Date | null;
+    dataEvento: string | null;
+
+    @Column({ name: 'inicio_acao', type: 'date', nullable: false })
+    inicioAcao: string | null;
 
     @Column({ name: 'tipo_acao', type: 'enum', enum: TipoAcaoEnum, nullable: false})
     tipoAcao: TipoAcaoEnum | null;
 
     @Column({ name: 'data_cadastro', type: 'timestamp', default: () => 'NOW()' })
-    dataCadastro: Date | null;
+    dataCadastro: string | null;
 
     @Column({ name: 'status_acao', type: 'enum', enum: StatusAcaoEnum, nullable: false })
     statusAcao: StatusAcaoEnum | null;
@@ -41,8 +44,9 @@ export class AcaoEntity {
         acaoId: number | null,
         titulo: string | null,
         descricao: string | null,
-        dataEvento: Date | null,
-        dataCadastro: Date | null,
+        dataEvento: string | null,
+        inicioAcao: string | null,
+        dataCadastro: string | null,
         tipoAcao: TipoAcaoEnum | null,
         qtdAcaoSocial: number | null,
         templateAcao: TemplateEntity | null,
@@ -53,6 +57,7 @@ export class AcaoEntity {
         this.titulo = titulo;
         this.descricao = descricao;
         this.dataEvento = dataEvento;
+        this.inicioAcao = inicioAcao;
         this.dataCadastro = dataCadastro;
         this.templateAcao = templateAcao;
         this.tipoAcao = tipoAcao;

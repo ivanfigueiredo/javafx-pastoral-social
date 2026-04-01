@@ -35,7 +35,7 @@ export class AcaoService implements AcaoUseCase {
         this.logger = logger.child({ service: "AcaoUseCase" });
     }
 
-    public async cadastrarAcao(dto: CadastrarAcaoDTO): Promise<any> {
+    public async cadastrarAcao(dto: CadastrarAcaoDTO): Promise<void> {
         try {
             await this.unitOfwork.startTransaction();
             const payloadIdempotencia = {
@@ -48,7 +48,7 @@ export class AcaoService implements AcaoUseCase {
             if (!hasProcessado) {
                 const idempotencyData = new IdempotencyDTO(hash, dto, ContextoIdempotencyEnum.CADASTRAR_ACAO);
                 await this.idempotenciaPort.salvarIdempotenciaRecord(idempotencyData);
-                const acao = new AcaoEntity(null, dto.titulo, dto.descricao, new Date(dto.dataEvento), new Date(), dto.tipoAcao, null, null, StatusAcaoEnum.ativa, []);
+                const acao = new AcaoEntity(null, dto.titulo, dto.descricao, dto.dataEvento, dto.inicioAcao, new Date().toISOString(), dto.tipoAcao, null, null, StatusAcaoEnum.PLANEJADA, []);
                 if (this.acaoIsValid(dto.tipoAcao)) {
                     if (!dto.qtdAcaoSocial || dto.qtdAcaoSocial < 0) throw new UnprocessableException(`O campo qtdAcaoSocial precisa ser preenchido para tipo de ação: ${dto.tipoAcao}`);
                     const tipoTemplate = (dto.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ? TemplateTypeEnum.CESTA_BASICA : TemplateTypeEnum.ALMOCO;
@@ -83,11 +83,13 @@ export class AcaoService implements AcaoUseCase {
                     const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
                         await this.getItensGerados(acao.templateAcao!) : 0;
                     return {
+                        acaoId: acao.acaoId!,
                         titulo: acao.titulo,
                         descricao: acao.descricao,
                         tipoAcao: TipoAcao[acao.tipoAcao!],
                         totalAcaoSocial: (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0,
                         dataConclusaoAcao: acao.dataEvento,
+                        statusAcao: StatusAcaoEnum[acao.statusAcao!],
                         percentualRecebido: (acao.qtdAcaoSocial != null && qtdItensGerados > 0) ? 
                             `${this.getCalculaPercentualItensGerados(qtdItensGerados, acao.qtdAcaoSocial!)}%` : '0',
                         itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,

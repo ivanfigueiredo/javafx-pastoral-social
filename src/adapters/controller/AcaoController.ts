@@ -20,15 +20,14 @@ export class AcaoController {
         httpClient.on(
             "post", 
             "/acao/cadastrar", 
-            // auth.authentication.bind(auth),
-            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CancelarAjuda),
-            (req: Request, res: Response, next: NextFunction) => next(),
-            (req: Request, res: Response, next: NextFunction) => next(),
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarAcao),
             async function (params: any, data: CadastrarAcaoDTO) {
                 const dto = new CadastrarAcaoDTO(
                     data.titulo, 
                     data.descricao, 
                     data.dataEvento, 
+                    data.inicioAcao,
                     TipoAcaoEnum[data.tipoAcao as keyof typeof TipoAcaoEnum],
                     (data.itens !== undefined && data.itens !== null && data.itens.length > 0) ?
                         data.itens.map(item => new TemplateItemDTO(item.itemProdutoId, item.quantidade)) : undefined,
@@ -46,12 +45,10 @@ export class AcaoController {
         httpClient.on(
             "get", 
             "/acao/listar", 
-            // auth.authentication.bind(auth),
-            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CancelarAjuda),
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: any, __userLogged?: UserLogged, query?: AcaoFilterQueryDTO) {
-                const dtoQuery = new AcaoFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, query?.dataInicio, query?.dataFim);
+                const dtoQuery = new AcaoFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, query?.dataInicio, query?.dataFim, query?.statusAcao);
                 const output = await acaoUseCase.listarAcoes(dtoQuery);
                 return {
                     statusCode: 201,

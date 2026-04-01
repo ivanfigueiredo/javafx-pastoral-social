@@ -7,7 +7,7 @@ import { DificuldadeEntity } from "../persistence/entities/DificuldadeEntity";
 import { FamiliaEntity } from "../persistence/entities/FamiliaEntity";
 
 export class FamiliaMapper {
-    private FamiliaMapper() {}
+    private constructor() {}
 
     public static toFamiliaEntity(dto: CadastrarFamiliaDTO): FamiliaEntity {
         return new FamiliaEntity(

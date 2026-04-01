@@ -7,7 +7,7 @@ import { ItemProdutoEntity } from "../persistence/entities/ItemProdutoEntity";
 import { UnidadeMedidaEntity } from "../persistence/entities/UnidadeDeMedidaEntity";
 
 export class EstoqueMapper {
-    private EstoqueMapper() {}
+    private constructor() {}
 
     public static toEstoqueEntity(dto: CadastroEstoqueDTO): EstoqueEntity {
         return new EstoqueEntity(

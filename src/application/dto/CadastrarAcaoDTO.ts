@@ -7,6 +7,7 @@ export class CadastrarAcaoDTO {
         readonly titulo: string,
         readonly descricao: string,
         readonly dataEvento: string,
+        readonly inicioAcao: string,
         readonly tipoAcao: TipoAcaoEnum,
         readonly itens?: TemplateItemDTO[],
         readonly qtdAcaoSocial?: number
@@ -19,6 +20,9 @@ export class CadastrarAcaoDTO {
         }
         if (dataEvento === null || dataEvento === undefined) {
             throw new BadRequestException("O campo dataEvento é obrigatório.");
+        }
+        if (inicioAcao === null || inicioAcao === undefined) {
+            throw new BadRequestException("O campo inicioAcao é obrigatório.");
         }
         if (tipoAcao === null || tipoAcao === undefined) {
             throw new BadRequestException("O campo tipoAcao é obrigatório.");

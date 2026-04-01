@@ -78,6 +78,7 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
                 .createQueryBuilder("familia")
                 .distinct(true)
                 .leftJoinAndSelect("familia.ajudasRecebidas", "ajudasRecebidas")
+                .leftJoinAndSelect("familia.comunidade", "comunidade")
                 .leftJoinAndSelect("familia.dificuldades", "familiaDificuldade")
                 .leftJoinAndSelect("familiaDificuldade.dificuldade", "dificuldade")
                 .leftJoinAndSelect("dificuldade.dificuldadeTipoAjuda", "dificuldadeTipoAjuda")

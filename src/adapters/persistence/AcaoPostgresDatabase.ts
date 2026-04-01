@@ -1,9 +1,10 @@
-import { Repository } from "typeorm";
+import { Equal, Repository } from "typeorm";
 import { Connection } from "./database/Connection";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
 import { AcaoEntity } from "./entities/AcaoEntity";
 import { AcaoRepository } from "../../application/port/out/AcaoRepository";
 import { AcaoFilterQueryDTO } from "../../application/dto/acao/AcaoFilterQueryDTO";
+import { StatusAcaoEnum } from "../../application/dto/enuns/StatusAcaoEnum";
 
 export class AcaoPostgresDatabase implements AcaoRepository {
     private readonly acaoRepository: Repository<AcaoEntity>;
@@ -15,12 +16,33 @@ export class AcaoPostgresDatabase implements AcaoRepository {
         this.acaoRepository = connection.getDataSourcer().getRepository(AcaoEntity);
     }
 
+    public async updateStatusAcao(acaoId: number, status: StatusAcaoEnum): Promise<void> {
+        await this.acaoRepository.update({ acaoId }, { statusAcao: status });
+    }
+
     public async salvarAcao(acao: AcaoEntity): Promise<void> {
         await this.unitOfWork.transaction(AcaoEntity, acao);
     }
 
     public async listar(filter: AcaoFilterQueryDTO): Promise<[AcaoEntity[], number]> {
         const { page, pageSize } = filter;
+        const idsQuery = this.acaoRepository
+            .createQueryBuilder("acao")
+            .select("acao.acaoId", "acaoId")
+            .orderBy("acao.acaoId", "DESC")
+            .skip((page - 1) * pageSize)
+            .take(pageSize);
+        if (filter.dataInicio) {
+            idsQuery.andWhere("acao.dataEvento >= :dataInicio", { dataInicio: filter.dataInicio });
+        }
+        if (filter.dataFim) {
+            idsQuery.andWhere("acao.dataEvento <= :dataFim", { dataFim: filter.dataFim });
+        }
+        if (filter.statusAcao) {
+            const statusAcao = StatusAcaoEnum[filter.statusAcao as keyof typeof StatusAcaoEnum];
+            idsQuery.andWhere("acao.statusAcao = :statusAcao", { statusAcao });
+        }
+        const ids = await idsQuery.getRawMany();
         const query = this.acaoRepository.createQueryBuilder("acao")
             .leftJoinAndSelect("acao.templateAcao", "templateAcao")
             .leftJoinAndSelect("acao.doacoesRecebidas", "doacoesRecebidas")
@@ -28,16 +50,28 @@ export class AcaoPostgresDatabase implements AcaoRepository {
             .leftJoinAndSelect("doacoesRecebidas.itemProduto", "itemProduto")
             .leftJoinAndSelect("templateAcao.itensTemplate", "itensTemplate")
             .leftJoinAndSelect("itensTemplate.itemProduto", "itemProdutoTemplate")
-            .orderBy("acao.acaoId", "DESC")
-            .skip((page - 1) * pageSize)
-            .take(pageSize);
-        
-        if (filter.dataInicio) {
-            query.andWhere("acao.dataEvento >= :dataInicio", { dataInicio: filter.dataInicio });
-        }
-        if (filter.dataFim) {
-            query.andWhere("acao.dataEvento <= :dataFim", { dataFim: filter.dataFim });
-        }
+            .where("acao.acaoId IN (:...ids)", { ids: ids.map(i => i.acaoId) })
+            .orderBy("acao.acaoId", "DESC");
         return query.getManyAndCount();
+    }
+
+    public async findById(idAcao: number): Promise<AcaoEntity | null> {
+        return this.acaoRepository.findOne({
+            where: { acaoId: idAcao }
+        });
+    }
+
+    public async findByInicioAcao(): Promise<AcaoEntity | null> {
+        const hoje = new Date();
+        const dataLocal = new Date(
+            hoje.getFullYear(),
+            hoje.getMonth(),
+            hoje.getDate()
+        );
+        const now = dataLocal.toISOString().split("T")[0];
+        console.log("=======================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   ", now);
+        return this.acaoRepository.findOne({
+            where: { inicioAcao: Equal(now), statusAcao: StatusAcaoEnum.PLANEJADA }
+        });
     }
 }

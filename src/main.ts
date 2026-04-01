@@ -65,6 +65,7 @@ import { ConsultarProdutosProxVencimentoService } from "./application/service/Co
 import { ItemProdutoPostgresDatabase } from "./adapters/persistence/ItemProdutoPostgresDatabase";
 import { NotificacaoController } from "./adapters/controller/NotificacaoController";
 import { TempDataPostgresDatabase } from "./adapters/persistence/TempDataPostgresDatabase";
+import { IniciarAcaoService } from "./application/service/IniciarAcaoService";
 config();
 
 export async function buildApp() {
@@ -102,6 +103,7 @@ export async function buildApp() {
     const cancelarAjudaService = new CancelarAjudaService(logger, ajudaRepository, unitOfWork);
     const notificacaoWhatsAppGateway = new NotificacaoWhatsAppGatewayImpl(logger);
     const notificacaoAgradecimentoDoacaoService = new NotificacaoAgradecimentoDoacaoService(logger, notificacaoWhatsAppGateway, mensagemRepository);
+    const iniciarAcaoService = new IniciarAcaoService(logger, acaoRepository, mensagemRepository, doadorRepository, notificacaoWhatsAppGateway);
     const getFamiliaService = new GetFamiliaService(logger, familiaRepository);
     const getCestasService = new GetCestasService(logger, cestaGeradaRepository);
     const updateUsuarioService = new UpdateUsuarioService(logger, usuarioRepository);
@@ -111,7 +113,7 @@ export async function buildApp() {
     const entregarAjudaService = new EntregarAjudaService(logger, ajudaRepository, unitOfWork);
     const notificarAgenteProdutoVencimentoService = new NotificarAgenteProdutoVencimentoService(logger, notificacaoWhatsAppGateway, itemRepository, estoqueRepositiory, tempDataRepository);
     const visualizarProdutosProxVencimentoService =  new VisualizarProdutosProxVencimentoService(logger, usuarioRepository, notificarAgenteProdutoVencimentoService, tempDataRepository);
-    const doacaoService = new DoacaoService(logger, unitOfWork, doadorRepository, doacaoRepository, idempotenciaService, notificacaoAgradecimentoDoacaoService);
+    const doacaoService = new DoacaoService(logger, unitOfWork, acaoRepository, doadorRepository, doacaoRepository, idempotenciaService, notificacaoAgradecimentoDoacaoService);
     const listarTemplatesComCestasDisponiveisService = new ListarTemplatesComCestasDisponiveisService(logger, templateRepository);
     const cancelarCestaService = new CancelarCestaService(logger, cestaGeradaRepository, ajudaRepository, estoqueRepositiory, unitOfWork);
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
@@ -133,8 +135,8 @@ export async function buildApp() {
     new HealthCheckController(httpClient);
     new DoacaoController(httpClient, auth, authorize, doacaoService);
     new AcaoController(httpClient, auth, authorize, acaoService);
-    new NotificacaoController(httpClient, consultarProdutosProxVencimentoService);
-    // const consultarProdutosProxVencimentoJob = new CronJob('* * * * *', async () => await consultarProdutosProxVencimentoService.execute());
+    new NotificacaoController(httpClient, consultarProdutosProxVencimentoService, iniciarAcaoService);
+    // const consultarProdutosProxVencimentoJob = new CronJob('* * * * *', async () => await iniciarAcaoService.execute());
     // consultarProdutosProxVencimentoJob.start();
     return httpClient.getExpress();
 }

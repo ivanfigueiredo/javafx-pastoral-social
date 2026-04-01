@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { DoacaoRecebidaEntity } from "./DoacaoRecebidaEntity";
 
+@Index('idx_tps_doador_telefone', ['doadorTelefone'], { unique: true })
 @Entity('tps_doador', {schema: 'doador'})
 export class DoadorEntity {
     @PrimaryGeneratedColumn({ name: 'id_doador', type: "int4" })

@@ -1,5 +1,4 @@
 import { Logger } from "pino";
-import { AcaoEntity } from "../../adapters/persistence/entities/AcaoEntity";
 import { DoacaoRecebidaEntity } from "../../adapters/persistence/entities/DoacaoRecebidaEntity";
 import { DoadorEntity } from "../../adapters/persistence/entities/DoadorEntity";
 import { ItemProdutoEntity } from "../../adapters/persistence/entities/ItemProdutoEntity";
@@ -13,6 +12,9 @@ import { IdempotencyDTO } from "../dto/idempotency/IdempotencyDTO";
 import { ContextoIdempotencyEnum } from "../dto/enuns/ContextoIdempotencyEnum";
 import { NotificarDoacaoRecebidaDoadorDTO } from "../dto/doador/NotificarDoacaoRecebidaDoadorDTO";
 import { NotificacaoAgradecimentoDoacaoService } from "./NotificacaoAgradecimentoDoacaoService";
+import { AcaoRepository } from "../port/out/AcaoRepository";
+import { NotFoundException } from "../exceptions/NotFoundException";
+import { UnprocessableException } from "../exceptions/UnprocessableException";
 
 export class DoacaoService implements DoacaoUseCase {
     private readonly logger: Logger;
@@ -20,6 +22,7 @@ export class DoacaoService implements DoacaoUseCase {
     constructor(
         logger: Logger,    
         private readonly unitOfWork: UnitOfWorkPort,
+        private readonly acaoRepository: AcaoRepository,
         private readonly doadorRepository: DoadorRepository,
         private readonly doacaoRepository: DoacaoRepository,
         private readonly idempotenciaPort: IdempotenciaPort,
@@ -45,9 +48,12 @@ export class DoacaoService implements DoacaoUseCase {
                     doador = existDoador;
                 }
                 const doacoes: DoacaoRecebidaEntity[] = [];
+                const acao = await this.acaoRepository.findById(parseInt(dto.idAcao));
+                if (!acao) throw new NotFoundException(`Ação com id ${dto.idAcao} não encontrada.`);
+                if (acao.statusAcao === "CONCLUIDA") throw new UnprocessableException("Não é possível receber doações para ações já concluídas.");
+                if (acao.statusAcao === "PLANEJADA") throw new UnprocessableException("Não é possível receber doações para ações que ainda não foram iniciadas.");
                 for (const itemProduto of dto.itensProduto) {
                     const itemProdutoEntity = new ItemProdutoEntity(itemProduto.idItemProduto, null, null, null, [], []);
-                    const acao = new AcaoEntity(parseInt(dto.idAcao), null, null, null, null, null, null, null, null, []);
                     const doacao = new DoacaoRecebidaEntity(null, itemProdutoEntity, doador, dto.tipoDoacao, dto.dataEntrega, null, itemProduto.quantidade, acao);
                     doacoes.push(doacao);
                 }

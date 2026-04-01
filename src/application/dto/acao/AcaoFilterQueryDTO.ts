@@ -3,6 +3,7 @@ export class AcaoFilterQueryDTO {
         readonly page: number,
         readonly pageSize: number,
         readonly dataInicio?: Date,
-        readonly dataFim?: Date
+        readonly dataFim?: Date,
+        readonly statusAcao?: string
     ) {}
 }

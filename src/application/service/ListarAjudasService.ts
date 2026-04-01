@@ -31,6 +31,7 @@ export class ListarAjudasService implements ListarAjudasUseCase {
                 representante: ajuda.familia.nomeRepresentante,
                 endereco: ajuda.familia.endereco,
                 statusAjuda: ajuda.statusAjuda.valueOf(),
+                observacao: ajuda.observacao !== null ? ajuda.observacao : undefined,
                 tipoAjuda: ajuda.tipoAjuda.descricao!,
                 dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega.toISOString() : null,
                 cesta: this.getCesta(ajuda)

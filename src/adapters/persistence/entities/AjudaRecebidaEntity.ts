@@ -1,9 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne, JoinColumn, Column, OneToOne, Index, In } from "typeorm";
 import { TipoAjudaEntity } from "./TipoAjudaEntity";
 import { FamiliaEntity } from "./FamiliaEntity";
 import { CestaGeradaEntity } from "./CestaGeradaEntity";
 import { StatusAjudaEnum } from "./StatusAjudaEnum";
 
+@Index('idx_tdr_familia_ajuda_recebida', ['familia'])
+@Index('idx_tdr_tipo_ajuda_ajuda_recebida', ['tipoAjuda'])
+@Index('idx_tdr_cesta_ajuda_recebida', ['cestaGerada'])
 @Entity('tps_ajuda_recebida', {schema: 'ajuda'})
 export class AjudaRecebidaEntity {
   @PrimaryGeneratedColumn({ name: 'id_ajuda_recebida', type: "int4" })

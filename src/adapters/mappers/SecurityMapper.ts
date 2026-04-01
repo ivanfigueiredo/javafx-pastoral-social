@@ -6,7 +6,7 @@ import { UserEntity } from "../persistence/entities/UserEntity";
 import { RevokedTokenResponseDTO } from "../../application/dto/RevokedTokenResponseDTO";
 
 export class SecurityMapper {
-    private SecurityMapper() {}
+    private constructor() {}
 
     public static toUserResponseDTO(user: UserEntity): UserResponseDTO {
         return new UserResponseDTO(

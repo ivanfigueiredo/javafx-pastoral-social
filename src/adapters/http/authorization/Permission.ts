@@ -29,6 +29,7 @@ type ActionType =
   | 'AtualizarUsuario'
   | 'CancelarAjuda'
   | 'ConfirmarAjuda'
+  | 'CadastrarAcao';
 
 export type Action = 
     | 'cadastrar_familia'
@@ -57,6 +58,7 @@ export type Action =
     | 'atualizar_usuario'
     | 'cancelar_ajuda'
     | 'confirmar_ajuda'
+    | 'cadastrar_acao';
 
 export const ActionType: Record<ActionType, Action> = {
     CadastrarFamilia: 'cadastrar_familia',
@@ -84,7 +86,8 @@ export const ActionType: Record<ActionType, Action> = {
     CancelarCesta: 'cancelar_cesta',
     AtualizarUsuario: 'atualizar_usuario',
     CancelarAjuda: 'cancelar_ajuda',
-    ConfirmarAjuda: 'confirmar_ajuda'
+    ConfirmarAjuda: 'confirmar_ajuda',
+    CadastrarAcao: 'cadastrar_acao'
 }
 
 export type Role = 
