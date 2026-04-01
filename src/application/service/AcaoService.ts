@@ -95,9 +95,8 @@ export class AcaoService implements AcaoUseCase {
                         itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
                         qtdDoadores: (acao.doacoesRecebidas != null) ? this.getTotalDoadores(acao.doacoesRecebidas) : 0,
                         itensGerados: `${qtdItensGerados}/${(acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0}`,
-                        itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
-                            (acao.doacoesRecebidas != null && acao.doacoesRecebidas.length > 0) ? this.getItensDoacao(acao.templateAcao!.itensTemplate) : []
-                            : []
+                        itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ? 
+                            this.getItensDoacao(acao.templateAcao!.itensTemplate) : []
                     }
                 })
             );
