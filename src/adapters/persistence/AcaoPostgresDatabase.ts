@@ -50,6 +50,7 @@ export class AcaoPostgresDatabase implements AcaoRepository {
             .leftJoinAndSelect("doacoesRecebidas.itemProduto", "itemProduto")
             .leftJoinAndSelect("templateAcao.itensTemplate", "itensTemplate")
             .leftJoinAndSelect("itensTemplate.itemProduto", "itemProdutoTemplate")
+            .leftJoinAndSelect("itemProdutoTemplate.unidadeMedida", "unidadeMedida")
             .where("acao.acaoId IN (:...ids)", { ids: ids.map(i => i.acaoId) })
             .orderBy("acao.acaoId", "DESC");
         return query.getManyAndCount();
