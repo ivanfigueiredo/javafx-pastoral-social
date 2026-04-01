@@ -3,6 +3,6 @@ import { CadastrarAcaoDTO } from "../../dto/CadastrarAcaoDTO";
 import { PaginatedDTO } from "../../dto/PaginatedDTO";
 
 export interface AcaoUseCase {
-    cadastrarAcao: (dto: CadastrarAcaoDTO) => Promise<any>;
+    cadastrarAcao: (dto: CadastrarAcaoDTO) => Promise<void>;
     listarAcoes: (dto: AcaoFilterQueryDTO) => Promise<PaginatedDTO>;
 }

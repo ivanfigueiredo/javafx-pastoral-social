@@ -3,7 +3,7 @@ import { FamiliaEntity } from "../../adapters/persistence/entities/FamiliaEntity
 import { ComunidadeDTO } from "../dto/ComunidadeDTO";
 import { PrioridadeEnum, PrioridadePeso } from "../dto/enuns/PrioridadeEnum";
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
-import { FamiliaDTO } from "../dto/familias/FamiliaDTO";
+import { FamiliaDificuldadeDTO, FamiliaDTO } from "../dto/familias/FamiliaDTO";
 import { ListarFamiliasPrioritariasDTO } from "../dto/familias/ListasFamiliasPrioritariasDTO";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
 import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
@@ -28,7 +28,8 @@ export class GetFamiliaService implements GetFamiliaUseCase {
     }
 
     public async listarFamilias(dto: FamiliaFilterQueryDTO): Promise<PaginatedDTO> {
-        const [familias, totalFamilias] = await this.familiaRepository.findFamilias(dto);
+        try {
+            const [familias, totalFamilias] = await this.familiaRepository.findFamilias(dto);
         const familiasComPrioridade = familias.map(familia => {
             const calculo = new CalcularPrioridadeAjuda(familia);
             return {
@@ -39,8 +40,23 @@ export class GetFamiliaService implements GetFamiliaUseCase {
         familiasComPrioridade.sort((a, b) => {
             return PrioridadePeso[a.prioridade] - PrioridadePeso[b.prioridade];
         });
-        const result = familiasComPrioridade.map(fcp => new FamiliaDTO(fcp.familia.id, fcp.familia.nomeRepresentante, fcp.familia.endereco, fcp.familia.qtdPessoasResidencia, fcp.familia.qtdPessoasEmpregadas));
+        const result = familiasComPrioridade.map(fcp => new FamiliaDTO(
+            fcp.familia.id, 
+            fcp.familia.nomeRepresentante, 
+            fcp.familia.endereco, 
+            fcp.familia.qtdPessoasResidencia, 
+            fcp.familia.qtdPessoasEmpregadas,
+            new ComunidadeDTO(fcp.familia.comunidade.id!, fcp.familia.comunidade.descricao!),
+            fcp.familia.dificuldades.map(d => new FamiliaDificuldadeDTO(d.dificuldade!.id!, d.dificuldade!.descricao)),
+            fcp.familia.telefone,
+            fcp.familia.criancasFrequentamEscola,
+            fcp.familia.membroComProblemaSaude
+        ));
         return new PaginatedDTO(parseInt(`${dto.page}`), totalFamilias, Math.ceil(totalFamilias / dto.pageSize), result);
+        } catch (e: any) {
+            this.logger.error({ err: e.message }, 'Erro ao listar familias ');
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        }
     }
 
     public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<ListarFamiliasPrioritariasDTO[]> {

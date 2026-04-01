@@ -1,4 +1,5 @@
 export enum StatusAcaoEnum {
-    ativa = 'ATIVA',
-    concluida = 'CONCLUIDA'
+    PLANEJADA = 'PLANEJADA',
+    EM_ANDAMENTO = 'EM_ANDAMENTO',
+    CONCLUIDA = 'CONCLUIDA'
 }
