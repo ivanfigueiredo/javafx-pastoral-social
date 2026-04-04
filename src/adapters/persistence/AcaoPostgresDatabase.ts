@@ -39,7 +39,7 @@ export class AcaoPostgresDatabase implements AcaoRepository {
             idsQuery.andWhere("acao.dataEvento <= :dataFim", { dataFim: filter.dataFim });
         }
         if (filter.statusAcao) {
-            const statusAcao = StatusAcaoEnum[filter.statusAcao as keyof typeof StatusAcaoEnum];
+            const statusAcao = StatusAcaoEnum[filter.statusAcao.toUpperCase() as keyof typeof StatusAcaoEnum];
             idsQuery.andWhere("acao.statusAcao = :statusAcao", { statusAcao });
         }
         const ids = await idsQuery.getRawMany();

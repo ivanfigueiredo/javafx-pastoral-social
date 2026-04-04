@@ -42,8 +42,10 @@ export class CestasController {
             '/cestas/listar',
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarCesta),
-            async function (_params: any, _data: any, userLogged?: UserLogged, query?: CestaFilterQueryDTO) {
-                const dtoQuery = new CestaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, query?.statusCesta ?? StatusCestaEnum.CRIADA);
+            async function (_params: any, _data: any, userLogged?: UserLogged, query?: any) {
+                const statusCesta = (query && query.statusCesta !== null && query.statusCesta !== undefined) ? 
+                    StatusCestaEnum[query.statusCesta.toUpperCase() as keyof typeof StatusCestaEnum] : StatusCestaEnum.CRIADA;  
+                const dtoQuery = new CestaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, statusCesta);
                 const output = await getCestasUseCase.execute(dtoQuery);
                 return {
                     statusCode: 200,
