@@ -147,4 +147,30 @@ export class AcaoService implements AcaoUseCase {
     private getCalculaPercentualItensGerados(qtdAtual: number, qtdTotal: number): number {
         return (qtdAtual / qtdTotal) * 100;
     }
+
+    public async getAcao(idAcao: string): Promise<any> {
+        try {
+            const acao = await this.acaoRepository.findById(parseInt(idAcao));
+            if (!acao) throw new UnprocessableException("Ação não encontrada");
+            return {
+                acaoId: acao.acaoId!,
+                titulo: acao.titulo,
+                descricao: acao.descricao,
+                tipoAcao: TipoAcao[acao.tipoAcao!],
+                totalAcaoSocial: (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0,
+                dataConclusaoAcao: acao.dataEvento,
+                statusAcao: StatusAcaoEnum[acao.statusAcao!],
+                itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
+                        acao.templateAcao!.itensTemplate.map(item => ({
+                            idItemProduto: item.itemProduto.id, 
+                            nomeProduto: item.itemProduto.itemProdutoDesc, 
+                            unidadeMedida: item.itemProduto.unidadeMedida!.undMedidas
+                        }))
+                    : []
+            }
+        } catch (e: any) {
+            this.logger.error({error: e.message}, 'Erro ao buscar acao');
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }   
+    }
 }

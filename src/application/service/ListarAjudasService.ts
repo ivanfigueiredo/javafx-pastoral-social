@@ -31,7 +31,8 @@ export class ListarAjudasService implements ListarAjudasUseCase {
                 representante: ajuda.familia.nomeRepresentante,
                 endereco: ajuda.familia.endereco,
                 statusAjuda: ajuda.statusAjuda.valueOf(),
-                observacao: ajuda.observacao !== null ? ajuda.observacao : undefined,
+                observacao: (ajuda.observacao != null && ajuda.observacao !== undefined && ajuda.observacao !== "") ? 
+                    this.getObservacao(JSON.parse(ajuda.observacao)) : undefined,
                 tipoAjuda: ajuda.tipoAjuda.descricao!,
                 dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega.toISOString() : null,
                 cesta: this.getCesta(ajuda)
@@ -48,6 +49,13 @@ export class ListarAjudasService implements ListarAjudasUseCase {
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
+
+    private getObservacao(observacao: {[key: string]: string}): string | undefined {
+        if (observacao.detalhe) {
+            return observacao.detalhe;
+        }
+        return undefined;
+    }   
 
     private getCesta(ajuda: AjudaRecebidaEntity): {[key:string]: any} | undefined {
         if (ajuda.tipoAjuda.id === TipoAjudaEnum.CESTA_BASICA && (ajuda.cestaGerada !== null && ajuda.cestaGerada !== undefined)) {

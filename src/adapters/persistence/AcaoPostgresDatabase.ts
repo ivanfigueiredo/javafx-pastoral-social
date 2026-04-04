@@ -58,7 +58,16 @@ export class AcaoPostgresDatabase implements AcaoRepository {
 
     public async findById(idAcao: number): Promise<AcaoEntity | null> {
         return this.acaoRepository.findOne({
-            where: { acaoId: idAcao }
+            where: { acaoId: idAcao },
+            relations: {
+                templateAcao: {
+                    itensTemplate: {
+                        itemProduto: {
+                            unidadeMedida: true
+                        }
+                    }
+                }
+            }
         });
     }
 
