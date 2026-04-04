@@ -104,8 +104,12 @@ export class AjudaController {
             "/ajuda/listar", 
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarAjuda),
-            async function (_params: any, _data: any, _userLogged?: UserLogged, query?: AjudaFilterQueryDTO) {
-                const dtoQuery = new AjudaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, query?.statusAjuda ?? StatusAjudaEnum.AGUARDANDO_APROVACAO, query?.tipoAjuda);
+            async function (_params: any, _data: any, _userLogged?: UserLogged, query?: any) {
+                const statusAjuda = (query && query.statusAjuda !== null && query.statusAjuda !== undefined) ?
+                    StatusAjudaEnum[query.statusAjuda.toUpperCase() as keyof typeof StatusAjudaEnum] : StatusAjudaEnum.AGUARDANDO_APROVACAO;
+                const tipoAjuda = (query && query.tipoAjuda !== null && query.tipoAjuda !== undefined) ?
+                    TipoAjudaEnum[query.tipoAjuda.toUpperCase() as keyof typeof TipoAjudaEnum] : undefined;
+                const dtoQuery = new AjudaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, statusAjuda, tipoAjuda);
                 const output = await listarAjudasUseCase.listarAjudas(dtoQuery);
                 return {
                     statusCode: 201,
