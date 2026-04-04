@@ -57,5 +57,21 @@ export class AcaoController {
                 };
             }
         );
+
+        httpClient.on(
+            "get", 
+            "/acao/:idAcao", 
+            (req: Request, res: Response, next: NextFunction) => next(),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            async function (params: any, data: any) {
+                const output = await acaoUseCase.getAcao(params.idAcao);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
     }
 }
