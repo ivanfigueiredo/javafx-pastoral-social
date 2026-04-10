@@ -21,6 +21,7 @@ import { IdempotencyDTO } from "../dto/idempotency/IdempotencyDTO";
 import { ContextoIdempotencyEnum } from "../dto/enuns/ContextoIdempotencyEnum";
 import { PaginatedDTO } from "../dto/PaginatedDTO";
 import { AcaoFilterQueryDTO } from "../dto/acao/AcaoFilterQueryDTO";
+import { NivelNecessidadeDoacaoEnum } from "../dto/enuns/NivelNecessidadeDoacaoEnum";
 
 export class AcaoService implements AcaoUseCase {
     private readonly logger: Logger;
@@ -100,7 +101,7 @@ export class AcaoService implements AcaoUseCase {
                     }
                 })
             );
-            return new PaginatedDTO(parseInt(`${dto.page}`), totalAcoes, Math.ceil(totalAcoes / dto.pageSize), response);
+            return new PaginatedDTO(dto.page, totalAcoes, Math.ceil(totalAcoes / dto.pageSize), response);
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao listar acao');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
@@ -115,7 +116,7 @@ export class AcaoService implements AcaoUseCase {
         return itensTemplate.map(item => `${item.itemProduto.itemProdutoDesc!} (${this.calculatePeso(item)})`);
     }
 
-    private calculatePeso(itemTemplate: ItemTemplateEntity): any {
+    private calculatePeso(itemTemplate: ItemTemplateEntity): string | undefined {
         if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.KG) {
             return `${itemTemplate.quantidade}${itemTemplate.itemProduto.unidadeMedida!.undMedidas}`;
         } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.G) {
@@ -164,7 +165,9 @@ export class AcaoService implements AcaoUseCase {
                         acao.templateAcao!.itensTemplate.map(item => ({
                             idItemProduto: item.itemProduto.id, 
                             nomeProduto: item.itemProduto.itemProdutoDesc, 
-                            unidadeMedida: item.itemProduto.unidadeMedida!.undMedidas
+                            unidadeMedida: item.itemProduto.unidadeMedida!.undMedidas,
+                            nivelNecessidadeDoacao: (acao.doacoesRecebidas !== null && acao.doacoesRecebidas.length > 0) ?
+                                this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id) : undefined
                         }))
                     : []
             }
@@ -172,5 +175,14 @@ export class AcaoService implements AcaoUseCase {
             this.logger.error({error: e.message}, 'Erro ao buscar acao');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }   
+    }
+
+    private getNivelNecessidadeDoacao(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number): string {
+        const qtd =doacoes.filter(doacao => doacao.itemProduto!.id === itemProdutoId)
+            .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
+        if (qtd <= 10) return NivelNecessidadeDoacaoEnum.CRITICAL;
+        if (qtd > 10 && qtd <= 30) return NivelNecessidadeDoacaoEnum.HIGH;
+        if (qtd > 30 && qtd <= 50) return NivelNecessidadeDoacaoEnum.MEDIUM;
+        return NivelNecessidadeDoacaoEnum.LOW;
     }
 }

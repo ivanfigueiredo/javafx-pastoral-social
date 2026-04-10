@@ -43,6 +43,9 @@ export class AcaoPostgresDatabase implements AcaoRepository {
             idsQuery.andWhere("acao.statusAcao = :statusAcao", { statusAcao });
         }
         const ids = await idsQuery.getRawMany();
+        if (ids.length === 0) {
+            return [[], 0];
+        }
         const query = this.acaoRepository.createQueryBuilder("acao")
             .leftJoinAndSelect("acao.templateAcao", "templateAcao")
             .leftJoinAndSelect("acao.doacoesRecebidas", "doacoesRecebidas")
@@ -66,6 +69,9 @@ export class AcaoPostgresDatabase implements AcaoRepository {
                             unidadeMedida: true
                         }
                     }
+                },
+                doacoesRecebidas: {
+                    itemProduto: true
                 }
             }
         });
@@ -79,7 +85,6 @@ export class AcaoPostgresDatabase implements AcaoRepository {
             hoje.getDate()
         );
         const now = dataLocal.toISOString().split("T")[0];
-        console.log("=======================>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>   ", now);
         return this.acaoRepository.findOne({
             where: { inicioAcao: Equal(now), statusAcao: StatusAcaoEnum.PLANEJADA }
         });
