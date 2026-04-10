@@ -167,7 +167,7 @@ export class AcaoService implements AcaoUseCase {
                             nomeProduto: item.itemProduto.itemProdutoDesc, 
                             unidadeMedida: item.itemProduto.unidadeMedida!.undMedidas,
                             nivelNecessidadeDoacao: (acao.doacoesRecebidas !== null && acao.doacoesRecebidas.length > 0) ?
-                                this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id) : undefined
+                                this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id) : NivelNecessidadeDoacaoEnum.CRITICAL
                         }))
                     : []
             }
