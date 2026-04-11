@@ -153,12 +153,13 @@ export class AcaoService implements AcaoUseCase {
         try {
             const acao = await this.acaoRepository.findById(parseInt(idAcao));
             if (!acao) throw new UnprocessableException("Ação não encontrada");
+            const totalAcaoSocial = (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0;
             return {
                 acaoId: acao.acaoId!,
                 titulo: acao.titulo,
                 descricao: acao.descricao,
                 tipoAcao: TipoAcao[acao.tipoAcao!],
-                totalAcaoSocial: (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0,
+                totalAcaoSocial: totalAcaoSocial,
                 dataConclusaoAcao: acao.dataEvento,
                 statusAcao: StatusAcaoEnum[acao.statusAcao!],
                 itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
@@ -167,7 +168,7 @@ export class AcaoService implements AcaoUseCase {
                             nomeProduto: item.itemProduto.itemProdutoDesc, 
                             unidadeMedida: item.itemProduto.unidadeMedida!.undMedidas,
                             nivelNecessidadeDoacao: (acao.doacoesRecebidas !== null && acao.doacoesRecebidas.length > 0) ?
-                                this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id) : NivelNecessidadeDoacaoEnum.CRITICAL
+                                this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id, item, totalAcaoSocial) : NivelNecessidadeDoacaoEnum.CRITICAL
                         }))
                     : []
             }
@@ -177,12 +178,13 @@ export class AcaoService implements AcaoUseCase {
         }   
     }
 
-    private getNivelNecessidadeDoacao(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number): string {
+    private getNivelNecessidadeDoacao(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number, itemTemplate: ItemTemplateEntity, totalAcaoSocial: number): string {
         const qtd =doacoes.filter(doacao => doacao.itemProduto!.id === itemProdutoId)
             .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
-        if (qtd <= 10) return NivelNecessidadeDoacaoEnum.CRITICAL;
-        if (qtd > 10 && qtd <= 30) return NivelNecessidadeDoacaoEnum.HIGH;
-        if (qtd > 30 && qtd <= 50) return NivelNecessidadeDoacaoEnum.MEDIUM;
+        const qtdMinimaDoacaoRecebida = (qtd / (itemTemplate.quantidade * totalAcaoSocial)) * 100;
+        if (qtdMinimaDoacaoRecebida <= 35) return NivelNecessidadeDoacaoEnum.CRITICAL;
+        if (qtdMinimaDoacaoRecebida > 35 && qtdMinimaDoacaoRecebida <= 70) return NivelNecessidadeDoacaoEnum.HIGH;
+        if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 90) return NivelNecessidadeDoacaoEnum.MEDIUM;
         return NivelNecessidadeDoacaoEnum.LOW;
     }
 }
