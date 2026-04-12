@@ -154,6 +154,8 @@ export class AcaoService implements AcaoUseCase {
             const acao = await this.acaoRepository.findById(parseInt(idAcao));
             if (!acao) throw new UnprocessableException("Ação não encontrada");
             const totalAcaoSocial = (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0;
+            const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
+                await this.getItensGerados(acao.templateAcao!) : 0;
             return {
                 acaoId: acao.acaoId!,
                 titulo: acao.titulo,
@@ -162,6 +164,11 @@ export class AcaoService implements AcaoUseCase {
                 totalAcaoSocial: totalAcaoSocial,
                 dataConclusaoAcao: acao.dataEvento,
                 statusAcao: StatusAcaoEnum[acao.statusAcao!],
+                itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
+                percentualRecebido: (acao.qtdAcaoSocial != null && qtdItensGerados > 0) ? 
+                    `${this.getCalculaPercentualItensGerados(qtdItensGerados, acao.qtdAcaoSocial!)}%` : '0',
+                itensGerados: `${qtdItensGerados}/${(acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0}`,
+                qtdDoadores: (acao.doacoesRecebidas != null) ? this.getTotalDoadores(acao.doacoesRecebidas) : 0,                          
                 itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
                         acao.templateAcao!.itensTemplate.map(item => ({
                             idItemProduto: item.itemProduto.id, 

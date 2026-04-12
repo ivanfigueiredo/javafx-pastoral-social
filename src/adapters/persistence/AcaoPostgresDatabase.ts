@@ -71,7 +71,8 @@ export class AcaoPostgresDatabase implements AcaoRepository {
                     }
                 },
                 doacoesRecebidas: {
-                    itemProduto: true
+                    itemProduto: true,
+                    doador: true
                 }
             }
         });
