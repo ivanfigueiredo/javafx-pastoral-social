@@ -129,6 +129,8 @@ export class AcaoService implements AcaoUseCase {
             return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.L}` : `${sum}${UnidadeMedidaEnum.ML}`;
         } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.L) {
             return `${itemTemplate.quantidade}${UnidadeMedidaEnum.L}`;
+        } else {
+            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.UND}`;
         }
     }
 

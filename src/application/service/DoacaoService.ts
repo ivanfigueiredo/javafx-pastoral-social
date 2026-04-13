@@ -15,6 +15,8 @@ import { NotificacaoAgradecimentoDoacaoService } from "./NotificacaoAgradeciment
 import { AcaoRepository } from "../port/out/AcaoRepository";
 import { NotFoundException } from "../exceptions/NotFoundException";
 import { UnprocessableException } from "../exceptions/UnprocessableException";
+import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
+import { SejaDoadorDTO } from "../dto/doador/SejaDoadorDTO";
 
 export class DoacaoService implements DoacaoUseCase {
     private readonly logger: Logger;
@@ -68,6 +70,27 @@ export class DoacaoService implements DoacaoUseCase {
         } catch (e: any) {
             this.logger.error({ err: e.message }, 'Erro ao persistir ')
             await this.unitOfWork.rollBack();
+            if (e instanceof NotFoundException || e instanceof UnprocessableException || e instanceof NotFoundException) throw e;
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        } finally {
+            await this.unitOfWork.release();
+        }
+    }
+
+    public async sejaDoador(dto: SejaDoadorDTO): Promise<void> {
+        try {
+            await this.unitOfWork.startTransaction();
+            const existDoador = await this.doadorRepository.findDoadorByTelefone(dto.cleanTelefone());
+            if (!existDoador) {
+                const telefone = dto.cleanTelefone().startsWith("55") ? dto.cleanTelefone() : "55".concat(dto.cleanTelefone());
+                const doador = new DoadorEntity(null, dto.nomeDoador, telefone, []);
+                await this.doadorRepository.save(doador);
+            }
+            await this.unitOfWork.commit();
+        } catch (e: any) {
+            this.logger.error({ err: e.message }, 'Erro ao cadastrar doador ')
+            await this.unitOfWork.rollBack();
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
         } finally {
             await this.unitOfWork.release();
         }

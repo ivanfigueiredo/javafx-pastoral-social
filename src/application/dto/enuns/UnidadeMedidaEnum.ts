@@ -2,5 +2,6 @@ export enum UnidadeMedidaEnum {
     G = "G",
     KG = "KG",
     L = "L",
-    ML = "ML"
+    ML = "ML",
+    UND = "UND"
 }
