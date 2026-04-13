@@ -6,6 +6,7 @@ import { DoacaoUseCase } from "../../application/port/in/DoacaoUseCase";
 import { CadastrarDoacaoDTO } from "../../application/dto/doador/CadastrarDoacaoDTO";
 import { DoadorDTO } from "../../application/dto/doador/DoadorDTO";
 import { ItemProdutoDoacaoDTO } from "../../application/dto/doador/ItemProdutoDoacaoDTO";
+import { SejaDoadorDTO } from "../../application/dto/doador/SejaDoadorDTO";
 
 export class DoacaoController {
     constructor(
@@ -17,8 +18,6 @@ export class DoacaoController {
         httpClient.on(
             "post", 
             "/doacao/cadastrar", 
-            // auth.authentication.bind(auth),
-            // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: CadastrarDoacaoDTO) {
@@ -29,6 +28,25 @@ export class DoacaoController {
                     data.itensProduto.map(item => new ItemProdutoDoacaoDTO(item.idItemProduto, item.quantidade)), 
                     data.dataEntrega);
                 const output = await doacaoUseCase.cadastrarDoacao(dto);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
+        httpClient.on(
+            "post", 
+            "/doador/seja-doador", 
+            (req: Request, res: Response, next: NextFunction) => next(),
+            (req: Request, res: Response, next: NextFunction) => next(),
+            async function (params: any, data: SejaDoadorDTO) {
+                const dto = new SejaDoadorDTO(
+                    data.nomeDoador, 
+                    data.telefone
+                );
+                const output = await doacaoUseCase.sejaDoador(dto);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),
