@@ -91,6 +91,11 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
                     { idTipoDificuldade: filter.tipoDificuldade }
                 );
             }
+            if (filter.dataInicio && filter.dataFim) {
+                query.andWhere("ajudasRecebidas.dataEntrega >= :dataInicio", { dataInicio: filter.dataInicio });
+                query.andWhere("ajudasRecebidas.dataEntrega <= :dataFim", { dataFim: filter.dataFim });
+                query.andWhere("ajudasRecebidas.statusAjuda = :status", { status: 'ENTREGUE' });
+            }
             return await query.getManyAndCount();
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao consultar cestas");

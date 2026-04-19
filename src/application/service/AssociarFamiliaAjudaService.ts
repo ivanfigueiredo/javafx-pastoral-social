@@ -48,12 +48,13 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
                     if (cestas === null || cestas.length === 0) throw new UnprocessableException("O template informado não tem cestas disponíveis");
                     const cesta = cestas[0];
                     cesta.status = new StatusCestaEntity(StatusCestaEnum.RESERVADA, null, []);
+                    await this.cestaGeradaRepository.save(cesta);
                     this.logger.info({ statusCesta: StatusCestaEnum.RESERVADA }, 'Atualizando status da cesta para: ');
                     const tipoAjuda = new TipoAjudaEntity(TipoAjudaEnum.CESTA_BASICA, null, null, []);
-                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, new Date(), familia, tipoAjuda, cesta);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, this.getLocalDate(), familia, tipoAjuda, cesta);
                 } else {
                     const tipoAjuda = new TipoAjudaEntity(item.ajuda.tipoAjuda, null, null, []);
-                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, new Date(), familia, tipoAjuda, null);
+                    ajudaRecebida = new AjudaRecebidaEntity(null, null, false, false, StatusAjudaEnum.AGUARDANDO_APROVACAO, null, detalhe, this.getLocalDate(), familia, tipoAjuda, null);
                 }
                 ajudasDoada.push(ajudaRecebida);
             }
@@ -72,5 +73,15 @@ export class AssociarFamiliaAjudaService implements AssociarFamiliaAjudaUseCase 
 
     private existeFamilia(familias: FamiliaEntity[], idFamilia: number): boolean {
         return familias.some(familia => familia.id === idFamilia);
+    }
+
+    private getLocalDate(): string {
+        const hoje = new Date();
+        const dataLocal = new Date(
+            hoje.getFullYear(),
+            hoje.getMonth(),
+            hoje.getDate()
+        );
+        return dataLocal.toISOString().split("T")[0];
     }
 }

@@ -26,7 +26,7 @@ export class TemplateService implements TemplateUseCase {
     }
 
     public async listarTemplates(dto: GetTemplatesDTO): Promise<any> {
-        const [templates, total] = await this.templateRepository.findPaginatedTemplate(dto.page, dto.pageSize);
+        const [templates, total] = await this.templateRepository.findPaginatedTemplate(dto.page, dto.pageSize, dto.tipoTemplate);
         const result = await Promise.all(templates.map(async template => {
             let data: Result = {
                 idTemplate: template.id!,

@@ -30,6 +30,7 @@ export class AprovarAjudaService implements AprovarAjudaUseCase {
                 throw new UnprocessableException("A ajuda precisa estar aguardando aprovacao para ser aprovada.");
             }
             ajuda.statusAjuda = StatusAjudaEnum.APROVADA;
+            ajuda.entregaAprovada = true;
             await this.ajudaRepository.save(ajuda);
             await this.unitOfWork.commit();
         } catch (e: any) {

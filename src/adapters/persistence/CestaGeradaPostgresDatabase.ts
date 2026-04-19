@@ -34,7 +34,12 @@ export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
     public async findCestaById(id: number): Promise<CestaGeradaEntity | null> {
         return this.cestaRepository.findOne({ 
             where: { id },
-            relations: {cestaItens: {cestaEstoqueItem: true}, ajuda: true}
+            relations: {
+                cestaItens: {
+                    cestaEstoqueItem: true
+                }, 
+                ajuda: true
+            }
         })
     }
 
@@ -60,6 +65,16 @@ export class CestaGeradaPostgresDatabase implements CestaGeradaRepository {
     }
 
     public async findCestasByIdTemplate(idTemplate: number): Promise<CestaGeradaEntity[]> {
-        return this.cestaRepository.find({where: {template: {id: idTemplate, templateType: TemplateTypeEnum.CESTA_BASICA}, status: {id: StatusCestaEnum.CRIADA}}});
+        return this.cestaRepository.find({where: {
+                template: {
+                    id: idTemplate, 
+                    templateType: TemplateTypeEnum.CESTA_BASICA
+                }, 
+                status: {id: StatusCestaEnum.CRIADA}
+            },
+            relations: {
+                status: true,
+            }
+        });
     }
 }

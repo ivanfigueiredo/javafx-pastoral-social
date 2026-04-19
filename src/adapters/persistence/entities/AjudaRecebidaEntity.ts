@@ -29,10 +29,10 @@ export class AjudaRecebidaEntity {
   cestaGerada: CestaGeradaEntity | null;
 
   @Column({ name: 'data_entrega', nullable: true, type: 'date' })
-  dataEntrega: Date | null;
+  dataEntrega: string | null;
 
   @Column({ name: 'data_criacao', type: 'timestamptz' })
-  dataCriacao: Date | null;
+  dataCriacao: string | null;
 
   @Column({ name: 'entrega_aprovada', type: 'bool', default: false })
   entregaAprovada: boolean;
@@ -51,13 +51,13 @@ export class AjudaRecebidaEntity {
 
   constructor(
     id: number | null,
-    dataEntrega: Date | null,
+    dataEntrega: string | null,
     envolveuAutoridade: boolean,
     entregaAprovada: boolean,
     statusAjuda: StatusAjudaEnum,
     autoridadeNome: string | null,
     observacao: string | null,
-    dataCriacao: Date | null,
+    dataCriacao: string | null,
     familia: FamiliaEntity,
     tipoAjuda: TipoAjudaEntity,
     cestaGerada: CestaGeradaEntity | null

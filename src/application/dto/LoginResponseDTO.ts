@@ -3,7 +3,7 @@ export class PermissinSecurityDTO {
 }
 
 export class UserDTO {
-    constructor(readonly userId: number, readonly nickName: string, readonly nome: string, readonly permissions: string[]) {}
+    constructor(readonly userId: number, readonly nickName: string, readonly nome: string, readonly telefone: string, readonly permissions: string[]) {}
 }
 
 export class LoginResponseDTO {

@@ -110,7 +110,7 @@ export async function buildApp() {
     const listarAjudasService = new ListarAjudasService(logger, ajudaRepository);
     const idempotenciaService = new IdempotenciaService(idempotenciaRepository);
     const aprovarAjudaService = new AprovarAjudaService(logger, ajudaRepository, unitOfWork);
-    const entregarAjudaService = new EntregarAjudaService(logger, ajudaRepository, unitOfWork);
+    const entregarAjudaService = new EntregarAjudaService(logger, ajudaRepository, cestaGeradaRepository, unitOfWork);
     const notificarAgenteProdutoVencimentoService = new NotificarAgenteProdutoVencimentoService(logger, notificacaoWhatsAppGateway, itemRepository, estoqueRepositiory, tempDataRepository);
     const visualizarProdutosProxVencimentoService =  new VisualizarProdutosProxVencimentoService(logger, usuarioRepository, notificarAgenteProdutoVencimentoService, tempDataRepository);
     const doacaoService = new DoacaoService(logger, unitOfWork, acaoRepository, doadorRepository, doacaoRepository, idempotenciaService, notificacaoAgradecimentoDoacaoService);

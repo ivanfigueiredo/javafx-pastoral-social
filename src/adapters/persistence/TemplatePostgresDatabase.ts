@@ -36,14 +36,14 @@ export class TemplatePostgresDatabase implements TemplateRepository {
         }
     }
 
-    public async findPaginatedTemplate(page: number, pageSize: number): Promise<[TemplateEntity[], number]> {
+    public async findPaginatedTemplate(page: number, pageSize: number, tipoTemplate: TemplateTypeEnum): Promise<[TemplateEntity[], number]> {
         const currentPage = (page && page > 1) ? page : 1;
         const currentPageSize = (pageSize && pageSize > 10) ? pageSize : 10;
         return this.templateRepository.findAndCount({
             skip: (currentPage - 1) * pageSize,
             take: currentPageSize,
             order: { id: "ASC" },
-            where: {templateType: TemplateTypeEnum.CESTA_BASICA},
+            where: {templateType: tipoTemplate},
             relations: {itensTemplate: {itemProduto: true}}
         });
     }
