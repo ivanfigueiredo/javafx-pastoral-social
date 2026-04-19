@@ -109,7 +109,7 @@ export class AjudaController {
                     StatusAjudaEnum[query.statusAjuda.toUpperCase() as keyof typeof StatusAjudaEnum] : StatusAjudaEnum.AGUARDANDO_APROVACAO;
                 const tipoAjuda = (query && query.tipoAjuda !== null && query.tipoAjuda !== undefined) ?
                     TipoAjudaEnum[query.tipoAjuda.toUpperCase() as keyof typeof TipoAjudaEnum] : undefined;
-                const dtoQuery = new AjudaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, statusAjuda, tipoAjuda);
+                const dtoQuery = new AjudaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, statusAjuda, tipoAjuda, query?.dataInicio, query?.dataFim);
                 const output = await listarAjudasUseCase.listarAjudas(dtoQuery);
                 return {
                     statusCode: 201,

@@ -34,7 +34,7 @@ export class ListarAjudasService implements ListarAjudasUseCase {
                 observacao: (ajuda.observacao != null && ajuda.observacao !== undefined && ajuda.observacao !== "") ? 
                     this.getObservacao(JSON.parse(ajuda.observacao)) : undefined,
                 tipoAjuda: ajuda.tipoAjuda.descricao!,
-                dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega.toISOString() : null,
+                dataEntrega: (ajuda.dataEntrega != null) ? ajuda.dataEntrega : null,
                 cesta: this.getCesta(ajuda)
             }));
             const response = {

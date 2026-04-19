@@ -91,7 +91,7 @@ export class FamiliaController {
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarFamilia),
             async function (_params: any, _data: any, __userLogged?: UserLogged, query?: any) {
                 const tipoDificuldade = (query && (query.tipoDificuldade !== null && query.tipoDificuldade !== undefined)) ? TipoDificuldadeEnum[FamiliaController.removerAcentos(query.tipoDificuldade) as keyof typeof TipoDificuldadeEnum] : undefined;
-                const dto = new FamiliaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, tipoDificuldade);
+                const dto = new FamiliaFilterQueryDTO(query?.page ?? 1, query?.pageSize ?? 10, tipoDificuldade, query?.dataInicio, query?.dataFim);
                 const output = await getFamiliaUseCase.listarFamilias(dto);
                 return {
                     statusCode: 200,

@@ -7,6 +7,7 @@ import { UserLogged } from "../http/types/express";
 import { GetTemplatesDTO } from "../../application/dto/GetTemplatesDTO";
 import { ActionType } from "../http/authorization/Permission";
 import { ListarTemplatesComCestasDisponiveisUseCase } from "../../application/port/in/ListarTemplatesComCestasDisponiveisUseCase";
+import { TemplateTypeEnum } from "../../application/dto/enuns/TemplateTypeEnum";
 
 export class TemplateController {
     constructor(
@@ -22,7 +23,9 @@ export class TemplateController {
             auth.authentication.bind(auth),
             async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarDificuldade),
             async function (_params: any, _data: any, _userLogged?: UserLogged, query?: GetTemplatesDTO) {
-                const dtoQuery = new GetTemplatesDTO(query?.page ?? 1, query?.pageSize ?? 10);
+                const templateType = (query && query.tipoTemplate !== null && query.tipoTemplate !== undefined) ?
+                    TemplateTypeEnum[query.tipoTemplate.toUpperCase() as keyof typeof TemplateTypeEnum] : TemplateTypeEnum.CESTA_BASICA;
+                const dtoQuery = new GetTemplatesDTO(query?.page ?? 1, query?.pageSize ?? 10, templateType);
                 const output = await templateUseCase.listarTemplates(dtoQuery);
                 return {
                     statusCode: 200,

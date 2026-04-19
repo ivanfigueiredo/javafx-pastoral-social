@@ -37,6 +37,7 @@ export class PostgresDatabase implements Connection {
     constructor() {
         this.connection = new DataSource({
             type: 'postgres',
+            // url: this.isProduction ? process.env.URL_PRODUCTION : process.env.URL_PRODUCTION,
             url: this.isProduction ? process.env.URL_PRODUCTION : process.env.URL_DEV,
             synchronize: false,
             poolSize: 5,
