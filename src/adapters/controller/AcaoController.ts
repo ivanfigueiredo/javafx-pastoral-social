@@ -9,6 +9,7 @@ import { TipoAcaoEnum } from "../../application/dto/enuns/TipoAcaoEnum";
 import { TemplateItemDTO } from "../../application/dto/TemplateItemDTO";
 import { UserLogged } from "../http/types/express";
 import { AcaoFilterQueryDTO } from "../../application/dto/acao/AcaoFilterQueryDTO";
+import { AtualizarAcaoDTO } from "../../application/dto/acao/AtualizarAcaoDTO";
 
 export class AcaoController {
     constructor(
@@ -65,6 +66,28 @@ export class AcaoController {
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: any) {
                 const output = await acaoUseCase.getAcao(params.idAcao);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
+        httpClient.on(
+            "put", 
+            "/acao/atualizar/:idAcao", 
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.AtualizarAcao),
+            async function (params: any, data: any) {
+                const dto = new AtualizarAcaoDTO(
+                    params.idAcao,
+                    data?.titulo,
+                    data?.descricao,
+                    data?.dataEvento,
+                    data?.inicioAcao
+                );
+                const output = await acaoUseCase.atualizarAcao(dto);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),
