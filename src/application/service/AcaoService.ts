@@ -22,6 +22,8 @@ import { ContextoIdempotencyEnum } from "../dto/enuns/ContextoIdempotencyEnum";
 import { PaginatedDTO } from "../dto/PaginatedDTO";
 import { AcaoFilterQueryDTO } from "../dto/acao/AcaoFilterQueryDTO";
 import { NivelNecessidadeDoacaoEnum } from "../dto/enuns/NivelNecessidadeDoacaoEnum";
+import { AtualizarAcaoDTO } from "../dto/acao/AtualizarAcaoDTO";
+import { NotFoundException } from "../exceptions/NotFoundException";
 
 export class AcaoService implements AcaoUseCase {
     private readonly logger: Logger;
@@ -90,6 +92,7 @@ export class AcaoService implements AcaoUseCase {
                         tipoAcao: TipoAcao[acao.tipoAcao!],
                         totalAcaoSocial: (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0,
                         dataConclusaoAcao: acao.dataEvento,
+                        inicioAcao: acao.inicioAcao,
                         statusAcao: StatusAcaoEnum[acao.statusAcao!],
                         percentualRecebido: (acao.qtdAcaoSocial != null && qtdItensGerados > 0) ? 
                             `${this.getCalculaPercentualItensGerados(qtdItensGerados, acao.qtdAcaoSocial!)}%` : '0',
@@ -154,7 +157,7 @@ export class AcaoService implements AcaoUseCase {
     public async getAcao(idAcao: string): Promise<any> {
         try {
             const acao = await this.acaoRepository.findById(parseInt(idAcao));
-            if (!acao) throw new UnprocessableException("Ação não encontrada");
+            if (!acao) throw new NotFoundException("Ação não encontrada");
             const totalAcaoSocial = (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0;
             const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
                 await this.getItensGerados(acao.templateAcao!) : 0;
@@ -165,6 +168,7 @@ export class AcaoService implements AcaoUseCase {
                 tipoAcao: TipoAcao[acao.tipoAcao!],
                 totalAcaoSocial: totalAcaoSocial,
                 dataConclusaoAcao: acao.dataEvento,
+                inicioAcao: acao.inicioAcao,
                 statusAcao: StatusAcaoEnum[acao.statusAcao!],
                 itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
                 percentualRecebido: (acao.qtdAcaoSocial != null && qtdItensGerados > 0) ? 
@@ -183,6 +187,7 @@ export class AcaoService implements AcaoUseCase {
             }
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao buscar acao');
+            if (e instanceof NotFoundException) throw e;
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }   
     }
@@ -195,5 +200,27 @@ export class AcaoService implements AcaoUseCase {
         if (qtdMinimaDoacaoRecebida > 35 && qtdMinimaDoacaoRecebida <= 70) return NivelNecessidadeDoacaoEnum.HIGH;
         if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 90) return NivelNecessidadeDoacaoEnum.MEDIUM;
         return NivelNecessidadeDoacaoEnum.LOW;
+    }
+
+    public async atualizarAcao(dto: AtualizarAcaoDTO): Promise<void> {
+        try {
+            await this.unitOfwork.startTransaction();
+            const acao = await this.acaoRepository.findById(parseInt(dto.idAcao));
+            if (!acao) throw new UnprocessableException("Ação não encontrada");
+            if (acao.statusAcao === StatusAcaoEnum.CONCLUIDA) throw new UnprocessableException("Ação concluída não pode ser atualizada.");
+            if (dto.titulo) acao.titulo = dto.titulo;
+            if (dto.descricao) acao.descricao = dto.descricao;
+            if (dto.dataEvento) acao.dataEvento = dto.dataEvento;
+            if (dto.inicioAcao) acao.inicioAcao = dto.inicioAcao;
+            await this.acaoRepository.salvarAcao(acao);
+            await this.unitOfwork.commit();
+        } catch (e: any) {
+            this.logger.error({error: e.message}, 'Erro ao atualizar acao');
+            await this.unitOfwork.rollBack();
+            if (e instanceof UnprocessableException) throw e;
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        } finally {
+            await this.unitOfwork.release();
+        }
     }
 }
