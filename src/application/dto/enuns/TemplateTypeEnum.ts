@@ -3,3 +3,9 @@ export enum TemplateTypeEnum {
     JANTA = 'JANTA',
     ALMOCO = 'ALMOCO'
 }
+
+export const TemplateTypeEnumDescricao: Record<TemplateTypeEnum, string> = {
+    [TemplateTypeEnum.CESTA_BASICA]: 'Cesta Básica',
+    [TemplateTypeEnum.JANTA]: 'Janta',
+    [TemplateTypeEnum.ALMOCO]: 'Almoço'
+};

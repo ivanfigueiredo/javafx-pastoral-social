@@ -16,6 +16,10 @@
     {
       "path": "/api/notificacao/produtos-proximo-vencimento",
       "schedule": "50 23 * * *"
+    },
+    {
+      "path": "/api/notificacao/iniciar-acao",
+      "schedule": "50 23 * * *"
     }
   ]
 }
