@@ -47,7 +47,7 @@ export class CancelarCestaService implements CancelarCestaUseCase {
         } catch (e: any) {
             await this.unitOfWork.rollBack();
             this.logger.error({error: e.message}, 'Erro ao cancelar cesta');
-            if (e instanceof NotFoundException) throw e;
+            if (e instanceof NotFoundException || e instanceof UnprocessableException) throw e;
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         } finally {
             await this.unitOfWork.release();

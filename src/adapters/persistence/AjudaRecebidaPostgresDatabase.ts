@@ -44,7 +44,14 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     }
 
     public async findAjudaById(idAjuda: number): Promise<AjudaRecebidaEntity | null> {
-        return this.ajudaRepository.findOne({where: {id: idAjuda}, relations: {cestaGerada: true}})
+        return this.ajudaRepository.findOne({
+            where: {id: idAjuda},
+            relations: {
+                cestaGerada: {
+                    status: true,
+                }
+            }
+        })
     }
 
     public async findAjudas(filter: AjudaFilterQueryDTO): Promise<[AjudaRecebidaEntity[], number]> {
