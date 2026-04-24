@@ -2,7 +2,7 @@ import { Logger } from 'pino';
 import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
 import { CadastroEstoqueDTO } from "../dto/CadastroEstoqueDTO";
 import { ConsultaGeracaoTemplateDTO } from "../dto/ConsultaGeracaoTemplateDTO";
-import { TemplateTypeEnum } from "../dto/enuns/TemplateTypeEnum";
+import { TemplateTypeEnum, TemplateTypeEnumDescricao } from "../dto/enuns/TemplateTypeEnum";
 import { EstoqueDTO } from "../dto/EstoqueDTO";
 import { GeracaoModeloTemplateDTO } from "../dto/GeracaoModeloTemplateDTO";
 import { ItemProdutoDTO } from "../dto/ItemProdutoDTO";
@@ -24,7 +24,6 @@ import { CestaGeradaRepository } from '../port/out/CestaGeradaRepository';
 import { CestaEstoqueItemRepository } from '../port/out/CestaEstoqueItemRepository';
 import { CestaEstoqueItemEntity } from '../../adapters/persistence/entities/CestaEstoqueItemEntity';
 import { EstoqueMapper } from '../../adapters/mappers/EstoqueMapper';
-import { EstoqueEntity } from '../../adapters/persistence/entities/EstoqueEntity';
 import { EstoqueDisponivelDTO } from '../dto/EstoqueDisponivelDTO';
 import { SugerirModeloTemplateResponseDTO, TemplateModeloFilhosDTO } from '../dto/SugerirModeloTemplateResponseDTO';
 import { TemplateItemDTO } from '../dto/TemplateItemDTO';
@@ -129,7 +128,7 @@ export class EstoqueService implements EstoqueUseCase {
 
     public async criarModeloTemplateAcao(templateItens: TemplateItemDTO[], templateType: TemplateTypeEnum): Promise<any> {
         try {
-            const template = new CriarTemplateDTO("Template ação social", templateType);
+            const template = new CriarTemplateDTO(TemplateTypeEnumDescricao[templateType], templateType);
             const templateEntity = await this.templateRepository.save(template);
             for (const templateItem of templateItens) {
                 templateItem.itemProdutoId
