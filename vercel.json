@@ -15,11 +15,11 @@
   "crons": [
     {
       "path": "/api/notificacao/produtos-proximo-vencimento",
-      "schedule": "40 2 * * *"
+      "schedule": "50 2 * * *"
     },
     {
       "path": "/api/notificacao/iniciar-acao",
-      "schedule": "40 2 * * *"
+      "schedule": "50 2 * * *"
     }
   ]
 }
