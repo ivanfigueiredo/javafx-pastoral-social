@@ -1,5 +1,6 @@
 import { AjudaRecebidaEntity } from "../../../adapters/persistence/entities/AjudaRecebidaEntity";
 import { AjudaFilterQueryDTO } from "../../dto/AjudaFilterQueryDTO";
+import { StatusAjudaEnum } from "../../dto/enuns/StatusAjudaEnum";
 import { OpcaoListaDTO } from "../../dto/OpcaoListaDTO";
 
 export interface AjudaRepository {
@@ -8,4 +9,5 @@ export interface AjudaRepository {
     findAjudas: (dto: AjudaFilterQueryDTO) => Promise<[AjudaRecebidaEntity[], number]>;
     findAjudasOpcaoLista: () => Promise<OpcaoListaDTO[]>;
     save: (ajuda: AjudaRecebidaEntity) => Promise<void>;
+    countAjudasByStatus: (statusAjuda: StatusAjudaEnum) => Promise<number>
 }

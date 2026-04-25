@@ -8,8 +8,6 @@ import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
 import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 import { PaginatedDTO } from "../dto/PaginatedDTO";
 import { AjudaRecebidaEntity } from "../../adapters/persistence/entities/AjudaRecebidaEntity";
-import { TipoDoacaoEnum } from "../../adapters/persistence/entities/TipoDoacaoEnum";
-import { CestaGeradaEntity } from "../../adapters/persistence/entities/CestaGeradaEntity";
 import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
 import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
 
@@ -26,6 +24,8 @@ export class ListarAjudasService implements ListarAjudasUseCase {
     public async listarAjudas(dto: AjudaFilterQueryDTO): Promise<PaginatedDTO> {
         try {
             const [ajudas, totalAjuda] = await this.ajudaRepository.findAjudas(dto);
+            const totalPendentes = await this.ajudaRepository.countAjudasByStatus(StatusAjudaEnum.APROVADA);
+            const totalConcluidas = await this.ajudaRepository.countAjudasByStatus(StatusAjudaEnum.ENTREGUE);
             const result: Result[] = ajudas.map(ajuda => ({
                 id: ajuda.id,
                 representante: ajuda.familia.nomeRepresentante,
@@ -39,8 +39,8 @@ export class ListarAjudasService implements ListarAjudasUseCase {
             }));
             const response = {
                 total: totalAjuda,
-                pendentes: ajudas.filter(ajuda => ajuda.statusAjuda === StatusAjudaEnum.AGUARDANDO_APROVACAO).length,
-                concluidas: ajudas.filter(ajuda => ajuda.statusAjuda === StatusAjudaEnum.ENTREGUE).length,
+                pendentes: totalPendentes,
+                concluidas: totalConcluidas,
                 data: result
             }
             return new PaginatedDTO(parseInt(`${dto.page}`), totalAjuda, Math.ceil(totalAjuda / dto.pageSize), response);

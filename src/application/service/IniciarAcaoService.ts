@@ -33,7 +33,8 @@ export class IniciarAcaoService implements IniciarAcaoUseCase {
                     this.logger.info(`Ação ${acao.titulo} iniciada.`);
                     const doadores = await this.doadorRepository.findDoadoresAll();
                     for (const doador of doadores) {
-                        const newMsg = msg.parametrosMensagem!.replace("$1", doador.doadorNome!).replace("$2", `https://pastoral-social.s3.amazonaws.com/acao.${acao.acaoId}/templateAcao`);
+                        const URL_ACAO = 'https://andersonaslap.github.io/deferred-deep-link-pastoral-social?doadorDetalheAcao/$slug';
+                        const newMsg = msg.parametrosMensagem!.replace("$1", doador.doadorNome!).replace("$2", URL_ACAO.replace("$slug", `${acao.acaoId!}`));
                         const parametros = JSON.parse(newMsg) as ParameterDTO[];
                         const telefone = doador.doadorTelefone!.replace("5581", "55819");
                         const componente = new ComponenteDTO(ComponenteTypeEnum.body, parametros);
