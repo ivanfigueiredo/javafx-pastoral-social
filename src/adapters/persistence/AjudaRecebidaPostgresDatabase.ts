@@ -9,6 +9,7 @@ import { AjudaFilterQueryDTO } from "../../application/dto/AjudaFilterQueryDTO";
 import { OpcaoListaDTO } from "../../application/dto/OpcaoListaDTO";
 import { TipoAjudaEntity } from "./entities/TipoAjudaEntity";
 import { AjudaMapper } from "../mappers/AjudaMapper";
+import { StatusAjudaEnum } from "./entities/StatusAjudaEnum";
 
 export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     private readonly ajudaRepository: Repository<AjudaRecebidaEntity>;
@@ -89,5 +90,14 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
     public async findAjudasOpcaoLista(): Promise<OpcaoListaDTO[]> {
         const tiposAjuda = await this.tipoAjudaRepository.find();
         return AjudaMapper.toTipoAjudaOpcaoListaDTO(tiposAjuda);
+    }
+
+    public async countAjudasByStatus(statusAjuda: StatusAjudaEnum): Promise<number> {
+        try {
+            return await this.ajudaRepository.count({ where: { statusAjuda } });
+        } catch (e: any) {
+            this.logger.error({err: e.message}, "Erro ao contar ajudas");
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
     }
 }
