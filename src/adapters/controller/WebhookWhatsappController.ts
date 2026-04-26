@@ -39,6 +39,7 @@ export class WebhookWhatsappController {
             async function (params: any, data: any) {
                 try {
                     const payload = WhatsappMetaMapper.toWebHookMetaPayloadDTO(data);
+                    console.dir("Recebido novo webhook do WhatsApp: " + JSON.stringify(payload, null, 2), {depth: null});
                     if (payload.entry.length > 0 && payload.entry[0].changes.length > 0) {
                         for (const entry of payload.entry) {
                             const changes = entry.changes;
