@@ -59,23 +59,50 @@ export class GetFamiliaService implements GetFamiliaUseCase {
         }
     }
 
+    // public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<ListarFamiliasPrioritariasDTO[]> {
+    //     try {
+    //         const familias: FamiliaEntity[] = await this.familiaRepository.getFamiliasPorTipoAjuda(tipoAjuda);
+    //         const familiasClassificadas: FamiliaEntity[] = [];
+    //         for (const familia of familias) {
+    //             const calculo = new CalcularPrioridadeAjuda(familia);
+    //             if (calculo.prioridade === PrioridadeEnum.ALTA) {
+    //                 familiasClassificadas.push(familia);
+    //             }
+    //         }
+    //         const LIMIT_FAMILIAS = 3;
+    //         if (familiasClassificadas.length > LIMIT_FAMILIAS) {
+    //             const familiasEscolhidas = this.escolhaAleatoria(familiasClassificadas, LIMIT_FAMILIAS);
+    //             return familiasEscolhidas.map(familia => new ListarFamiliasPrioritariasDTO(familia.id, familia.nomeRepresentante));
+    //         } else {
+    //             return familiasClassificadas.map(familia => new ListarFamiliasPrioritariasDTO(familia.id, familia.nomeRepresentante));
+    //         }
+    //     } catch (e: any) {
+    //         this.logger.error({ err: e.message }, 'Erro ao listar familias ');
+    //         throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+    //     }
+    // }
+
     public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<ListarFamiliasPrioritariasDTO[]> {
         try {
             const familias: FamiliaEntity[] = await this.familiaRepository.getFamiliasPorTipoAjuda(tipoAjuda);
-            const familiasClassificadas: FamiliaEntity[] = [];
-            for (const familia of familias) {
+            const familiasComPrioridade = familias.map(familia => {
                 const calculo = new CalcularPrioridadeAjuda(familia);
-                if (calculo.prioridade === PrioridadeEnum.ALTA) {
-                    familiasClassificadas.push(familia);
-                }
-            }
+                return {
+                    familia,
+                    prioridade: calculo.prioridade
+                };
+            });
+            familiasComPrioridade.sort((a, b) => {
+                return PrioridadePeso[a.prioridade] - PrioridadePeso[b.prioridade];
+            });
             const LIMIT_FAMILIAS = 3;
-            if (familiasClassificadas.length > LIMIT_FAMILIAS) {
-                const familiasEscolhidas = this.escolhaAleatoria(familiasClassificadas, LIMIT_FAMILIAS);
-                return familiasEscolhidas.map(familia => new ListarFamiliasPrioritariasDTO(familia.id, familia.nomeRepresentante));
-            } else {
-                return familiasClassificadas.map(familia => new ListarFamiliasPrioritariasDTO(familia.id, familia.nomeRepresentante));
-            }
+            const topFamilias = familiasComPrioridade.slice(0, LIMIT_FAMILIAS);
+            return topFamilias.map(item => 
+                new ListarFamiliasPrioritariasDTO(
+                    item.familia.id,
+                    item.familia.nomeRepresentante
+                )
+            );
         } catch (e: any) {
             this.logger.error({ err: e.message }, 'Erro ao listar familias ');
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
