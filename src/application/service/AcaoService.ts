@@ -81,7 +81,10 @@ export class AcaoService implements AcaoUseCase {
     public async listarAcoes(dto: AcaoFilterQueryDTO): Promise<PaginatedDTO> {
         try {
             const [acoes, totalAcoes] = await this.acaoRepository.listar(dto);
-            const response = await Promise.all(
+            const totalPlanejadas = await this.acaoRepository.countAcoesByStatus(StatusAcaoEnum.PLANEJADA);
+            const totalEmAndamento = await this.acaoRepository.countAcoesByStatus(StatusAcaoEnum.EM_ANDAMENTO);
+            const totalConcluidas = await this.acaoRepository.countAcoesByStatus(StatusAcaoEnum.CONCLUIDA);
+            const result = await Promise.all(
                 acoes.map(async (acao) => {
                     const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
                         await this.getItensGerados(acao.templateAcao!) : 0;
@@ -104,6 +107,13 @@ export class AcaoService implements AcaoUseCase {
                     }
                 })
             );
+            const response = {
+                totalAcoes: totalAcoes,
+                planejadas: totalPlanejadas,
+                emAndamento: totalEmAndamento,
+                concluidas: totalConcluidas,
+                data: result
+            }
             return new PaginatedDTO(dto.page, totalAcoes, Math.ceil(totalAcoes / dto.pageSize), response);
         } catch (e: any) {
             this.logger.error({error: e.message}, 'Erro ao listar acao');
