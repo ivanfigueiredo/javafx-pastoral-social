@@ -5,6 +5,7 @@ import { AcaoEntity } from "./entities/AcaoEntity";
 import { AcaoRepository } from "../../application/port/out/AcaoRepository";
 import { AcaoFilterQueryDTO } from "../../application/dto/acao/AcaoFilterQueryDTO";
 import { StatusAcaoEnum } from "../../application/dto/enuns/StatusAcaoEnum";
+import { InternalServerErrorException } from "../../application/exceptions/InternalServerErrorException";
 
 export class AcaoPostgresDatabase implements AcaoRepository {
     private readonly acaoRepository: Repository<AcaoEntity>;
@@ -89,5 +90,13 @@ export class AcaoPostgresDatabase implements AcaoRepository {
         return this.acaoRepository.findOne({
             where: { inicioAcao: Equal(now), statusAcao: StatusAcaoEnum.PLANEJADA }
         });
+    }
+
+    public async countAcoesByStatus(statusAcao: StatusAcaoEnum): Promise<number> {
+        try {
+            return await this.acaoRepository.count({ where: { statusAcao } });
+        } catch (e: any) {
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
     }
 }

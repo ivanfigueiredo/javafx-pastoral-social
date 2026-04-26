@@ -8,4 +8,5 @@ export interface AcaoRepository {
     listar: (filter: AcaoFilterQueryDTO) => Promise<[AcaoEntity[], number]>;
     findByInicioAcao: () => Promise<AcaoEntity | null>;
     updateStatusAcao: (acaoId: number, status: StatusAcaoEnum) => Promise<void>
+    countAcoesByStatus: (statusAcao: StatusAcaoEnum) => Promise<number>
 }
