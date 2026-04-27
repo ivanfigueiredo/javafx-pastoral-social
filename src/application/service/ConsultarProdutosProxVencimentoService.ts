@@ -27,7 +27,7 @@ export class ConsultarProdutosProxVencimentoService {
                 if (msg) {
                     const coordenadores = await this.usuarioRepository.findAllCoordenadores();
                         for (const coordenador of coordenadores) {
-                        const newMsg = msg!.parametrosMensagem!.replace("$1", coordenador.nome);
+                        const newMsg = msg!.parametrosMensagem!.replace("$1", coordenador.nome.split(" ")[0]);
                         const telefone = coordenador.telefone!.startsWith("55") ? coordenador.telefone! : "55".concat(coordenador.telefone!);
                         const parametros = JSON.parse(newMsg) as ParameterDTO[];
                         const componente = new ComponenteDTO(ComponenteTypeEnum.body, parametros);
