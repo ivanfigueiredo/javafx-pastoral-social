@@ -19,7 +19,7 @@ export class WhatsappMetaMapper {
     private constructor() {}
 
     public static toWebHookMetaPayloadDTO(data: any): WebHookMetaPayloadDTO {
-        const entries = (data?.payload?.entry ?? []).map((entry: any) => {
+        const entries = (data?.entry ?? []).map((entry: any) => {
             const changes = (entry?.changes ?? []).map((change: any) => {
                 const value = change?.value ?? {};
                 const messages = value?.messages?.map((message: any) => {
