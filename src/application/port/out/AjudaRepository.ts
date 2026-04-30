@@ -9,5 +9,5 @@ export interface AjudaRepository {
     findAjudas: (dto: AjudaFilterQueryDTO) => Promise<[AjudaRecebidaEntity[], number]>;
     findAjudasOpcaoLista: () => Promise<OpcaoListaDTO[]>;
     save: (ajuda: AjudaRecebidaEntity) => Promise<void>;
-    countAjudasByStatus: (statusAjuda: StatusAjudaEnum) => Promise<number>
+    countAjudasByStatus: (statusAjuda: StatusAjudaEnum[]) => Promise<number>
 }

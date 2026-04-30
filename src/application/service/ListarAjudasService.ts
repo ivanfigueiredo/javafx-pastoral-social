@@ -24,8 +24,10 @@ export class ListarAjudasService implements ListarAjudasUseCase {
     public async listarAjudas(dto: AjudaFilterQueryDTO): Promise<PaginatedDTO> {
         try {
             const [ajudas, totalAjuda] = await this.ajudaRepository.findAjudas(dto);
-            const totalPendentes = await this.ajudaRepository.countAjudasByStatus(StatusAjudaEnum.APROVADA);
-            const totalConcluidas = await this.ajudaRepository.countAjudasByStatus(StatusAjudaEnum.ENTREGUE);
+            const totalPendentes = await this.ajudaRepository.countAjudasByStatus([StatusAjudaEnum.APROVADA]);
+            const totalConcluidas = await this.ajudaRepository.countAjudasByStatus([StatusAjudaEnum.ENTREGUE]);
+            const totalAjudas = await this.ajudaRepository.countAjudasByStatus([StatusAjudaEnum.AGUARDANDO_APROVACAO, StatusAjudaEnum.APROVADA, StatusAjudaEnum.ENTREGUE]);
+            const totalNovas = await this.ajudaRepository.countAjudasByStatus([StatusAjudaEnum.AGUARDANDO_APROVACAO]);
             const result: Result[] = ajudas.map(ajuda => ({
                 id: ajuda.id,
                 representante: ajuda.familia.nomeRepresentante,
@@ -38,9 +40,10 @@ export class ListarAjudasService implements ListarAjudasUseCase {
                 cesta: this.getCesta(ajuda)
             }));
             const response = {
-                total: totalAjuda,
                 pendentes: totalPendentes,
                 concluidas: totalConcluidas,
+                total: totalAjudas,
+                novas: totalNovas,
                 data: result
             }
             return new PaginatedDTO(parseInt(`${dto.page}`), totalAjuda, Math.ceil(totalAjuda / dto.pageSize), response);

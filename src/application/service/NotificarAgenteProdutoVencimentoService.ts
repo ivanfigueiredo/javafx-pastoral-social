@@ -83,8 +83,10 @@ export class NotificarAgenteProdutoVencimentoService {
         this.logger.info("Agente notificado com sucesso");
     }
 
-    private getFormatoMensagem(estoque: EstoqueEntity): string {
-        return `Código: ${estoque.codProduto} - Vence em: ${this.diffInDays(estoque.validade)} dias`;
+    private getFormatoMensagem(estoque: EstoqueEntity): string | undefined {
+        const dias = this.diffInDays(estoque.validade);
+        if (dias < 0) return undefined;
+        return `Código: ${estoque.codProduto} - Vence em: ${dias} dias`;
     }
 
     private getPrimeiraParte(estoques: EstoqueEntity[]): EstoqueEntity[] {
@@ -109,7 +111,10 @@ export class NotificarAgenteProdutoVencimentoService {
 
     private setMapProduto(estoques: EstoqueEntity[], mapa: Map<string, string[]>): void {
         for (const estoque of estoques) {
-            mapa.get(estoque.itemProduto.itemProdutoDesc!)?.push(this.getFormatoMensagem(estoque));
+            const formato = this.getFormatoMensagem(estoque);
+            if (formato) {
+                mapa.get(estoque.itemProduto.itemProdutoDesc!)?.push(formato);
+            }
         }
     }
 

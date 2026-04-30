@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { In, Repository } from "typeorm";
 import { AjudaRepository } from "../../application/port/out/AjudaRepository";
 import { AjudaRecebidaEntity } from "./entities/AjudaRecebidaEntity";
 import { Connection } from "./database/Connection";
@@ -92,9 +92,10 @@ export class AjudaRecebidaPostgresDatabase implements AjudaRepository {
         return AjudaMapper.toTipoAjudaOpcaoListaDTO(tiposAjuda);
     }
 
-    public async countAjudasByStatus(statusAjuda: StatusAjudaEnum): Promise<number> {
+    public async countAjudasByStatus(statusAjuda: StatusAjudaEnum[]): Promise<number> {
         try {
-            return await this.ajudaRepository.count({ where: { statusAjuda } });
+                return await this.ajudaRepository.count({ where: { statusAjuda: In(statusAjuda) } });
+
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao contar ajudas");
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
