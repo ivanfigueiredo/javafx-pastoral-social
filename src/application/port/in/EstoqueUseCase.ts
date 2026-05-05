@@ -19,4 +19,5 @@ export interface EstoqueUseCase {
     gerarModeloTemplate: (dto: GeracaoModeloTemplateDTO) => Promise<ModeloTemplateCriadoResponse>;
     criarModeloTemplateAcao: (templateItens: TemplateItemDTO[], templateType: TemplateTypeEnum) => Promise<any>;
     sugerirModeloTemplate: () => Promise<any>;
+    removerProdutosVencidos: () => Promise<void>;
 }

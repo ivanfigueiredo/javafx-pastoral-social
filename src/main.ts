@@ -1,5 +1,4 @@
 import "reflect-metadata";
-import { CronJob } from "cron";
 import { Auth } from "./adapters/http/authentication/Auth";
 import { Authorize } from "./adapters/http/authorization/Authorize";
 import { ExpressAdapter } from "./adapters/http/ExpressAdapter"
@@ -82,7 +81,7 @@ export async function buildApp() {
     const authRepository = new AuthPostgresDatabase(postgresDatabase);
     const templateRepository = new TemplatePostgresDatabase(logger, postgresDatabase, unitOfWork);
     const auditoriaRepository = new AuditoriaPostgresDatabase(postgresDatabase, logger);
-    const itemTemplateRepository = new ItemTemplatePostgresDatabase(logger, unitOfWork);
+    const itemTemplateRepository = new ItemTemplatePostgresDatabase(logger, unitOfWork, postgresDatabase);
     const cestaGeradaRepository = new CestaGeradaPostgresDatabase(logger, postgresDatabase, unitOfWork);
     const ajudaRepository = new AjudaRecebidaPostgresDatabase(logger, postgresDatabase, unitOfWork);
     const acaoRepository = new AcaoPostgresDatabase(postgresDatabase, unitOfWork);
@@ -119,7 +118,7 @@ export async function buildApp() {
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
     const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
     const gerarModeloTemplateProxy = new GerarModeloTemplateProxy(logger, estoqueService, auditoriaRepository);
-    const acaoService = new AcaoService(estoqueService, acaoRepository, unitOfWork, logger, idempotenciaService);
+    const acaoService = new AcaoService(estoqueService, acaoRepository, unitOfWork, logger, idempotenciaService, itemTemplateRepository);
     const authUseCase = new AuthService(logger, usuarioRepository, securityRepository, authRepository);
     const consultarProdutosProxVencimentoService = new ConsultarProdutosProxVencimentoService(usuarioRepository, estoqueRepositiory, mensagemRepository, notificacaoWhatsAppGateway, tempDataRepository);
     const auth = new Auth(authRepository);
@@ -135,8 +134,6 @@ export async function buildApp() {
     new HealthCheckController(httpClient);
     new DoacaoController(httpClient, auth, authorize, doacaoService);
     new AcaoController(httpClient, auth, authorize, acaoService);
-    new NotificacaoController(httpClient, consultarProdutosProxVencimentoService, iniciarAcaoService);
-    // const consultarProdutosProxVencimentoJob = new CronJob('* * * * *', async () => await iniciarAcaoService.execute());
-    // consultarProdutosProxVencimentoJob.start();
+    new NotificacaoController(httpClient, consultarProdutosProxVencimentoService, iniciarAcaoService, estoqueService);
     return httpClient.getExpress();
 }

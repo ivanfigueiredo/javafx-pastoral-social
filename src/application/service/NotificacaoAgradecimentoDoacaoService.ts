@@ -23,7 +23,7 @@ export class NotificacaoAgradecimentoDoacaoService {
         try {
             const msg = await this.msgNotificacaoRepository.findMensagemNotificacaoById(MensagemNotificacaoEnum.MSG_AGRADECIMENTO_DOACAO);
             if (msg) {
-                const newMsg = msg!.parametrosMensagem!.replace("$1", dto.nomeDoador);
+                const newMsg = msg!.parametrosMensagem!.replace("$1", dto.nomeDoador.split(" ")[0]);
                 const parametros = JSON.parse(newMsg) as ParameterDTO[];
                 const componente = new ComponenteDTO(ComponenteTypeEnum.body, parametros);
                 const templateData = new TemplateDataNotificaoDTO(msg.templateName!, {code: 'pt_BR'}, [componente]);

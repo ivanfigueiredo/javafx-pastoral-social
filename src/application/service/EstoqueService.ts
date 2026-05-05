@@ -151,19 +151,22 @@ export class EstoqueService implements EstoqueUseCase {
                 this.logger.error({ templateType: dto.template.templateType }, "Não é possível gerar cestas básicas para um tipo de template diferente de CESTA_BASICA");
                 throw new UnprocessableException(`Não é possível gerar cestas básicas para um tipo de template diferente de CESTA_BASICA`);
             }
+            let templateEntity = await this.itemTemplateRepository.existeTemplateByItens(dto.templateItens, dto.template.templateType);
+            if (!templateEntity) {
+                templateEntity = await this.templateRepository.save(dto.template);
+                for (const templateItem of dto.templateItens) {
+                    templateItem.itemProdutoId
+                    const itemProdutoEntity = new ItemProdutoEntity(templateItem.itemProdutoId, null, null, null, [], []);
+                    const itemTemplate = new ItemTemplateEntity(null, templateItem.quantidade, templateEntity, itemProdutoEntity);
+                    await this.itemTemplateRepository.save(itemTemplate);
+                    this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
+                }
+            }
             const consultGeracaoTemplate = new ConsultaGeracaoTemplateDTO(dto.templateItens);
             const result = await this.consultarGeracaoTemplate(consultGeracaoTemplate);
             if (result.quantidadePossivel == 0) {
                 this.logger.error({ quantidadePossivel: result.quantidadePossivel, templateDescricao: dto.template.templateDesc }, "Estoque indisponível para o template informado.");
                 throw new UnprocessableException(`Estoque indisponível para o modelo de template informado: '${dto.template.templateDesc}'.`);
-            }
-            const templateEntity = await this.templateRepository.save(dto.template);
-            for (const templateItem of dto.templateItens) {
-                templateItem.itemProdutoId
-                const itemProdutoEntity = new ItemProdutoEntity(templateItem.itemProdutoId, null, null, null, [], []);
-                const itemTemplate = new ItemTemplateEntity(null, templateItem.quantidade, templateEntity, itemProdutoEntity);
-                await this.itemTemplateRepository.save(itemTemplate);
-                this.logger.info({idItemTemplate: itemTemplate.id} , 'Item template cadastrado com sucesso.');
             }
             if (dto.template.gerarCestas) {
                 for (let i = 0; i < dto.qtdGeracaoPossivel; i++) {
@@ -196,6 +199,29 @@ export class EstoqueService implements EstoqueUseCase {
                 throw e;
             }
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        } finally {
+            await this.unitOfWork.release();
+        }
+    }
+
+    public async removerProdutosVencidos(): Promise<void> {
+        try {
+            await this.unitOfWork.startTransaction();
+            this.logger.info('Iniciando processo de remoção de produtos vencidos');
+            const produtosVencidos = await this.estoqueRepository.findProdutosVencidos();
+            for (const produto of produtosVencidos) {
+                produto.isDisponivel = false;
+                produto.isProdutoVencido = true;
+            }
+            if (produtosVencidos.length > 0) {
+                this.logger.info({ quantidade: produtosVencidos.length }, 'Encontrados produtos vencidos para remoção');
+                await this.estoqueRepository.saveMany(produtosVencidos);
+                this.logger.info('Processo de remoção de produtos vencidos concluído com sucesso');
+            }
+            await this.unitOfWork.commit();
+        } catch (e: any) {
+            this.logger.error({ err: e.message }, 'Erro ao remover produtos vencidos ')
+            await this.unitOfWork.rollBack();
         } finally {
             await this.unitOfWork.release();
         }
