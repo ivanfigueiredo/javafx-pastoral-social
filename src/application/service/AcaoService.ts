@@ -24,6 +24,7 @@ import { AcaoFilterQueryDTO } from "../dto/acao/AcaoFilterQueryDTO";
 import { NivelNecessidadeDoacaoEnum } from "../dto/enuns/NivelNecessidadeDoacaoEnum";
 import { AtualizarAcaoDTO } from "../dto/acao/AtualizarAcaoDTO";
 import { NotFoundException } from "../exceptions/NotFoundException";
+import { ItemTemplateRepository } from "../port/out/ItemTemplateRepository";
 
 export class AcaoService implements AcaoUseCase {
     private readonly logger: Logger;
@@ -33,7 +34,8 @@ export class AcaoService implements AcaoUseCase {
         private readonly acaoRepository: AcaoRepository,
         private readonly unitOfwork: UnitOfWorkPort,
         logger: Logger,
-        private readonly idempotenciaPort: IdempotenciaPort
+        private readonly idempotenciaPort: IdempotenciaPort,
+        private readonly itemTemplateRepository: ItemTemplateRepository
     ) {
         this.logger = logger.child({ service: "AcaoUseCase" });
     }
@@ -54,10 +56,16 @@ export class AcaoService implements AcaoUseCase {
                 const acao = new AcaoEntity(null, dto.titulo, dto.descricao, dto.dataEvento, dto.inicioAcao, new Date().toISOString(), dto.tipoAcao, null, null, StatusAcaoEnum.PLANEJADA, []);
                 if (this.acaoIsValid(dto.tipoAcao)) {
                     if (!dto.qtdAcaoSocial || dto.qtdAcaoSocial < 0) throw new UnprocessableException(`O campo qtdAcaoSocial precisa ser preenchido para tipo de ação: ${dto.tipoAcao}`);
+                    if (!dto.itens || dto.itens.length === 0) throw new UnprocessableException(`O campo itens precisa ser preenchido para tipo de ação: ${dto.tipoAcao}`);
                     const tipoTemplate = (dto.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ? TemplateTypeEnum.CESTA_BASICA : TemplateTypeEnum.ALMOCO;
-                    const templateCriado = await this.estoqueUseCase.criarModeloTemplateAcao(dto.itens!, tipoTemplate);
-                    const template = new TemplateEntity(templateCriado.idTemplate, null, null, [], [], null);
-                    acao.templateAcao = template;
+                    const templateExistente = await this.itemTemplateRepository.existeTemplateByItens(dto.itens, tipoTemplate);
+                    if (templateExistente) {
+                        acao.templateAcao = templateExistente;
+                    } else {
+                        const templateCriado = await this.estoqueUseCase.criarModeloTemplateAcao(dto.itens!, tipoTemplate);
+                        const template = new TemplateEntity(templateCriado.idTemplate, null, null, [], [], null);
+                        acao.templateAcao = template;
+                    }
                     acao.qtdAcaoSocial = dto.qtdAcaoSocial;
                 }
                 await this.idempotenciaPort.concluirProcessamento(hash);
@@ -86,8 +94,8 @@ export class AcaoService implements AcaoUseCase {
             const totalConcluidas = await this.acaoRepository.countAcoesByStatus(StatusAcaoEnum.CONCLUIDA);
             const result = await Promise.all(
                 acoes.map(async (acao) => {
-                    const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
-                        await this.getItensGerados(acao.templateAcao!) : 0;
+                    const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ?
+                        await this.getItensGerados(acao.templateAcao!) : this.getItensGeradosAcaoSocial(acao);
                     return {
                         acaoId: acao.acaoId!,
                         titulo: acao.titulo,
@@ -169,8 +177,8 @@ export class AcaoService implements AcaoUseCase {
             const acao = await this.acaoRepository.findById(parseInt(idAcao));
             if (!acao) throw new NotFoundException("Ação não encontrada");
             const totalAcaoSocial = (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0;
-            const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
-                await this.getItensGerados(acao.templateAcao!) : 0;
+            const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ?
+                await this.getItensGerados(acao.templateAcao!) : this.getItensGeradosAcaoSocial(acao);
             return {
                 acaoId: acao.acaoId!,
                 titulo: acao.titulo,
@@ -191,7 +199,11 @@ export class AcaoService implements AcaoUseCase {
                             nomeProduto: item.itemProduto.itemProdutoDesc, 
                             unidadeMedida: item.itemProduto.unidadeMedida!.undMedidas,
                             nivelNecessidadeDoacao: (acao.doacoesRecebidas !== null && acao.doacoesRecebidas.length > 0) ?
-                                this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id, item, totalAcaoSocial) : NivelNecessidadeDoacaoEnum.CRITICAL
+                                (
+                                    (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ? 
+                                        this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id, item, totalAcaoSocial) 
+                                        : this.getNivelNecessidadeDoacaoAcaoSocial(acao.doacoesRecebidas, item.itemProduto.id, item, totalAcaoSocial)
+                                    ) : NivelNecessidadeDoacaoEnum.CRITICAL
                         }))
                     : []
             }
@@ -202,6 +214,21 @@ export class AcaoService implements AcaoUseCase {
         }   
     }
 
+    private getItensGeradosAcaoSocial(acao: AcaoEntity): number {
+        let percentualRecebido = 0;
+        let qtdItensNecessarios = 0;
+        if (acao.doacoesRecebidas != null && acao.doacoesRecebidas.length > 0) {
+            acao.templateAcao!.itensTemplate.forEach(itemTemplate => {
+                qtdItensNecessarios += itemTemplate.quantidade;
+                percentualRecebido += acao.doacoesRecebidas!.filter(doacao => doacao.itemProduto!.id === itemTemplate.itemProduto.id)
+                    .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
+            });
+            const result = (percentualRecebido / qtdItensNecessarios);
+            percentualRecebido = (result == 1) ? 100 : result * 100;
+        }
+        return percentualRecebido;
+    }
+
     private getNivelNecessidadeDoacao(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number, itemTemplate: ItemTemplateEntity, totalAcaoSocial: number): string {
         const qtd =doacoes.filter(doacao => doacao.itemProduto!.id === itemProdutoId)
             .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
@@ -209,6 +236,18 @@ export class AcaoService implements AcaoUseCase {
         if (qtdMinimaDoacaoRecebida <= 35) return NivelNecessidadeDoacaoEnum.CRITICAL;
         if (qtdMinimaDoacaoRecebida > 35 && qtdMinimaDoacaoRecebida <= 70) return NivelNecessidadeDoacaoEnum.HIGH;
         if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 90) return NivelNecessidadeDoacaoEnum.MEDIUM;
+        return NivelNecessidadeDoacaoEnum.LOW;
+    }
+
+    private getNivelNecessidadeDoacaoAcaoSocial(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number, itemTemplate: ItemTemplateEntity, totalAcaoSocial: number): string {
+        const qtd =doacoes.filter(doacao => doacao.itemProduto!.id === itemProdutoId)
+            .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
+        let qtdMinimaDoacaoRecebida = (qtd / itemTemplate.quantidade);
+        if (qtdMinimaDoacaoRecebida == 1) return NivelNecessidadeDoacaoEnum.LOW;
+        qtdMinimaDoacaoRecebida = (qtdMinimaDoacaoRecebida * 100);
+        if (qtdMinimaDoacaoRecebida <= 35) return NivelNecessidadeDoacaoEnum.CRITICAL;
+        if (qtdMinimaDoacaoRecebida > 35 && qtdMinimaDoacaoRecebida <= 70) return NivelNecessidadeDoacaoEnum.HIGH;
+        if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 96) return NivelNecessidadeDoacaoEnum.MEDIUM;
         return NivelNecessidadeDoacaoEnum.LOW;
     }
 

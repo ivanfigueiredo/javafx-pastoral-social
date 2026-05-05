@@ -32,6 +32,9 @@ export class EstoqueEntity {
     @Column({ name: 'data_saida', type: 'date', nullable: true })
     dataSaida: Date | null;
 
+    @Column({ name: 'is_produto_vencido', type: 'boolean', default: false })
+    isProdutoVencido: boolean | null;
+
     @OneToOne(() => CestaEstoqueItemEntity, (cestaEstoque) => cestaEstoque.cestaEstoqueItem)
     cestaItemEstoque: CestaEstoqueItemEntity | null;
 
@@ -45,7 +48,8 @@ export class EstoqueEntity {
     itemProduto: ItemProdutoEntity,
     cestaItemEstoque: CestaEstoqueItemEntity | null,
     doacoesEstoque: DoacaoEstoqueEntity[],
-    codProduto: string | null = null
+    codProduto: string | null = null,
+    isProdutoVencido: boolean | null = null
   ) {
     this.id = id;
     this.dataEntrada = dataEntrada;
@@ -56,5 +60,6 @@ export class EstoqueEntity {
     this.doacoesEstoque = doacoesEstoque;
     this.cestaItemEstoque = cestaItemEstoque;
     this.codProduto = codProduto;
+    this.isProdutoVencido = isProdutoVencido;
   }
 }

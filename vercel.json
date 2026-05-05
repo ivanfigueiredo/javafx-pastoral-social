@@ -20,6 +20,10 @@
     {
       "path": "/api/notificacao/iniciar-acao",
       "schedule": "50 23 * * *"
+    },
+    {
+      "path": "/api/notificacao/remover-produtos-vencidos",
+      "schedule": "30 2 * * *"
     }
   ]
 }

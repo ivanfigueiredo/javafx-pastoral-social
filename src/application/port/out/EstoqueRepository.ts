@@ -19,4 +19,5 @@ export interface EstoqueRepository {
     buscarEstoqueDisponivel: () => Promise<EstoqueDisponivelDTO[]>;
     findEstoqueByItemProdutoIdAndQtdGeracaoTemplate: (itemProdutoId: number, qtdGeracaoTemplate: number) => Promise<EstoqueEntity[]>;
     findProdutoProximoVencimento: () => Promise<EstoqueEntity[]>
+    findProdutosVencidos: () => Promise<EstoqueEntity[]>
 }

@@ -1,4 +1,4 @@
-import { Between, IsNull, Repository } from "typeorm";
+import { Between, IsNull, LessThan, Repository } from "typeorm";
 import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
@@ -93,6 +93,20 @@ export class EstoquePostgresDatabase implements EstoqueRepository {
             }
         });
             
+    }
+
+    public async findProdutosVencidos(): Promise<EstoqueEntity[]> {
+        const hoje = new Date();
+        return this.estoqueRepository.find({
+            where: {
+                validade: LessThan(hoje),
+                isDisponivel: true, 
+                dataSaida: IsNull()
+            }, 
+            relations: {
+                itemProduto: true
+            }
+        });
     }
 
     public async buscarEstoqueDisponivel(): Promise<EstoqueDisponivelDTO[]> { 

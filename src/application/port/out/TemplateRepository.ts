@@ -7,7 +7,7 @@ export interface TemplateRepository {
     save: (dto: CriarTemplateDTO) => Promise<TemplateEntity>;
     findTemplateById: (templateId: number) => Promise<TemplateEntity | null>;
     findPaginatedTemplate: (page: number, pageSize: number, templateType: TemplateTypeEnum) => Promise<[TemplateEntity[], number]>;
-    findTemplates: () => Promise<TemplateEntity[]>
-    findTemplatesOpcaoLista: () => Promise<OpcaoListaDTO[]>
+    findTemplates: () => Promise<TemplateEntity[]>;
+    findTemplatesOpcaoLista: () => Promise<OpcaoListaDTO[]>;
 }
 
