@@ -204,7 +204,7 @@ export class AcaoService implements AcaoUseCase {
                                 (
                                     (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ? 
                                         this.getNivelNecessidadeDoacao(acao.doacoesRecebidas, item.itemProduto.id, item, totalAcaoSocial) 
-                                        : this.getNivelNecessidadeDoacaoAcaoSocial(acao.doacoesRecebidas, item.itemProduto.id, item, totalAcaoSocial)
+                                        : this.getNivelNecessidadeDoacaoAcaoSocial(acao.doacoesRecebidas, item.itemProduto.id, item)
                                     ) : NivelNecessidadeDoacaoEnum.CRITICAL
                         }))
                     : []
@@ -241,11 +241,11 @@ export class AcaoService implements AcaoUseCase {
         const qtdMinimaDoacaoRecebida = (qtd / (itemTemplate.quantidade * totalAcaoSocial)) * 100;
         if (qtdMinimaDoacaoRecebida <= 35) return NivelNecessidadeDoacaoEnum.CRITICAL;
         if (qtdMinimaDoacaoRecebida > 35 && qtdMinimaDoacaoRecebida <= 70) return NivelNecessidadeDoacaoEnum.HIGH;
-        if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 90) return NivelNecessidadeDoacaoEnum.MEDIUM;
+        if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 98) return NivelNecessidadeDoacaoEnum.MEDIUM;
         return NivelNecessidadeDoacaoEnum.LOW;
     }
 
-    private getNivelNecessidadeDoacaoAcaoSocial(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number, itemTemplate: ItemTemplateEntity, totalAcaoSocial: number): string {
+    private getNivelNecessidadeDoacaoAcaoSocial(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number, itemTemplate: ItemTemplateEntity): string {
         const qtd =doacoes.filter(doacao => doacao.itemProduto!.id === itemProdutoId)
             .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
         let qtdMinimaDoacaoRecebida = (qtd / itemTemplate.quantidade);
@@ -253,7 +253,7 @@ export class AcaoService implements AcaoUseCase {
         qtdMinimaDoacaoRecebida = (qtdMinimaDoacaoRecebida * 100);
         if (qtdMinimaDoacaoRecebida <= 35) return NivelNecessidadeDoacaoEnum.CRITICAL;
         if (qtdMinimaDoacaoRecebida > 35 && qtdMinimaDoacaoRecebida <= 70) return NivelNecessidadeDoacaoEnum.HIGH;
-        if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 96) return NivelNecessidadeDoacaoEnum.MEDIUM;
+        if (qtdMinimaDoacaoRecebida > 70 && qtdMinimaDoacaoRecebida <= 98) return NivelNecessidadeDoacaoEnum.MEDIUM;
         return NivelNecessidadeDoacaoEnum.LOW;
     }
 
