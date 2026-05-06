@@ -95,7 +95,7 @@ export class AcaoService implements AcaoUseCase {
             const result = await Promise.all(
                 acoes.map(async (acao) => {
                     const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ?
-                        await this.getItensGerados(acao.templateAcao!) : this.getItensGeradosAcaoSocial(acao);
+                        await this.getCalculaPercentualItensGerados(acao, acao.qtdAcaoSocial!) : this.getItensGeradosAcaoSocial(acao);
                     return {
                         acaoId: acao.acaoId!,
                         titulo: acao.titulo,
@@ -105,8 +105,7 @@ export class AcaoService implements AcaoUseCase {
                         dataConclusaoAcao: acao.dataEvento,
                         inicioAcao: acao.inicioAcao,
                         statusAcao: StatusAcaoEnum[acao.statusAcao!],
-                        percentualRecebido: (acao.qtdAcaoSocial != null && qtdItensGerados > 0) ? 
-                            `${this.getCalculaPercentualItensGerados(qtdItensGerados, acao.qtdAcaoSocial!)}%` : '0',
+                        percentualRecebido: `${qtdItensGerados}%`,
                         itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
                         qtdDoadores: (acao.doacoesRecebidas != null) ? this.getTotalDoadores(acao.doacoesRecebidas) : 0,
                         itensGerados: `${qtdItensGerados}/${(acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0}`,
@@ -168,8 +167,12 @@ export class AcaoService implements AcaoUseCase {
         return new ConsultaGeracaoTemplateDTO(itens.map(item => new TemplateItemDTO(item.itemProduto.id, item.quantidade)));
     }
 
-    private getCalculaPercentualItensGerados(qtdAtual: number, qtdTotal: number): number {
-        return (qtdAtual / qtdTotal) * 100;
+    private async getCalculaPercentualItensGerados(acao: AcaoEntity, qtdTotal: number): Promise<number> {
+        if (acao.doacoesRecebidas != null && acao.doacoesRecebidas.length > 0) {
+            const qtdAtual = acao.templateAcao!.itensTemplate.reduce((sum, item) => sum + item.quantidade, 0);
+            return (qtdAtual / qtdTotal) * 100;
+        }
+        return 0;
     }
 
     public async getAcao(idAcao: string): Promise<any> {
@@ -178,7 +181,7 @@ export class AcaoService implements AcaoUseCase {
             if (!acao) throw new NotFoundException("Ação não encontrada");
             const totalAcaoSocial = (acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0;
             const qtdItensGerados = (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA) ?
-                await this.getItensGerados(acao.templateAcao!) : this.getItensGeradosAcaoSocial(acao);
+                await this.getCalculaPercentualItensGerados(acao, acao.qtdAcaoSocial!) : this.getItensGeradosAcaoSocial(acao);
             return {
                 acaoId: acao.acaoId!,
                 titulo: acao.titulo,
@@ -189,8 +192,7 @@ export class AcaoService implements AcaoUseCase {
                 inicioAcao: acao.inicioAcao,
                 statusAcao: StatusAcaoEnum[acao.statusAcao!],
                 itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
-                percentualRecebido: (acao.qtdAcaoSocial != null && qtdItensGerados > 0) ? 
-                    `${this.getCalculaPercentualItensGerados(qtdItensGerados, acao.qtdAcaoSocial!)}%` : '0',
+                percentualRecebido: `${qtdItensGerados}%`,
                 itensGerados: `${qtdItensGerados}/${(acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0}`,
                 qtdDoadores: (acao.doacoesRecebidas != null) ? this.getTotalDoadores(acao.doacoesRecebidas) : 0,                          
                 itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
@@ -224,9 +226,13 @@ export class AcaoService implements AcaoUseCase {
                     .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
             });
             const result = (percentualRecebido / qtdItensNecessarios);
-            percentualRecebido = (result == 1) ? 100 : result * 100;
+            percentualRecebido = (result == 1) ? 100 : this.formatNumber(result);
         }
         return percentualRecebido;
+    }
+
+    private formatNumber(value: number): number {
+        return Math.trunc(value * 100);
     }
 
     private getNivelNecessidadeDoacao(doacoes: DoacaoRecebidaEntity[], itemProdutoId: number, itemTemplate: ItemTemplateEntity, totalAcaoSocial: number): string {
