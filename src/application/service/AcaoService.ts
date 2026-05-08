@@ -105,7 +105,7 @@ export class AcaoService implements AcaoUseCase {
                         dataConclusaoAcao: acao.dataEvento,
                         inicioAcao: acao.inicioAcao,
                         statusAcao: StatusAcaoEnum[acao.statusAcao!],
-                        percentualRecebido: `${qtdItensGerados}%`,
+                        percentualRecebido: `${qtdItensGerados}`,
                         itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
                         qtdDoadores: (acao.doacoesRecebidas != null) ? this.getTotalDoadores(acao.doacoesRecebidas) : 0,
                         itensGerados: `${qtdItensGerados}/${(acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0}`,
@@ -192,7 +192,7 @@ export class AcaoService implements AcaoUseCase {
                 inicioAcao: acao.inicioAcao,
                 statusAcao: StatusAcaoEnum[acao.statusAcao!],
                 itensRecebidos: (acao.doacoesRecebidas != null) ? this.somarDoacoes(acao.doacoesRecebidas) : 0,
-                percentualRecebido: `${qtdItensGerados}%`,
+                percentualRecebido: `${qtdItensGerados}`,
                 itensGerados: `${qtdItensGerados}/${(acao.qtdAcaoSocial !== null) ? acao.qtdAcaoSocial : 0}`,
                 qtdDoadores: (acao.doacoesRecebidas != null) ? this.getTotalDoadores(acao.doacoesRecebidas) : 0,                          
                 itens: (acao.tipoAcao === TipoAcaoEnum.CESTA_BASICA || acao.tipoAcao === TipoAcaoEnum.JANTA) ?
@@ -224,6 +224,9 @@ export class AcaoService implements AcaoUseCase {
                 qtdItensNecessarios += itemTemplate.quantidade;
                 percentualRecebido += acao.doacoesRecebidas!.filter(doacao => doacao.itemProduto!.id === itemTemplate.itemProduto.id)
                     .reduce((quantidade, doacao) => quantidade + doacao.quantidade!, 0);
+                if (percentualRecebido > qtdItensNecessarios) {
+                    percentualRecebido = qtdItensNecessarios;
+                }
             });
             const result = (percentualRecebido / qtdItensNecessarios);
             percentualRecebido = (result == 1) ? 100 : this.formatNumber(result);
