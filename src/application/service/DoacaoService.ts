@@ -61,7 +61,7 @@ export class DoacaoService implements DoacaoUseCase {
                 }
                 await this.doacaoRepository.saveMany(doacoes);
                 await this.idempotenciaPort.concluirProcessamento(hash);
-                const data = new NotificarDoacaoRecebidaDoadorDTO(doador.doadorNome!, doador.doadorTelefone!.startsWith("55") ? doador.doadorTelefone! : "55".concat(doador.doadorTelefone!));
+                const data = new NotificarDoacaoRecebidaDoadorDTO(doador.doadorNome!, this.getTelefoneFormatado(doador.doadorTelefone!));
                 await this.notificacaoAgradecimentoDoacaoService.execute(data);
             } else {
                 this.logger.info("Ignorando requisicao ja processada.");
@@ -75,6 +75,10 @@ export class DoacaoService implements DoacaoUseCase {
         } finally {
             await this.unitOfWork.release();
         }
+    }
+
+    private getTelefoneFormatado(telefone: string): string {
+        return telefone.startsWith("55819") ? telefone : telefone.replace("5581", "55819");
     }
 
     public async sejaDoador(dto: SejaDoadorDTO): Promise<void> {

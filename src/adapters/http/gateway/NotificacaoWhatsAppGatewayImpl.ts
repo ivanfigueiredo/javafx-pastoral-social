@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { DataNotificationDTO } from "../../../application/dto/notificacao/DataNotificationDTO";
 import { NotificacaoWhatsAppGateway } from "../../../application/port/out/NotificacaoWhatsAppGateway";
-import { InternalServerErrorException } from "../../../application/exceptions/InternalServerErrorException";
 import { Logger } from 'pino';
 import { DataNotificationTemplateTextDTO } from '../../../application/dto/notificacao/DataNotificationTemplateLivreDTO';
 
@@ -26,7 +25,6 @@ export class NotificacaoWhatsAppGatewayImpl implements NotificacaoWhatsAppGatewa
             } else {
                 this.logger.error({Error: JSON.stringify(e.message, null, 2)});
             }
-            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
 
@@ -44,7 +42,6 @@ export class NotificacaoWhatsAppGatewayImpl implements NotificacaoWhatsAppGatewa
             } else {
                 this.logger.error({Error: JSON.stringify(e.message, null, 2)});
             }
-            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
         }
     }
 }

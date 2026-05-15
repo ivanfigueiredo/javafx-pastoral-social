@@ -76,11 +76,15 @@ export class NotificarAgenteProdutoVencimentoService {
     private async publishMessage(mensagemFormat: string, coordenador: UserEntity): Promise<void> {
         const newMsg = this.getMessage().replace("$1", coordenador.nome.split(" ")[0])
             .replace("$2", mensagemFormat);
-        const telefone = coordenador.telefone!.startsWith("55") ? coordenador.telefone! : "55".concat(coordenador.telefone!);
+        const telefone = this.getTelefoneFormatado(coordenador.telefone!);
         const textDTO = new TextDTO(false, newMsg);
         const message = new DataNotificationTemplateTextDTO("whatsapp", telefone, "text", textDTO);
         await this.notificacao.sendMessage(message);
         this.logger.info("Agente notificado com sucesso");
+    }
+
+    private getTelefoneFormatado(telefone: string): string {
+        return telefone.startsWith("55819") ? telefone : telefone.replace("5581", "55819");
     }
 
     private getFormatoMensagem(estoque: EstoqueEntity): string | undefined {

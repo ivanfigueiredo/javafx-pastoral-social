@@ -25,8 +25,6 @@ export class EstoqueController {
             httpClient.on(
                 "post", 
                 "/estoque/cadastrar", 
-                // auth.authentication.bind(auth),
-                // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
                 (req: Request, res: Response, next: NextFunction) => next(),
                 (req: Request, res: Response, next: NextFunction) => next(),
                 async function (params: any, data: CadastroEstoqueDTO) {
@@ -141,8 +139,6 @@ export class EstoqueController {
                 "/estoque/sugerir-modelo", 
                 (req: Request, res: Response, next: NextFunction) => next(),
                 (req: Request, res: Response, next: NextFunction) => next(),
-                // auth.authentication.bind(auth),
-                // async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.ListarDificuldade),
                 async function (_params: any, _data: any, _userLogged?: UserLogged) {
                     const output = await estoqueUseCase.sugerirModeloTemplate();
                     return {

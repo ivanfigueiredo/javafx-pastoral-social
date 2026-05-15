@@ -36,7 +36,7 @@ export class IniciarAcaoService implements IniciarAcaoUseCase {
                         const URL_ACAO = 'https://andersonaslap.github.io/deferred-deep-link-pastoral-social?doadorDetalheAcao/$slug';
                         const newMsg = msg.parametrosMensagem!.replace("$1", doador.doadorNome!).replace("$2", URL_ACAO.replace("$slug", `${acao.acaoId!}`));
                         const parametros = JSON.parse(newMsg) as ParameterDTO[];
-                        const telefone = doador.doadorTelefone!.replace("5581", "55819");
+                        const telefone = this.getTelefoneFormatado(doador.doadorTelefone!);
                         const componente = new ComponenteDTO(ComponenteTypeEnum.body, parametros);
                         const templateData = new TemplateDataNotificaoDTO(msg.templateName!, {code: 'pt_BR'}, [componente]);
                         const message = new DataNotificationDTO("whatsapp", telefone, "template", templateData);
@@ -51,5 +51,9 @@ export class IniciarAcaoService implements IniciarAcaoUseCase {
         } catch (e: any) {
             this.logger.error(`Erro ao iniciar ação: ${e.message}`);
         }
+    }
+
+    private getTelefoneFormatado(telefone: string): string {
+        return telefone.startsWith("55819") ? telefone : telefone.replace("5581", "55819");
     }
 }   
