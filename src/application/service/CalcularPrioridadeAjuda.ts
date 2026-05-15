@@ -20,7 +20,11 @@ export class CalcularPrioridadeAjuda {
     }
 
     private calcularDificuldades(familia: FamiliaEntity): void {
-        this.countPeso += familia.dificuldades.reduce((acc, item) => acc + item.dificuldade!.dificuldadeTipoAjuda!.peso!, 0);
+        this.countPeso += familia.dificuldades.reduce((acc, item) => acc + this.nullifyUndefined(item.dificuldade!.dificuldadeTipoAjuda!?.peso), 0);
+    }
+
+    private nullifyUndefined(value: number | undefined | null): number {
+        return (value !== undefined && value !== null) ? value : 0;
     }
 
     private calcularMembroComProblemaSaude(familia: FamiliaEntity): void {

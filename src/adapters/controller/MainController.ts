@@ -15,7 +15,7 @@ export class MainController {
             (req: Request, res: Response, next: NextFunction) => next(),
             (req: Request, res: Response, next: NextFunction) => next(),
             async function (params: any, data: LoginDTO) {
-                const dto = new LoginDTO(data.nickName, data.senha);
+                const dto = new LoginDTO(data.nickName.toLowerCase(), data.senha);
                 const output = await auth.login(dto);
                 return {
                     statusCode: 200,
