@@ -28,7 +28,7 @@ export class ConsultarProdutosProxVencimentoService {
                     const coordenadores = await this.usuarioRepository.findAllCoordenadores();
                         for (const coordenador of coordenadores) {
                         const newMsg = msg!.parametrosMensagem!.replace("$1", coordenador.nome.split(" ")[0]);
-                        const telefone = coordenador.telefone!.startsWith("55") ? coordenador.telefone! : "55".concat(coordenador.telefone!);
+                        const telefone = this.getTelefoneFormatado(coordenador.telefone!);
                         const parametros = JSON.parse(newMsg) as ParameterDTO[];
                         const componente = new ComponenteDTO(ComponenteTypeEnum.body, parametros);
                         const templateData = new TemplateDataNotificaoDTO(msg.templateName!, {code: 'pt_BR'}, [componente]);
@@ -43,5 +43,9 @@ export class ConsultarProdutosProxVencimentoService {
             await this.tempDataRepository.save(new TempDataEntity(null, {Erro: e, action: 'ConsultarProdutosProxVencimento'}, new Date()));
             console.error({error: e.message}, 'Erro ao processar visualização de produtos próximos do vencimento');
         }
+    }
+
+    private getTelefoneFormatado(telefone: string): string {
+        return telefone.startsWith("55819") ? telefone : telefone.replace("5581", "55819");
     }
 }
