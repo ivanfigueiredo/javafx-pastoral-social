@@ -8,8 +8,7 @@ import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
 import { OpcaoListaDTO } from "../dto/OpcaoListaDTO";
 import { PaginatedDTO } from "../dto/PaginatedDTO";
 import { AjudaRecebidaEntity } from "../../adapters/persistence/entities/AjudaRecebidaEntity";
-import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
-import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
+import { ItemTemplateMapper } from "../mappers/ItemTemplateMapper";
 
 export class ListarAjudasService implements ListarAjudasUseCase {
     private readonly logger: Logger;
@@ -70,29 +69,12 @@ export class ListarAjudasService implements ListarAjudasUseCase {
                     idItemProduto: item.itemProduto.id,
                     nomeProduto: item.itemProduto.itemProdutoDesc,
                     quantidade: item.quantidade,
-                    detalhe: this.calculatePeso(item)
+                    detalhe: ItemTemplateMapper.formatPeso(item)
                 }))
             }
         }
         return undefined;
-    }
-
-    private calculatePeso(itemTemplate: ItemTemplateEntity): string | undefined {
-        if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.KG) {
-            return `${itemTemplate.quantidade}${itemTemplate.itemProduto.unidadeMedida!.undMedidas}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.G) {
-            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
-            const converteKG = (sum / 1000);
-            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.KG}` : `${sum}${UnidadeMedidaEnum.G}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.ML) {
-            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
-            const converteKG = (sum / 1000);
-            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.L}` : `${sum}${UnidadeMedidaEnum.ML}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.L) {
-            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.L}`;
-        }
-    }
-        
+    }   
 
     public async listarAjudasOpcaoLista(): Promise<OpcaoListaDTO[]> {
         try {

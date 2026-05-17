@@ -15,7 +15,6 @@ import { DoacaoRecebidaEntity } from "../../adapters/persistence/entities/Doacao
 import { ItemTemplateEntity } from "../../adapters/persistence/entities/./ItemTemplateEntity";
 import { ConsultaGeracaoTemplateDTO } from "../dto/ConsultaGeracaoTemplateDTO";
 import { TemplateItemDTO } from "../dto/TemplateItemDTO";
-import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
 import { IdempotenciaPort } from "../port/in/IdempotenciaPort";
 import { IdempotencyDTO } from "../dto/idempotency/IdempotencyDTO";
 import { ContextoIdempotencyEnum } from "../dto/enuns/ContextoIdempotencyEnum";
@@ -25,6 +24,7 @@ import { NivelNecessidadeDoacaoEnum } from "../dto/enuns/NivelNecessidadeDoacaoE
 import { AtualizarAcaoDTO } from "../dto/acao/AtualizarAcaoDTO";
 import { NotFoundException } from "../exceptions/NotFoundException";
 import { ItemTemplateRepository } from "../port/out/ItemTemplateRepository";
+import { ItemTemplateMapper } from "../mappers/ItemTemplateMapper";
 
 export class AcaoService implements AcaoUseCase {
     private readonly logger: Logger;
@@ -133,25 +133,7 @@ export class AcaoService implements AcaoUseCase {
     }
 
     private getItensDoacao(itensTemplate: ItemTemplateEntity[]): string[] {
-        return itensTemplate.map(item => `${item.itemProduto.itemProdutoDesc!} (${this.calculatePeso(item)})`);
-    }
-
-    private calculatePeso(itemTemplate: ItemTemplateEntity): string | undefined {
-        if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.KG) {
-            return `${itemTemplate.quantidade}${itemTemplate.itemProduto.unidadeMedida!.undMedidas}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.G) {
-            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
-            const converteKG = (sum / 1000);
-            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.KG}` : `${sum}${UnidadeMedidaEnum.G}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.ML) {
-            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
-            const converteKG = (sum / 1000);
-            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.L}` : `${sum}${UnidadeMedidaEnum.ML}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.L) {
-            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.L}`;
-        } else {
-            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.UND}`;
-        }
+        return itensTemplate.map(item => `${item.itemProduto.itemProdutoDesc!} (${ItemTemplateMapper.formatPeso(item)})`);
     }
 
     private getTotalDoadores(doacaoRecebidas: DoacaoRecebidaEntity[]): number {
