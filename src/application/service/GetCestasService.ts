@@ -1,13 +1,12 @@
 import { Logger } from "pino";
 import { CestaFilterQueryDTO } from "../dto/CestaFilterQueryDTO";
-import { UnidadeMedidaEnum } from "../dto/enuns/UnidadeMedidaEnum";
 import { GetCestasUseCase } from "../port/in/GetCestasUseCase";
 import { CestaGeradaRepository } from "../port/out/CestaGeradaRepository";
 import { CestasDTO, ItemsData } from "../dto/CestasDTO";
 import { GetCestasDTO } from "../dto/GetCestasDTO";
 import { CalculateProgressoEnum } from "../dto/enuns/CalculateProgressoEnum";
 import { PaginatedDTO } from "../dto/PaginatedDTO";
-import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
+import { ItemTemplateMapper } from "../mappers/ItemTemplateMapper";
 
 export class GetCestasService implements GetCestasUseCase {
     private readonly logger: Logger;
@@ -37,7 +36,7 @@ export class GetCestasService implements GetCestasUseCase {
                     const itemTemplate = cestas[i].template.itensTemplate.find(itemTemplate => itemTemplate.itemProduto.id == cestaItem.cestaEstoqueItem.itemProduto.id)!;
                     return ({
                         itemProdutoId: cestaItem.cestaEstoqueItem.itemProduto.id,
-                        nomeProduto: `${cestaItem.cestaEstoqueItem.itemProduto.itemProdutoDesc} (${this.calculatePeso(itemTemplate)})`,
+                        nomeProduto: `${cestaItem.cestaEstoqueItem.itemProduto.itemProdutoDesc} (${ItemTemplateMapper.formatPeso(itemTemplate)})`,
                         quantidade: itemTemplate.quantidade,
                         unidadeMedida: cestaItem.cestaEstoqueItem.itemProduto.unidadeMedida!.undMedidas,
                         valor: cestaItem.cestaEstoqueItem.itemProduto.valorMedida
@@ -64,24 +63,6 @@ export class GetCestasService implements GetCestasUseCase {
         } catch (e: any) {
             this.logger.error({ error: e.message }, 'Erro ao consultar cestas ');
             throw e;
-        }
-    }
-    
-    private calculatePeso(itemTemplate: ItemTemplateEntity): any {
-        if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.KG) {
-            return `${itemTemplate.quantidade}${itemTemplate.itemProduto.unidadeMedida!.undMedidas}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.G) {
-            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
-            const converteKG = (sum / 1000);
-            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.KG}` : `${sum}${UnidadeMedidaEnum.G}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.ML) {
-            const sum = itemTemplate.itemProduto.valorMedida! * itemTemplate.quantidade;
-            const converteKG = (sum / 1000);
-            return (converteKG >= 1) ? `${converteKG}${UnidadeMedidaEnum.L}` : `${sum}${UnidadeMedidaEnum.ML}`;
-        } else if (itemTemplate.itemProduto.unidadeMedida!.undMedidas == UnidadeMedidaEnum.L) {
-            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.L}`;
-        } else {
-            return `${itemTemplate.quantidade}${UnidadeMedidaEnum.UND}`;
         }
     }
 }

@@ -1,7 +1,7 @@
 import { Logger } from "pino";
 import { FamiliaEntity } from "../../adapters/persistence/entities/FamiliaEntity";
 import { ComunidadeDTO } from "../dto/ComunidadeDTO";
-import { PrioridadeEnum, PrioridadePeso } from "../dto/enuns/PrioridadeEnum";
+import { PrioridadePeso } from "../dto/enuns/PrioridadeEnum";
 import { TipoAjudaEnum } from "../dto/enuns/TipoAjudaEnum";
 import { FamiliaDificuldadeDTO, FamiliaDTO } from "../dto/familias/FamiliaDTO";
 import { ListarFamiliasPrioritariasDTO } from "../dto/familias/ListasFamiliasPrioritariasDTO";
@@ -59,29 +59,6 @@ export class GetFamiliaService implements GetFamiliaUseCase {
         }
     }
 
-    // public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<ListarFamiliasPrioritariasDTO[]> {
-    //     try {
-    //         const familias: FamiliaEntity[] = await this.familiaRepository.getFamiliasPorTipoAjuda(tipoAjuda);
-    //         const familiasClassificadas: FamiliaEntity[] = [];
-    //         for (const familia of familias) {
-    //             const calculo = new CalcularPrioridadeAjuda(familia);
-    //             if (calculo.prioridade === PrioridadeEnum.ALTA) {
-    //                 familiasClassificadas.push(familia);
-    //             }
-    //         }
-    //         const LIMIT_FAMILIAS = 3;
-    //         if (familiasClassificadas.length > LIMIT_FAMILIAS) {
-    //             const familiasEscolhidas = this.escolhaAleatoria(familiasClassificadas, LIMIT_FAMILIAS);
-    //             return familiasEscolhidas.map(familia => new ListarFamiliasPrioritariasDTO(familia.id, familia.nomeRepresentante));
-    //         } else {
-    //             return familiasClassificadas.map(familia => new ListarFamiliasPrioritariasDTO(familia.id, familia.nomeRepresentante));
-    //         }
-    //     } catch (e: any) {
-    //         this.logger.error({ err: e.message }, 'Erro ao listar familias ');
-    //         throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
-    //     }
-    // }
-
     public async consultarFamiliaPrioridade(tipoAjuda: TipoAjudaEnum): Promise<ListarFamiliasPrioritariasDTO[]> {
         try {
             const familias: FamiliaEntity[] = await this.familiaRepository.getFamiliasPorTipoAjuda(tipoAjuda);
@@ -108,15 +85,6 @@ export class GetFamiliaService implements GetFamiliaUseCase {
             throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
         }
     }
-    
-    private escolhaAleatoria(familiasClassificadas: FamiliaEntity[], limiteFamilia: number): FamiliaEntity[] {
-        const array = [...familiasClassificadas];
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array.slice(0, limiteFamilia);
-    } 
     
     public async listarFamiliaOpcaoLista(): Promise<OpcaoListaDTO[]> {
         const familiasOpcaoLista = await this.familiaRepository.findFamiliaOptionLista();

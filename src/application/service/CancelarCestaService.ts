@@ -9,7 +9,6 @@ import { EstoqueRepository } from "../port/out/EstoqueRepository";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
 import { EstoqueEntity } from "../../adapters/persistence/entities/EstoqueEntity";
 import { UnitOfWorkPort } from "../port/out/UnitOfWorkPort";
-import { StatusAjudaEnum } from "../../adapters/persistence/entities/StatusAjudaEnum";
 import { AjudaRepository } from "../port/out/AjudaRepository";
 import { UnprocessableException } from "../exceptions/UnprocessableException";
 
