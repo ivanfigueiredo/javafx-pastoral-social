@@ -56,7 +56,12 @@ export class TemplateService implements TemplateUseCase {
                 itens: newListItensData
             };
         }));
-        const paginated = new PaginatedDTO(parseInt(`${dto.page}`), total, Math.ceil(total / dto.pageSize), result);
+        const templatesOrdenados = result.sort((a, b) => {
+            if (a.qtdPossivelGeracao === 0 && b.qtdPossivelGeracao > 0) return 1;
+            if (a.qtdPossivelGeracao > 0 && b.qtdPossivelGeracao === 0) return -1;
+            return a.qtdPossivelGeracao - b.qtdPossivelGeracao;
+        });
+        const paginated = new PaginatedDTO(parseInt(`${dto.page}`), total, Math.ceil(total / dto.pageSize), templatesOrdenados);
         return paginated;
     }
 

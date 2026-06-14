@@ -1,5 +1,5 @@
 import { Between, IsNull, LessThan, Repository } from "typeorm";
-import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
+import { CadastroEstoqueDTO } from "../../application/dto/estoque/CadastroEstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
 import { EstoqueRepository } from "../../application/port/out/EstoqueRepository";
@@ -8,7 +8,7 @@ import { EstoqueEntity } from "./entities/EstoqueEntity";
 import { EstoqueMapper } from "../mappers/EstoqueMapper";
 import { UnidadeMedidaEntity } from "./entities/UnidadeDeMedidaEntity";
 import { ItemProdutoEntity } from "./entities/ItemProdutoEntity";
-import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
+import { EstoqueDTO } from "../../application/dto/estoque/EstoqueDTO";
 import { TemplateItemDTO } from "../../application/dto/TemplateItemDTO";
 import { UnitOfWork } from "./unitOfWork/UnitOfWork";
 import { EstoqueDisponivelDTO } from "../../application/dto/EstoqueDisponivelDTO";

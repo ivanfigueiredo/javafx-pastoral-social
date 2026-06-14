@@ -4,7 +4,8 @@ import { ActionType } from "../http/authorization/Permission";
 import { HttpClient } from "../http/HttpClient";
 import { Auth } from "../http/authentication/Auth";
 import { EstoqueUseCase } from "../../application/port/in/EstoqueUseCase";
-import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
+import { CadastroEstoqueDTO } from "../../application/dto/estoque/CadastroEstoqueDTO";
+import { CadastroEstoqueV2DTO } from "../../application/dto/estoque/CadastroEstoqueV2DTO";
 import { ConsultaGeracaoTemplateDTO } from "../../application/dto/ConsultaGeracaoTemplateDTO";
 import { GeracaoModeloTemplateDTO } from "../../application/dto/GeracaoModeloTemplateDTO";
 import { AuditProxy } from "../../application/port/in/AuditProxy";
@@ -25,8 +26,8 @@ export class EstoqueController {
             httpClient.on(
                 "post", 
                 "/estoque/cadastrar", 
-                (req: Request, res: Response, next: NextFunction) => next(),
-                (req: Request, res: Response, next: NextFunction) => next(),
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
                 async function (params: any, data: CadastroEstoqueDTO) {
                     const dto = new CadastroEstoqueDTO(data.validade, data.itemProdutoId, data.codProduto);
                     const output = await estoqueUseCase.cadastrar(dto);
@@ -37,6 +38,23 @@ export class EstoqueController {
                     };
                 }
             );
+
+            httpClient.on(
+                "post", 
+                "/estoque/v2/cadastrar", 
+                auth.authentication.bind(auth),
+                async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarItemEstoque),
+                async function (params: any, data: CadastroEstoqueV2DTO) {
+                    const dto = new CadastroEstoqueV2DTO(data.validade, data.itemProdutoId, data.codProduto, data.quantidade);
+                    const output = await estoqueUseCase.cadastrarV2(dto);
+                    return {
+                        statusCode: 201,
+                        timeStampe: new Date().toISOString(),
+                        data: output ?? {}
+                    };
+                }
+            );
+
 
             httpClient.on(
                 "post", 

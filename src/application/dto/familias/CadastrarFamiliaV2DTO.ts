@@ -1,9 +1,9 @@
-import { BaseDTO } from "./BaseDTO";
+import { BaseDTO } from "../BaseDTO";
 
-export class CadastrarFamiliaDTO extends BaseDTO {
+export class CadastrarFamiliaV2DTO extends BaseDTO {
     constructor(
         readonly nomeRepresentante: string,
-        readonly idade: number,
+        readonly dataNascimento: string,
         readonly idComunidade: number,
         readonly dificuldades: number[],
         readonly cpfRg: string | null,

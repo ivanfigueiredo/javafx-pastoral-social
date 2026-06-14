@@ -3,7 +3,7 @@ import { Auth } from "../http/authentication/Auth";
 import { Authorize } from "../http/authorization/Authorize";
 import { HttpClient } from "../http/HttpClient";
 import { ActionType } from "../http/authorization/Permission";
-import { CadastrarFamiliaDTO } from "../../application/dto/CadastrarFamiliaDTO";
+import { CadastrarFamiliaDTO } from "../../application/dto/familias/CadastrarFamiliaDTO";
 import { ConsultarFamiliaUseCase } from "../../application/port/in/ConsultarFamiliaUseCase";
 import { UserLogged } from "../http/types/express";
 import { AuditProxy } from "../../application/port/in/AuditProxy";
@@ -11,6 +11,7 @@ import { GetFamiliaUseCase } from "../../application/port/in/GetFamiliaUseCase";
 import { QueryTipoAjudaDTO } from "../../application/dto/QueryTipoAjudaDTO";
 import { FamiliaFilterQueryDTO } from "../../application/dto/familias/FamiliaFilterQueryDTO";
 import { TipoDificuldadeEnum } from "../../application/dto/enuns/TipoDificuldadeEnum";
+import { CadastrarFamiliaV2DTO } from "../../application/dto/familias/CadastrarFamiliaV2DTO";
 
 export class FamiliaController {
     constructor(
@@ -18,6 +19,7 @@ export class FamiliaController {
         readonly auth: Auth,
         readonly authorize: Authorize,
         readonly auditProxy: AuditProxy<CadastrarFamiliaDTO, any>,
+        readonly auditProxyV2: AuditProxy<CadastrarFamiliaV2DTO, any>,
         readonly consultarFamiliaUseCase: ConsultarFamiliaUseCase,
         readonly getFamiliaUseCase: GetFamiliaUseCase
     ) {
@@ -46,6 +48,38 @@ export class FamiliaController {
                     data.outros
                 );
                 const output = await auditProxy.execute(dto, ActionType.CadastrarFamilia, userLogged!);
+                return {
+                    statusCode: 201,
+                    timeStampe: new Date().toISOString(),
+                    data: output ?? {}
+                };
+            }
+        );
+
+        httpClient.on(
+            "post", 
+            "/familia/v2/cadastrar", 
+            auth.authentication.bind(auth),
+            async (req: Request, res: Response, next: NextFunction) => authorize.can(req, res, next, ActionType.CadastrarFamilia),
+            async function (params: any, data: CadastrarFamiliaV2DTO, userLogged?: UserLogged) {
+                const dto = new CadastrarFamiliaV2DTO(
+                    data.nomeRepresentante,
+                    data.dataNascimento,
+                    data.idComunidade,
+                    data.dificuldades,
+                    data.cpfRg,
+                    data.telefone,
+                    data.endereco,
+                    data.qtdPessoasResidencia,
+                    data.qtdPessoasEmpregadas,
+                    data.criancasFrequentamEscola,
+                    data.membroComProblemaSaude,
+                    data.jaRecebeuAjuda,
+                    data.desejaParticiparCursos,
+                    data.observacao,
+                    data.outros
+                );
+                const output = await auditProxyV2.execute(dto, ActionType.CadastrarFamilia, userLogged!);
                 return {
                     statusCode: 201,
                     timeStampe: new Date().toISOString(),

@@ -64,7 +64,7 @@ export class CalcularPrioridadeAjuda {
     private calcularDiasPassados(ajudaRecebida: AjudaRecebidaEntity | null): number {
         const dataAtual = new Date();
         if (ajudaRecebida && ajudaRecebida.dataEntrega != null) {
-            const dataAnterior = new Date(ajudaRecebida.dataEntrega);
+            const dataAnterior = new Date(ajudaRecebida.dataEntrega + 'T00:00:00');
             const diferencaMs = (dataAtual.getTime() - dataAnterior.getTime());
             const diasPassados = Math.floor(diferencaMs / (1000 * 60 * 60 * 24));
             return diasPassados;

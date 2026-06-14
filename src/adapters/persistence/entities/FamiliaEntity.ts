@@ -47,6 +47,9 @@ export class FamiliaEntity {
   @Column({ name: 'data_cadastro', type: 'timestamptz', default: () => 'NOW()' })
   dataCadastro: Date;
 
+  @Column({ name: 'data_nascimento', type: 'date', nullable: true })
+  dataNascimento: Date | null;
+
   @OneToMany(() => FamiliaDificuldadeEntity, (fd) => fd.familia)
   dificuldades: FamiliaDificuldadeEntity[] = [];
 
@@ -61,7 +64,7 @@ export class FamiliaEntity {
 
   constructor(
     nomeRepresentante: string,
-    idade: number,
+    idade: number | null,
     cpfRg: string| null,
     telefone: string | null,
     endereco: string | null,
@@ -75,7 +78,8 @@ export class FamiliaEntity {
     dataCadastro: Date,
     comunidade: ComunidadeEntity,
     dificuldades: FamiliaDificuldadeEntity[],
-    ajudasRecebidas: AjudaRecebidaEntity[]
+    ajudasRecebidas: AjudaRecebidaEntity[],
+    dataNascimento: Date | null
   ) {
     this.nomeRepresentante = nomeRepresentante;
     this.idade = idade;
@@ -93,5 +97,6 @@ export class FamiliaEntity {
     this.dificuldades = dificuldades;
     this.ajudasRecebidas = ajudasRecebidas;
     this.comunidade = comunidade;
+    this.dataNascimento = dataNascimento;
   }
 }

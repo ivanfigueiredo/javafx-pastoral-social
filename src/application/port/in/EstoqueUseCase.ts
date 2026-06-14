@@ -1,7 +1,8 @@
-import { CadastroEstoqueDTO } from "../../dto/CadastroEstoqueDTO";
+import { CadastroEstoqueDTO } from "../../dto/estoque/CadastroEstoqueDTO";
 import { ConsultaGeracaoTemplateDTO } from "../../dto/ConsultaGeracaoTemplateDTO";
 import { TemplateTypeEnum } from "../../dto/enuns/TemplateTypeEnum";
-import { EstoqueDTO } from "../../dto/EstoqueDTO";
+import { CadastroEstoqueV2DTO } from "../../dto/estoque/CadastroEstoqueV2DTO";
+import { EstoqueDTO } from "../../dto/estoque/EstoqueDTO";
 import { GeracaoModeloTemplateDTO } from "../../dto/GeracaoModeloTemplateDTO";
 import { ItemProdutoDTO } from "../../dto/ItemProdutoDTO";
 import { ModeloTemplateCriadoResponse } from "../../dto/ModeloTemplateCriadoResponseDTO";
@@ -11,6 +12,7 @@ import { UnidadeDeMedidadDTO } from "../../dto/UnidadeDeMedidaDTO";
 
 export interface EstoqueUseCase {
     cadastrar: (dto: CadastroEstoqueDTO) => Promise<void>;
+    cadastrarV2: (dto: CadastroEstoqueV2DTO) => Promise<void>;
     deletar: (idEstoque: number) => Promise<void>;
     listarUnidadeMedida: () => Promise<UnidadeDeMedidadDTO[]>;
     listarItemProduto: () => Promise<ItemProdutoDTO[]>;

@@ -1,5 +1,5 @@
 import { In, Repository } from "typeorm";
-import { CadastrarFamiliaDTO } from "../../application/dto/CadastrarFamiliaDTO";
+import { CadastrarFamiliaDTO } from "../../application/dto/familias/CadastrarFamiliaDTO";
 import { ComunidadeDTO } from "../../application/dto/ComunidadeDTO";
 import { DificuldadeDTO } from "../../application/dto/DificuldadeDTO";
 import { FamiliaRepository } from "../../application/port/out/FamiliaRepository";
@@ -18,6 +18,7 @@ import { TipoAjudaEnum } from "../../application/dto/enuns/TipoAjudaEnum";
 import { TipoAjudaEntity } from "./entities/TipoAjudaEntity";
 import { OpcaoListaDTO } from "../../application/dto/OpcaoListaDTO";
 import { FamiliaFilterQueryDTO } from "../../application/dto/familias/FamiliaFilterQueryDTO";
+import { CadastrarFamiliaV2DTO } from "../../application/dto/familias/CadastrarFamiliaV2DTO";
 
 export class FamiliaPostgresDatabase implements FamiliaRepository {
     private readonly logger: Logger;
@@ -59,6 +60,16 @@ export class FamiliaPostgresDatabase implements FamiliaRepository {
     public async save(dto: CadastrarFamiliaDTO): Promise<FamiliaCadastradaDTO> {
         try {
             const familia = await this.unitOfWork.transaction(FamiliaEntity, FamiliaMapper.toFamiliaEntity(dto));
+            return new FamiliaCadastradaDTO(familia.id);
+        } catch (e: any) {
+            this.logger.error({err: e.message}, "Erro ao persistir Familia")
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        }
+    }
+
+    public async saveV2(dto: CadastrarFamiliaV2DTO): Promise<FamiliaCadastradaDTO> {
+        try {
+            const familia = await this.unitOfWork.transaction(FamiliaEntity, FamiliaMapper.toFamiliaEntityV2(dto));
             return new FamiliaCadastradaDTO(familia.id);
         } catch (e: any) {
             this.logger.error({err: e.message}, "Erro ao persistir Familia")
