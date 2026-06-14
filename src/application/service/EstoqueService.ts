@@ -1,9 +1,9 @@
 import { Logger } from 'pino';
 import { ItemTemplateEntity } from "../../adapters/persistence/entities/ItemTemplateEntity";
-import { CadastroEstoqueDTO } from "../dto/CadastroEstoqueDTO";
+import { CadastroEstoqueDTO } from "../dto/estoque/CadastroEstoqueDTO";
 import { ConsultaGeracaoTemplateDTO } from "../dto/ConsultaGeracaoTemplateDTO";
 import { TemplateTypeEnum, TemplateTypeEnumDescricao } from "../dto/enuns/TemplateTypeEnum";
-import { EstoqueDTO } from "../dto/EstoqueDTO";
+import { EstoqueDTO } from "../dto/estoque/EstoqueDTO";
 import { GeracaoModeloTemplateDTO } from "../dto/GeracaoModeloTemplateDTO";
 import { ItemProdutoDTO } from "../dto/ItemProdutoDTO";
 import { ModeloTemplateCriadoResponse } from "../dto/ModeloTemplateCriadoResponseDTO";
@@ -28,6 +28,8 @@ import { EstoqueDisponivelDTO } from '../dto/EstoqueDisponivelDTO';
 import { SugerirModeloTemplateResponseDTO, TemplateModeloFilhosDTO } from '../dto/SugerirModeloTemplateResponseDTO';
 import { TemplateItemDTO } from '../dto/TemplateItemDTO';
 import { CriarTemplateDTO } from '../dto/CriarTemplateDTO';
+import { CadastroEstoqueV2DTO } from '../dto/estoque/CadastroEstoqueV2DTO';
+import { EstoqueEntity } from '../../adapters/persistence/entities/EstoqueEntity';
 
 export class EstoqueService implements EstoqueUseCase {
     private readonly logger: Logger;
@@ -85,6 +87,26 @@ export class EstoqueService implements EstoqueUseCase {
             if (this.isProdutoForaValidade(dto.validade)) throw new UnprocessableException("O produto informado está fora da validade.");
             const estoqueEntity = EstoqueMapper.toEstoqueEntity(dto);
             await this.estoqueRepository.saveMany([estoqueEntity]);
+            await this.unitOfWork.commit();
+            await this.unitOfWork.release();
+        } catch (e: any) {
+            this.logger.error({ err: e.message }, 'Erro ao persistir ')
+            await this.unitOfWork.rollBack();
+            if (e instanceof UnprocessableException) throw e;
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.");
+        }
+    };
+
+    public async cadastrarV2(dto: CadastroEstoqueV2DTO): Promise<void> {
+        try {
+            await this.unitOfWork.startTransaction();
+            if (dto.quantidade <= 0) throw new UnprocessableException("A quantidade deve ser maior que zero.");
+            if (this.isProdutoForaValidade(dto.validade)) throw new UnprocessableException("O produto informado está fora da validade.");
+            const estoqueEntities: EstoqueEntity[] = [];
+            for (let i = 0; i < dto.quantidade; i++) {
+                estoqueEntities.push(EstoqueMapper.toEstoqueEntityV2(dto));
+            }
+            await this.estoqueRepository.saveMany(estoqueEntities);
             await this.unitOfWork.commit();
             await this.unitOfWork.release();
         } catch (e: any) {

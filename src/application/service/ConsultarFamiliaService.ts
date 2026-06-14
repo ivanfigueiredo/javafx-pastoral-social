@@ -1,5 +1,5 @@
 import { AssociarFamiliaComDificuldadeDTO } from "../dto/AssociarFamiliaComDificuldadeDTO";
-import { CadastrarFamiliaDTO } from "../dto/CadastrarFamiliaDTO";
+import { CadastrarFamiliaDTO } from "../dto/familias/CadastrarFamiliaDTO";
 import { ComunidadeDTO } from "../dto/ComunidadeDTO";
 import { DificuldadeDTO } from "../dto/DificuldadeDTO";
 import { ConsultarFamiliaUseCase } from "../port/in/ConsultarFamiliaUseCase";

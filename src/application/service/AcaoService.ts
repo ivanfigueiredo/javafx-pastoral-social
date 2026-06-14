@@ -13,8 +13,6 @@ import { UnprocessableException } from "../exceptions/UnprocessableException";
 import { StatusAcaoEnum } from "../dto/enuns/StatusAcaoEnum";
 import { DoacaoRecebidaEntity } from "../../adapters/persistence/entities/DoacaoRecebidaEntity";
 import { ItemTemplateEntity } from "../../adapters/persistence/entities/./ItemTemplateEntity";
-import { ConsultaGeracaoTemplateDTO } from "../dto/ConsultaGeracaoTemplateDTO";
-import { TemplateItemDTO } from "../dto/TemplateItemDTO";
 import { IdempotenciaPort } from "../port/in/IdempotenciaPort";
 import { IdempotencyDTO } from "../dto/idempotency/IdempotencyDTO";
 import { ContextoIdempotencyEnum } from "../dto/enuns/ContextoIdempotencyEnum";
@@ -138,15 +136,6 @@ export class AcaoService implements AcaoUseCase {
 
     private getTotalDoadores(doacaoRecebidas: DoacaoRecebidaEntity[]): number {
         return new Set(doacaoRecebidas.map(doacao => doacao.doador!.id)).size;
-    }
-
-    private async getItensGerados(template: TemplateEntity): Promise<number> {
-        const output = await this.estoqueUseCase.consultarGeracaoTemplate(this.getTemplateITens(template.itensTemplate));
-        return output.quantidadePossivel;
-    }
-
-    private getTemplateITens(itens: ItemTemplateEntity[]): ConsultaGeracaoTemplateDTO {
-        return new ConsultaGeracaoTemplateDTO(itens.map(item => new TemplateItemDTO(item.itemProduto.id, item.quantidade)));
     }
 
     private async getCalculaPercentualItensGerados(acao: AcaoEntity, qtdTotal: number): Promise<number> {

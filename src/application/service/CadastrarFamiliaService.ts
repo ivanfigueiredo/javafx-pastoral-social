@@ -1,10 +1,11 @@
 import { Logger } from 'pino';
 import { AssociarFamiliaComDificuldadeDTO } from "../dto/AssociarFamiliaComDificuldadeDTO";
-import { CadastrarFamiliaDTO } from "../dto/CadastrarFamiliaDTO";
+import { CadastrarFamiliaDTO } from "../dto/familias/CadastrarFamiliaDTO";
 import { InternalServerErrorException } from "../exceptions/InternalServerErrorException";
 import { CadastrarFamiliaUseCase } from "../port/in/CadastrarFamiliaUseCase";
 import { FamiliaRepository } from "../port/out/FamiliaRepository";
 import { UnitOfWorkPort } from '../port/out/UnitOfWorkPort';
+import { CadastrarFamiliaV2DTO } from '../dto/familias/CadastrarFamiliaV2DTO';
 
 export class CadastrarFamiliaService implements CadastrarFamiliaUseCase {
     private readonly logger: Logger;
@@ -21,6 +22,26 @@ export class CadastrarFamiliaService implements CadastrarFamiliaUseCase {
         try {
             await this.unitOfWork.startTransaction();
             const familiaCriada = await this.familiaRepository.save(dto);
+            const familiaDificuldades: AssociarFamiliaComDificuldadeDTO[] = []
+            for (const idDificuldade of dto.dificuldades) {
+                const assFamiliaComDif = new AssociarFamiliaComDificuldadeDTO(idDificuldade, familiaCriada.idFamilia, dto.outros);
+                familiaDificuldades.push(assFamiliaComDif);
+            }
+            await this.familiaRepository.saveFamiliaDificuldade(familiaDificuldades);
+            await this.unitOfWork.commit();
+        } catch (e: any) {
+            await this.unitOfWork.rollBack();
+            this.logger.error({ err: e.message }, 'Erro ao persistir ')
+            throw new InternalServerErrorException("Erro interno do servidor. Se o erro persistir, entre em contato com o suporte.")
+        } finally {
+            await this.unitOfWork.release();
+        }
+    }
+
+    public async executeV2(dto: CadastrarFamiliaV2DTO): Promise<void> {
+        try {
+            await this.unitOfWork.startTransaction();
+            const familiaCriada = await this.familiaRepository.saveV2(dto);
             const familiaDificuldades: AssociarFamiliaComDificuldadeDTO[] = []
             for (const idDificuldade of dto.dificuldades) {
                 const assFamiliaComDif = new AssociarFamiliaComDificuldadeDTO(idDificuldade, familiaCriada.idFamilia, dto.outros);

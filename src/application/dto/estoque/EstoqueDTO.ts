@@ -1,4 +1,4 @@
-import { UnidadeDeMedidadDTO } from "./UnidadeDeMedidaDTO";
+import { UnidadeDeMedidadDTO } from "..//UnidadeDeMedidaDTO";
 
 export class EstoqueDTO {
     constructor(

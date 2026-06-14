@@ -1,5 +1,6 @@
-import { CadastroEstoqueDTO } from "../../application/dto/CadastroEstoqueDTO";
-import { EstoqueDTO } from "../../application/dto/EstoqueDTO";
+import { CadastroEstoqueDTO } from "../../application/dto/estoque/CadastroEstoqueDTO";
+import { CadastroEstoqueV2DTO } from "../../application/dto/estoque/CadastroEstoqueV2DTO";
+import { EstoqueDTO } from "../../application/dto/estoque/EstoqueDTO";
 import { ItemProdutoDTO } from "../../application/dto/ItemProdutoDTO";
 import { UnidadeDeMedidadDTO } from "../../application/dto/UnidadeDeMedidaDTO";
 import { EstoqueEntity } from "../persistence/entities/EstoqueEntity";
@@ -10,6 +11,20 @@ export class EstoqueMapper {
     private constructor() {}
 
     public static toEstoqueEntity(dto: CadastroEstoqueDTO): EstoqueEntity {
+        return new EstoqueEntity(
+            null,
+            new Date(),
+            dto.validade,
+            true,
+            null,
+            new ItemProdutoEntity(dto.itemProdutoId, null, null, null, [], []),
+            null,
+            [],
+            dto.codProduto
+        );
+    }
+
+    public static toEstoqueEntityV2(dto: CadastroEstoqueV2DTO): EstoqueEntity {
         return new EstoqueEntity(
             null,
             new Date(),

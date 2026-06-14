@@ -1,8 +1,8 @@
 import { EstoqueEntity } from "../../../adapters/persistence/entities/EstoqueEntity";
 import { ItemProdutoEntity } from "../../../adapters/persistence/entities/ItemProdutoEntity";
-import { CadastroEstoqueDTO } from "../../dto/CadastroEstoqueDTO";
+import { CadastroEstoqueDTO } from "../../dto/estoque/CadastroEstoqueDTO";
 import { EstoqueDisponivelDTO } from "../../dto/EstoqueDisponivelDTO";
-import { EstoqueDTO } from "../../dto/EstoqueDTO";
+import { EstoqueDTO } from "../../dto/estoque/EstoqueDTO";
 import { ItemProdutoDTO } from "../../dto/ItemProdutoDTO";
 import { TemplateItemDTO } from "../../dto/TemplateItemDTO";
 import { UnidadeDeMedidadDTO } from "../../dto/UnidadeDeMedidaDTO";

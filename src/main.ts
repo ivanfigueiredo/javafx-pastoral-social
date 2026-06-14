@@ -65,6 +65,7 @@ import { ItemProdutoPostgresDatabase } from "./adapters/persistence/ItemProdutoP
 import { NotificacaoController } from "./adapters/controller/NotificacaoController";
 import { TempDataPostgresDatabase } from "./adapters/persistence/TempDataPostgresDatabase";
 import { IniciarAcaoService } from "./application/service/IniciarAcaoService";
+import { FamiliaV2AuditProxy } from "./application/proxy/FamiliaV2AuditProxy";
 config();
 
 export async function buildApp() {
@@ -117,6 +118,7 @@ export async function buildApp() {
     const cancelarCestaService = new CancelarCestaService(logger, cestaGeradaRepository, ajudaRepository, estoqueRepositiory, unitOfWork);
     const associarAjudaFamiliaService = new AssociarFamiliaAjudaService(logger, cestaGeradaRepository, ajudaRepository, familiaRepository, unitOfWork);
     const familiaAuditProxy = new FamiliaAuditProxy(cadastrarFamiliaService, auditoriaRepository);
+    const familiaAuditProxyV2 = new FamiliaV2AuditProxy(cadastrarFamiliaService, auditoriaRepository);
     const gerarModeloTemplateProxy = new GerarModeloTemplateProxy(logger, estoqueService, auditoriaRepository);
     const acaoService = new AcaoService(estoqueService, acaoRepository, unitOfWork, logger, idempotenciaService, itemTemplateRepository);
     const authUseCase = new AuthService(logger, usuarioRepository, securityRepository, authRepository);
@@ -126,7 +128,7 @@ export async function buildApp() {
     new TemplateController(httpClient, auth, authorize, templateService, listarTemplatesComCestasDisponiveisService);
     new MainController(httpClient, authUseCase);
     new EstoqueController(httpClient, auth, authorize, estoqueService, gerarModeloTemplateProxy);
-    new FamiliaController(httpClient, auth, authorize, familiaAuditProxy, consultarFamiliaService, getFamiliaService);
+    new FamiliaController(httpClient, auth, authorize, familiaAuditProxy, familiaAuditProxyV2, consultarFamiliaService, getFamiliaService);
     new CestasController(httpClient, auth, authorize, gerarCestasService, getCestasService, cancelarCestaService);
     new AjudaController(httpClient, auth, authorize, associarAjudaFamiliaService, cancelarAjudaService, listarAjudasService, aprovarAjudaService, entregarAjudaService);
     new UsuarioController(httpClient, auth, authorize, updateUsuarioService);

@@ -1,4 +1,4 @@
-import { BadRequestException } from "../exceptions/BadRequestException";
+import { BadRequestException } from "../../exceptions/BadRequestException";
 
 export class CadastroEstoqueDTO {
     constructor(

@@ -105,7 +105,7 @@ export class NotificarAgenteProdutoVencimentoService {
 
     private diffInDays(vencimento: Date): number {
         const now = Date.now();
-        const validade = new Date(vencimento).getTime();
+        const validade = new Date(vencimento + 'T00:00:00').getTime();
 
         const diffMs = validade - now;
         const diffDays = diffMs / (1000 * 60 * 60 * 24);
